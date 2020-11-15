@@ -651,18 +651,29 @@ def handleEncounter(inputCharacter, inputNPC):
         enemyInitiative = True if enemy['speed'] > player['speed'] else False
 
         while inCombat:
-            print(f"{player['name']}\'s health: {player['health']['current']}.")
-            print(f"{enemy['name']}\'s health: {enemy['health']['current']}.")
+            combatLog =  (
+                f"\n"
+                f"{player['name']}\'s health: {player['health']['current']}/{player['health']['max']}\n"
+                f"{enemy['name']}\'s health: {enemy['health']['current']}/{enemy['health']['max']}\n"
+                f"{player['name']}\'s chance to hit: {max(math.floor(((player['accuracy'] - enemy['dodge'])/player['accuracy'])*100) + (player['speed'] - enemy['speed']),10)}%\n"
+                f"{player['name']}\'s chance to dodge: {100 - max(math.floor(((enemy['accuracy'] - player['dodge'])/enemy['accuracy'])*100) + (enemy['speed'] - player['speed']),5)}%\n"
+                f"{player['name']}\'s damage: {player['attack'][0] + weapons[player['equipments']['main hand']][0]} - {player['attack'][1] + weapons[player['equipments']['main hand']][1]}\n"
+                f"{player['name']}\'s defence: {player['defence'] + armor[player['equipments']['armor']]}\n"
+
+            )
+            print(combatLog)
+            #print(f"{player['name']}\'s health: {player['health']['current']}.")
+            #print(f"{enemy['name']}\'s health: {enemy['health']['current']}.")
 
             consumeTurn = True
 
             combatControls = {
                 "A": "Attack",
-                "W":"Wait",
-                "D":"Describe",
-                "I":"Inventory",
-                "C":"Character",
-                "E":"Equipment",
+                "W": "Wait", 
+                "D": "Describe",
+                "I": "Inventory",
+                "C": "Character",
+                "E": "Equipment",
                 "R": "Run",
             }
             # Player's turn
@@ -678,7 +689,7 @@ def handleEncounter(inputCharacter, inputNPC):
                 # Maybe calculate dodge and accuracy, whether attack hits, here.
                 # Hit chance formula modified from https://www.gamedev.net/forums/topic/685930-the-simplest-but-most-effective-and-intuitive-way-to-implement-accuracy-and-dodge-chance-in-an-rpg/
                 chanceToHit = max(math.floor(((player['accuracy'] - enemy['dodge'])/player['accuracy'])*100) + (player['speed'] - enemy['speed']),10)
-                print(f"({chanceToHit}%) You attempt to strike...")
+                print(f"\n({chanceToHit}%) You attempt to strike...")
                 if randint(0,100) < chanceToHit:
                     # Calculates lower and upper bound of damage based on base attack + main weapon dmg 
                     lowerBoundDamage = player['attack'][0] + weapons[player["equipments"]["main hand"]][0] # + math.floor(weapons[player["equipments"]["offHand"]][0]/2)
@@ -851,7 +862,7 @@ def main(inputMap):
     if tutorialInput.lower() == "yes" :
         # tutorial goes here
         print("Too bad the tutorial isn't done yet. Pick it up as you go along.")
-        sleep(3)
+        sleep(1)
     else:
         print("Great! lets go!")
         
@@ -990,7 +1001,10 @@ def main(inputMap):
 
         if currentMap[y][x] == "K":
             player['inventory'].append('dungeon key')
+            print("\n")
             print("You found the Dungeon Key! You pick it up and place it in your inventory.")
+            sleep(1)
+            input("Press enter to continue")
 
         if currentMap[y][x] == "C":
             #returns random element from maploot
@@ -1007,7 +1021,8 @@ def main(inputMap):
                     print(f"You found a {loot} from the {lootType}.")
             if lootFound == False:
                 print(f"You found nothing else from the {lootType}. Bummer...")
-            sleep(4)
+            sleep(1)
+            input("Press enter to continue")
 
         # 0 is a wall
         if currentMap[y][x] == "0":
@@ -1049,7 +1064,8 @@ def main(inputMap):
             elif outcome == "victory":
                 print("You emerged victorious in combat!")
             print(f"You have {player['health']['current']} health left.")
-            sleep(4)
+            sleep(1)
+            input("Press enter to continue")
 
         #Update map and player states below if turn is consumed
         if consumeTurn:

@@ -314,8 +314,8 @@ classes = {
             "current":15
         },
         "food": {
-            "max":30,
-            "current":25
+            "max":25,
+            "current":20
         }
     },
 
@@ -344,8 +344,8 @@ classes = {
             "current":20
         },
         "food": {
-            "max":30,
-            "current":25
+            "max":25,
+            "current":20
         }
     },
     "beserker": {
@@ -373,8 +373,8 @@ classes = {
             "current":15
         },
         "food": {
-            "max":30,
-            "current":25
+            "max":25,
+            "current":20
         }
     },
 
@@ -404,7 +404,7 @@ classes = {
         },
         "food": {
             "max":35,
-            "current":35
+            "current":30
         }
     }
 
@@ -834,7 +834,12 @@ def main(inputMap):
     # NAME SELECT
     welcomeText = """
     _____________________________________________________________________________________
+
     Welcome! The goal is to escape the Dungeon by finding the key and unlocking the exit.
+
+    Howver, the dungeon is foggy, and despite having a torch, you can only reveal a small area
+    around you. There will be monsters and loot scattered across the play area.
+
     Pay close attention to your health, food and torch level as you traverse the Dungeon.
     _____________________________________________________________________________________
     
@@ -1002,7 +1007,7 @@ def main(inputMap):
                     print(f"You found a {loot} from the {lootType}.")
             if lootFound == False:
                 print(f"You found nothing else from the {lootType}. Bummer...")
-            sleep(5)
+            sleep(4)
 
         # 0 is a wall
         if currentMap[y][x] == "0":
@@ -1044,7 +1049,7 @@ def main(inputMap):
             elif outcome == "victory":
                 print("You emerged victorious in combat!")
             print(f"You have {player['health']['current']} health left.")
-            sleep(5)
+            sleep(4)
 
         #Update map and player states below if turn is consumed
         if consumeTurn:

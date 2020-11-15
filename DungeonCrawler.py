@@ -107,11 +107,11 @@ testMap2 = [
 ["0", " ", "0", "0", " ", " ", " ", " ", " ", "C", " ", "0"],
 ["0", "C", "0", "C", "D", "0", "G", " ", "S", " ", " ", "0"],
 ["0", "0", "0", "0", "0", "0", "0", "0", " ", "D", " ", "0"],
-["0", "C", "G", " ", " ", " ", "0", "C", "S", "C", "S", "0"],
-["0", "0", "0", "0", "0", " ", " ", " ", " ", " ", " ", "0"],
-["0", "C", " ", " ", "S", "S", "C", " ", "G", "0", " ", "0"],
+["0", "C", "D", " ", " ", " ", "0", "C", "S", "C", "S", "0"],
+["0", "G", "0", "0", "0", " ", " ", "H", " ", " ", " ", "0"],
+["0", "C", "H", " ", "S", "S", "C", " ", "G", "0", " ", "0"],
 ["0", "0", "0", " ", "C", " ", " ", " ", " ", "0", " ", "0"],
-["E", "H", " ", " ", "0", " ", "0", "H", " ", "0", "D", "0"],
+["E", "H", "D", " ", "0", " ", "0", "H", " ", "0", "D", "0"],
 ["0", "0", "S", " ", "0", "C", "0", "C", " ", "0", "C", "0"],
 ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
 ]
@@ -179,10 +179,10 @@ consumables = {
         "health": 15,
     },
     "health potion": {
-        "health": 30,
+        "health": 25,
     },
     "large health potion": {
-        "health": 50,
+        "health": 35,
     },
     "small torch fuel": {
         "torch": 5,
@@ -202,7 +202,7 @@ consumables = {
         "health": 4
     },
     "large food ration": {
-        "food": 30,
+        "food": 24,
         "health": 6
     },
 }
@@ -212,10 +212,10 @@ mapLoot = {
         "gold": [25,100],
         "possible loot": {
             "scale armor":5,
-            "dragonscale armor":5,
-            "plate armor":5,
-            "spear":5,
-            "short sword":5,
+            "dragonscale armor":1,
+            "plate armor":2,
+            "chainmail":5,
+            "gladius":5,
             "large torch fuel":10,
             "large health potion":10,
             "large food ration":10,
@@ -249,17 +249,17 @@ mapLoot = {
     "box of equipment": {
         "gold": [1,5],
         "possible loot": {
-            "dagger":80,
-            "short sword":40,
-            "spear":30,
-            "gladius":30,
-            "sword":20,
-            "halberd":10,
-            "longsword":10,
-            "leather armor":75,
-            "chainmail":40,
-            "scale armor":15,
-            "plate armor":5
+            "dagger":55,
+            "short sword":30,
+            "spear":15,
+            "gladius":15,
+            "sword":10,
+            "halberd":5,
+            "longsword":5,
+            "leather armor":55,
+            "chainmail":15,
+            "scale armor":7,
+            "plate armor":3
         }
     },
     "fuel box": {
@@ -373,7 +373,7 @@ classes = {
             "current":15
         },
         "food": {
-            "max":25,
+            "max":20,
             "current":20
         }
     },
@@ -426,12 +426,15 @@ nonPlayableCharacters = {
         "status": [],
         "possible loot": {
             # Structured by loot and loot chance
-            "small food ration":65,
+            "small food ration":50,
+            "small torch fuel":20,
             "food ration":10,
             "small health potion":20,
             "health potion":5,
             "dagger":20,
             "leather armor":10,
+            "gladius":5,
+            "short sword":2
         },
         "gold": [4,12],
         "intent": "hostile",
@@ -453,7 +456,8 @@ nonPlayableCharacters = {
         "possible loot": {
             "small torch fuel":50,
             "torch fuel":10,
-            "large torch fuel":5
+            "large torch fuel":5,
+            "small food ration":5
         },
         "gold": [2,8],
         "intent": "hostile",
@@ -502,10 +506,10 @@ nonPlayableCharacters = {
             "health potion":30,
             "dagger":75,
             "leather armor":60,
-            "chainmail":40,
-            "gladius":40,
-            "short sword":40,
-            "spear":20,
+            "chainmail":5,
+            "gladius":15,
+            "short sword":15,
+            "spear":5,
         },
         "gold": [2,8],
         "intent": "hostile",
@@ -1047,7 +1051,7 @@ def main(inputMap):
             if "dungeon key" in player['inventory']:
                 currentMap = updateMap(currentMap,x,y,prevX,prevY)
                 printMap(currentMap)
-                print(f"You reached the exit and escaped from the Dungeon with {player['gold']} Gold! You win!")
+                print(f"You reached the exit at turn {turn} and escaped from the Dungeon with {player['gold']} Gold! You win!")
                 break
             else:
                 #Reveals the exit that player hit (in case they lacked vision)

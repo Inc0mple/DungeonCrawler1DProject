@@ -36,28 +36,28 @@ win condition
 
 IMPORTANT:
 fog-of-war (done)
-health, monsters and combat system (basics done)
+health, monsters and combat system (done)
 inventory system (done)
-script writing and flavor texts (partially done)
+script writing and flavor texts (basically done)
 
 GOOD TO HAVE:
-loot and score system
+loot system (somewhat done)
 random events from chests/object interactions
-character creation
-variable torch level (torch runs out of fuel = cannot reveal fog)
-hunger (after hunger bar runs out, slowly depletes health until reaches 1)
+character creation (partially done)
+variable torch level (done)
+hunger (done)
 
 
 
 IF GOT TIME:
-more attributes and damage calculations
+more attributes and damage calculations (partially done)
+character classes (partially done)
 load/save system
 powerups
 status effects
 experience/lvl up
 multiple levels
 scaling enemies
-character classes
 skills and abilities
 
 
@@ -80,52 +80,84 @@ some powerup that permanently increases a stat when used? (also a version that i
 
 import math
 from random import randint
+from random import choice
 from copy import deepcopy
+from time import sleep
 
 testMap = [
 ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
 ["0", "P", " ", "G", "0", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", "0", " ", "0", " ", " ", "0"],
-["0", " ", "S", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", "0", "G", " ", "0", " ", " ", " ", "0"],
-["0", " ", "0", " ", " ", "0", " ", " ", " ", "0"],
+["0", " ", "K", " ", "0", " ", "0", " ", " ", "0"],
+["0", "C", "S", " ", " ", " ", " ", " ", " ", "0"],
+["0", "C", "0", "G", " ", "0", " ", " ", " ", "0"],
+["0", "C", "0", " ", " ", "0", " ", " ", " ", "0"],
 ["0", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
 ["0", " ", "0", "0", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", "S", " ", " ", "0", " ", "G", "E"],
+["0", "H", " ", "S", " ", " ", "0", " ", "G", "E"],
 ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
 ]
 
 testMap2 = [
 ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-["0", "P", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "E"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
+["0", "P", " ", "0", "D", "G", "0", "C", "0", "0", "K", "0"],
+["0", " ", " ", " ", " ", " ", " ", "S", "D", "0", "G", "0"],
+["0", " ", " ", "S", "0", "0", "0", " ", " ", "0", " ", "0"],
+["0", " ", "G", " ", " ", "0", " ", " ", "S", "0", " ", "0"],
+["0", "S", " ", " ", " ", "C", " ", "0", " ", "S", " ", "0"],
+["0", " ", "0", "0", " ", " ", " ", " ", " ", "C", " ", "0"],
+["0", "C", "0", "C", "D", "0", "G", " ", "S", " ", " ", "0"],
+["0", "0", "0", "0", "0", "0", "0", "0", " ", "D", " ", "0"],
+["0", "C", "G", " ", " ", " ", "0", "C", "S", "C", "S", "0"],
+["0", "0", "0", "0", "0", " ", " ", " ", " ", " ", " ", "0"],
+["0", "C", " ", " ", "S", "S", "C", " ", "G", "0", " ", "0"],
+["0", "0", "0", " ", "C", " ", " ", " ", " ", "0", " ", "0"],
+["E", "H", " ", " ", "0", " ", "0", "H", " ", "0", "D", "0"],
+["0", "0", "S", " ", "0", "C", "0", "C", " ", "0", "C", "0"],
+["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
 ]
+
+testMap3 = [
+["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
+["0", "P", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
+["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
+]
+
 
 """
 player stats ideas:
 attack, defence,speed,vision,dodge,accuracy
 
+"dagger","chainmail","short sword","small health potion","small food ration","torch fuel"
 
 """
 #
+
 weapons = {
+    # Structured by how much they increase lower and upper dmg bound
     "empty":(0,0),
     "dagger":(2,1),
+    "gladius":(2,2),
     "short sword":(1,3),
-    "spear":(1,5)
+    "sword":(2,3),
+    "spear":(1,5),
+    "halberd":(2,6),
+    "longsword":(3,5)
 }
 
 armor = {
@@ -133,7 +165,8 @@ armor = {
     "leather armor":1,
     "chainmail":2,
     "scale armor":3,
-    "plate armor":4
+    "plate armor":4,
+    "dragonscale armor":5
 }
 
 trinket = {
@@ -141,6 +174,7 @@ trinket = {
 }
 
 consumables = {
+    # Structured by the stat they restore and by how much
     "small health potion": {
         "health": 15,
     },
@@ -156,6 +190,9 @@ consumables = {
     "torch fuel": {
         "torch": 10,
     },
+    "large torch fuel": {
+        "torch": 20,
+    },
     "small food ration": {
         "food": 8,
         "health": 2
@@ -164,56 +201,319 @@ consumables = {
         "food": 16,
         "health": 4
     },
+    "large food ration": {
+        "food": 30,
+        "health": 6
+    },
 }
 
-yourCharacterOrClass = {
-    "name": "Mr Meeseeks",
-    "health": 50,
-    "attack": [4,6],
-    "defence": 0,
-    "speed": 7,
-    "equipments": {
-        "armor":"empty",
-        "main hand":"empty",
-        #"offHand":"empty",
-        "trinket":"empty"
+mapLoot = {
+    "treasure chest": {
+        "gold": [25,100],
+        "possible loot": {
+            "scale armor":5,
+            "dragonscale armor":5,
+            "plate armor":5,
+            "spear":5,
+            "short sword":5,
+            "large torch fuel":10,
+            "large health potion":10,
+            "large food ration":10,
+            "health potion":10,
+            "torch fuel":10,
+            "food ration":10,
+            "small torch fuel":15,
+            "small health potion":15,
+            "small food ration":15,
+            "health potion":10,
+            "torch fuel":10,
+            "food ration":10
+        }
     },
-    "status": [],
-    "inventory": ["dagger","chainmail","short sword"],
-    "gold": 0,
-    "torch":20,
-    "max food":40,
-    "food":30
+
+    "box of supplies": {
+        "gold": [1,10],
+        "possible loot": {
+            "large torch fuel":10,
+            "large health potion":10,
+            "large food ration":10,
+            "health potion":25,
+            "torch fuel":25,
+            "food ration":25,
+            "small torch fuel":50,
+            "small health potion":50,
+            "small food ration":50
+        }
+        
+    },
+    "box of equipment": {
+        "gold": [1,5],
+        "possible loot": {
+            "dagger":80,
+            "short sword":55,
+            "spear":30,
+            "gladius":30,
+            "sword":40,
+            "halberd":15,
+            "longsword":15,
+            "leather armor":75,
+            "chainmail":40,
+            "scale armor":20,
+            "plate armor":10
+        }
+    },
+    "fuel box": {
+        "gold": [1,5],
+        "possible loot": {
+            "small torch fuel":50,
+            "small torch fuel":50,
+            "torch fuel":40,
+            "large torch fuel":30,
+        }  
+        
+    },
+    
+    "potion pouch": {
+        "gold": [1,5],
+        "possible loot": {
+            "small health potion":90,
+            "small health potion":50,
+            "small health potion":50,
+            "small health potion":30,
+            "health potion":40,
+            "health potion":20,
+            "large health potion":20,
+        }       
+    }
 }
+
+# CHARACTER CLASSES:
+classes = {
+    "warrior": {
+        "name": "PlaceholderName",
+        "class":"warrior",
+        "health": {
+            "max":50,
+            "current":50
+        },
+        "attack": [4,6],
+        "defence": 1,
+        "speed": 7,
+        "accuracy": 80,
+        "dodge": 7,
+        "equipments": {
+            "armor":"empty",
+            "main hand":"empty",
+            "trinket":"empty"
+        },
+        "status": [],
+        "inventory": ["small health potion"],
+        "gold": 0,
+        "torch":{
+            "max":20,
+            "current":15
+        },
+        "food": {
+            "max":30,
+            "current":25
+        }
+    },
+
+    "rogue": {
+        "name": "PlaceholderName",
+        "class":"rogue",
+        "health": {
+            "max":35,
+            "current":35
+        },
+        "attack": [3,6],
+        "defence": 0,
+        "speed": 11,
+        "accuracy": 90,
+        "dodge": 20,
+        "equipments": {
+            "armor":"empty",
+            "main hand":"empty",
+            "trinket":"empty"
+        },
+        "status": [],
+        "inventory": ["small health potion"],
+        "gold": 0,
+        "torch":{
+            "max":25,
+            "current":20
+        },
+        "food": {
+            "max":30,
+            "current":25
+        }
+    },
+    "beserker": {
+        "name": "PlaceholderName",
+        "class":"beserker",
+        "health": {
+            "max":40,
+            "current":40
+        },
+        "attack": [4,8],
+        "defence": 0,
+        "speed": 6,
+        "accuracy": 75,
+        "dodge": 5,
+        "equipments": {
+            "armor":"empty",
+            "main hand":"empty",
+            "trinket":"empty"
+        },
+        "status": [],
+        "inventory": ["small health potion"],
+        "gold": 0,
+        "torch":{
+            "max":15,
+            "current":15
+        },
+        "food": {
+            "max":30,
+            "current":25
+        }
+    },
+
+    "survivalist": {
+        "name": "PlaceholderName",
+        "class":"survivalist",
+        "health": {
+            "max":55,
+            "current":55
+        },
+        "attack": [3,5],
+        "defence": 1,
+        "speed": 10,
+        "accuracy": 80,
+        "dodge": 15,
+        "equipments": {
+            "armor":"empty",
+            "main hand":"empty",
+            "trinket":"empty"
+        },
+        "status": [],
+        "inventory": ["small health potion","small torch fuel","small health potion"],
+        "gold": 0,
+        "torch":{
+            "max":30,
+            "current":25
+        },
+        "food": {
+            "max":35,
+            "current":35
+        }
+    }
+
+}
+
 
 nonPlayableCharacters = {
     "G": {
         "name": "Goblin",
-        "max health":25,
-        "health": 25,
-        "attack": [1,6],
-        "defence": 1,
+        "health": {
+            "max":23,
+            "current":23
+        },
+        "attack": [2,6],
+        "defence": 0,
         "speed": 8,
+        "accuracy": 75,
+        "dodge": 10,
         "status": [],
-        "inventory": [],
-        "gold": 5,
+        "possible loot": {
+            # Structured by loot and loot chance
+            "small food ration":65,
+            "food ration":10,
+            "small health potion":20,
+            "health potion":5,
+            "dagger":20,
+            "leather armor":10,
+        },
+        "gold": [4,12],
         "intent": "hostile",
         "behaviour": "simple"
     },
+
     "S": {
         "name": "Slime",
-        "max health":40,
-        "health": 40,
-        "attack": [1,3],
+        "health": {
+            "max":30,
+            "current":30
+        },
+        "attack": [1,4],
         "defence": 0,
         "speed": 4,
+        "accuracy": 65,
+        "dodge": 0,
         "status": [],
-        "inventory": [],
-        "gold": 3,
+        "possible loot": {
+            "small torch fuel":50,
+            "torch fuel":10,
+            "large torch fuel":5
+        },
+        "gold": [2,8],
+        "intent": "hostile",
+        "behaviour": "simple"
+    },
+
+    "D": {
+        "name": "Dire Wolf",
+        "health": {
+            "max":20,
+            "current":20
+        },
+        "attack": [3,7],
+        "defence": 0,
+        "speed": 12,
+        "accuracy": 75,
+        "dodge": 15,
+        "status": [],
+        "possible loot": {
+            # Structured by loot and loot chance
+            "small food ration":85,
+            "food ration":40,
+            "large food ration":20
+        },
+        "gold": [8,20],
+        "intent": "hostile",
+        "behaviour": "simple"
+    },
+
+    "H": {
+        "name": "Hobgoblin",
+        "health": {
+            "max":40,
+            "current":40
+        },
+        "attack": [4,7],
+        "defence": 1,
+        "speed": 9,
+        "accuracy": 80,
+        "dodge": 10,
+        "status": [],
+        "possible loot": {
+            "small food ration":95,
+            "food ration":25,
+            "small health potion":90,
+            "health potion":30,
+            "dagger":75,
+            "leather armor":60,
+            "chainmail":40,
+            "gladius":40,
+            "short sword":40,
+            "spear":20,
+        },
+        "gold": [2,8],
         "intent": "hostile",
         "behaviour": "simple"
     }
+    
 }
+
 
 # use this function to print map in human-readable format
 def printMap(map):
@@ -251,34 +551,43 @@ def handleUse(inputCharacter, inputItem):
 
     # Possible optimisation with a for loop?
     
-    
-    
-    #if inputItem in consumables:
-        #for effect in consumables[inputItem]:
+    if inputItem in consumables:
+        for effect in consumables[inputItem]:
+            offset = 0
+            inputCharacter[effect]["current"] += consumables[inputItem][effect]
+            if inputCharacter[effect]["current"] > inputCharacter[effect]["max"]:
+                offset = inputCharacter[effect]["current"] - inputCharacter[effect]["max"]
+                inputCharacter[effect]["current"] -= offset
+            amountRestored = consumables[inputItem][effect] - offset
+            print(f"Restored {inputCharacter['name']}'s {effect} by {amountRestored}.")
 
 
     # To implement choice of equipping in either main hand or off hand (perhaps)
     # First, check which slot equipment belongs. If current equipment slot not empty, remove current equipment first before replacing with new equipment
-    if inputItem in weapons:
+    elif inputItem in weapons:
         if inputCharacter["equipments"]["main hand"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["main hand"])
             print(f"You remove your {inputCharacter['equipments']['main hand']} and put it in your inventory.")
         inputCharacter["equipments"]["main hand"] = inputItem
         print(f"You equipped your {inputItem} in your Main Hand slot")
 
-    if inputItem in armor:
+    elif inputItem in armor:
         if inputCharacter["equipments"]["armor"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["armor"])
             print(f"You remove your {inputCharacter['equipments']['armor']} and put it in your inventory.")
         inputCharacter["equipments"]["armor"] = inputItem
         print(f"You equipped your {inputItem} in your Armor slot")
 
-    if inputItem in trinket:
+    elif inputItem in trinket:
         if inputCharacter["equipments"]["trinket"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["trinket"])
             print(f"You remove your {inputCharacter['equipments']['trinket']} and put it in your inventory.")
         inputCharacter["equipments"]["trinket"] = inputItem
         print(f"You equipped your {inputItem} in your Trinket slot")
+    
+    else:
+        print("You can't use that item!")
+        inputCharacter["inventory"].append(inputItem)
 
 def describeSurroundings(inputPlayerMap,x,y):
 
@@ -286,9 +595,13 @@ def describeSurroundings(inputPlayerMap,x,y):
     objectDescriptions = {
         "0":"a solid wall",
         "G":"a hidious goblin",
+        "H":"a strong hobgoblin",
+        "D":"a fast dire wolf",
         "S":"a glob of slime",
         "E":"a way out",
         ".":"nothing",
+        "K":"the dungeon key",
+        "C":"some dungeon loot",
         " ":"an empty room"
     }
     north = inputPlayerMap[y-1][x]
@@ -338,8 +651,8 @@ def handleEncounter(inputCharacter, inputNPC):
         enemyInitiative = True if enemy['speed'] > player['speed'] else False
 
         while inCombat:
-            print(f"{player['name']}\'s health: {player['health']}.")
-            print(f"{enemy['name']}\'s health: {enemy['health']}.")
+            print(f"{player['name']}\'s health: {player['health']['current']}.")
+            print(f"{enemy['name']}\'s health: {enemy['health']['current']}.")
 
             consumeTurn = True
 
@@ -350,7 +663,6 @@ def handleEncounter(inputCharacter, inputNPC):
                 "I":"Inventory",
                 "C":"Character",
                 "E":"Equipment",
-                #"D": "Defend",
                 "R": "Run",
             }
             # Player's turn
@@ -364,19 +676,28 @@ def handleEncounter(inputCharacter, inputNPC):
             # Handle player inputs
             if playerInput == "attack":
                 # Maybe calculate dodge and accuracy, whether attack hits, here.
-                # Calculates lower and upper bound of damage based on base attack + main weapon dmg (+ half of offhand Weapon dmg rounded down if it's ever reimplemented)
-                lowerBoundDamage = player['attack'][0] + weapons[player["equipments"]["main hand"]][0] # + math.floor(weapons[player["equipments"]["offHand"]][0]/2)
-                upperBoundDamage = player['attack'][1] + weapons[player["equipments"]["main hand"]][1] # + math.floor(weapons[player["equipments"]["offHand"]][1]/2)
-                damage = max(randint(lowerBoundDamage,upperBoundDamage) - (enemy['defence']),0)
+                # Hit chance formula modified from https://www.gamedev.net/forums/topic/685930-the-simplest-but-most-effective-and-intuitive-way-to-implement-accuracy-and-dodge-chance-in-an-rpg/
+                chanceToHit = max(math.floor(((player['accuracy'] - enemy['dodge'])/player['accuracy'])*100) + (player['speed'] - enemy['speed']),10)
+                print(f"({chanceToHit}%) You attempt to strike...")
+                if randint(0,100) < chanceToHit:
+                    # Calculates lower and upper bound of damage based on base attack + main weapon dmg 
+                    lowerBoundDamage = player['attack'][0] + weapons[player["equipments"]["main hand"]][0] # + math.floor(weapons[player["equipments"]["offHand"]][0]/2)
+                    upperBoundDamage = player['attack'][1] + weapons[player["equipments"]["main hand"]][1] # + math.floor(weapons[player["equipments"]["offHand"]][1]/2)
 
-                enemy['health'] -= damage
-                print(f"You attacked the {enemy['name']} for {damage} damage!")
+                    # max is to prevent negative damage from being dealt
+                    damage = max(randint(lowerBoundDamage,upperBoundDamage) - (enemy['defence']),0)
+                    enemy['health']['current'] -= damage
+                    print(f"You hit the {enemy['name']} for {damage} damage!")
+                
+                else:
+                    print("You missed!")
 
             if playerInput == "wait":
                 print("You bide your time...")
 
             if playerInput == "run":
-                chanceToRun = max(40 + 9 * (player['speed'] - enemy['speed']),15)
+                # minimum chance to run away is 10%
+                chanceToRun = max(math.floor((player['speed']/enemy['speed'])*100),10)
                 print(f"({chanceToRun}%) You try to run...")
                 if randint(0,100) < chanceToRun:
                     print("...and retreated succesfully!")
@@ -387,17 +708,17 @@ def handleEncounter(inputCharacter, inputNPC):
             
             if playerInput == "character":
                 consumeTurn = False
-                print("____________________________")
+                print("______________________________________")
                 for info in player:
                     print(f"{str(info).capitalize()}: {str(player[info]).capitalize()}")
-                print("____________________________")
+                print("______________________________________")
 
             if playerInput == "describe":
                 consumeTurn = False
-                print("____________________________")
+                print("______________________________________")
                 for info in enemy:
                     print(f"{str(info).capitalize()}: {str(enemy[info]).capitalize()}")
-                print("____________________________")
+                print("______________________________________")
 
             if playerInput == "inventory":
                 consumeTurn = False
@@ -429,10 +750,18 @@ def handleEncounter(inputCharacter, inputNPC):
                             player['inventory'].append(equipmentsInput)
                             player['equipments'][slot] = "empty"
 
-            # Handle combat-ending event in your turn
-            if enemy['health'] <= 0:
+            # Handle killing of enemy
+            if enemy['health']['current'] <= 0:
                 inCombat = False
-                print(f"You slew the {enemy['name']}.")
+                print("______________________________________")
+                print(f"You slew the {enemy['name']}!")
+                for loot in enemy['possible loot']:
+                    if randint(0,100) < enemy['possible loot'][loot]:
+                        player['inventory'].append(loot)
+                        print(f"You take the {loot} from the dead {enemy['name']}.")
+                goldReceived = randint(enemy['gold'][0],enemy['gold'][1]) 
+                player['gold'] += goldReceived
+                print(f"You received {goldReceived} gold from the dead {enemy['name']}.")
                 break
 
             #Informs player that enemy acted first due to them having higher speed
@@ -446,15 +775,19 @@ def handleEncounter(inputCharacter, inputNPC):
 
                 # Handle enemy inputs
                 if enemyInput == "attack":
-                    # Calculate damage, hit, dodge etc?
-                    lowerBoundDamage = enemy['attack'][0]
-                    upperBoundDamage = enemy['attack'][1]
-                    damage = max(randint(lowerBoundDamage,upperBoundDamage) - (player['defence'] + armor[player["equipments"]["armor"]]),0)
-                    player['health'] -= damage
-                    print(f"The {enemy['name']} attacked you for {damage} damage!")
+                    chanceToHit = max(math.floor(((enemy['accuracy'] - player['dodge'])/enemy['accuracy'])*100) + (enemy['speed'] - player['speed']),5)
+                    print(f"({chanceToHit}%) The {enemy['name']} attempts to attack you...")
+                    if randint(0,100) < chanceToHit:
+                        lowerBoundDamage = enemy['attack'][0]
+                        upperBoundDamage = enemy['attack'][1]
+                        damage = max(randint(lowerBoundDamage,upperBoundDamage) - (player['defence'] + armor[player["equipments"]["armor"]]),0)
+                        player['health']['current'] -= damage
+                        print(f"The {enemy['name']} hit you for {damage} damage!")
+                    else:
+                        print(f"You dodged the {enemy['name']}'s attack!")
 
             # Handle combat-ending event
-            if player['health'] <= 0:
+            if player['health']['current'] <= 0:
                 inCombat = False
                 playerDefeat = True
                 print(f"You were slain by the {enemy['name']}!")
@@ -491,18 +824,67 @@ def fogMap(inputMap):
                 outputMap[idxY][idX] = "."
     return outputMap
 
-
-def main(inputMap, inputCharacter):
+# Main game 
+def main(inputMap):
 
     # INITIALISE MAP
     currentMap = inputMap
     playerMap = fogMap(currentMap)
 
+    # NAME SELECT
+    welcomeText = """
+    _____________________________________________________________________________________
+    Welcome! The goal is to escape the Dungeon by finding the key and unlocking the exit.
+    Pay close attention to your health, food and torch level as you traverse the Dungeon.
+    _____________________________________________________________________________________
+    
+    Is this your first time playing? (Enter 1 for 'Yes' or 0 for 'No')
+    """
+    print(welcomeText)
+    tutorialInput =  playerAction({"0":"No","1":"Yes"})
+
+    if tutorialInput.lower() == "yes" :
+        # tutorial goes here
+        print("Tutorial goes here")
+        
+    print("Great! lets go!")
+    sleep(1)
+    playerName = input("Please select a name for your character: ")
+
+    # CLASS SELECT
+
+    classSelectText = """
+    _____________________________________________________________________________________
+    Available classes:
+
+    Warrior: Good all-rounder.
+    Rogue: Dextrous and survival-savvy but sacrificing power and durability.
+    Beserker: Powerful in combat, neglects defence and supplies.
+    Survivalist: Durable and start with more supplies, less combat oriented.
+    _____________________________________________________________________________________
+    
+    """
+    print(classSelectText)
+    classSelected = False
+    classesControls = {}
+    for idx,classChoice in enumerate(classes):    
+        classesControls[str(idx)] = classChoice
+    print("Please select a character class by entering the corresponding digit: ")
+    classesInput = playerAction(classesControls)
+    if classesInput != "go back":
+        classes[classesInput]['name'] = playerName
+        print(f"Class selected: {classesInput}!")
+        print("_____________________________________________________________________________________")
+        for info in classes[classesInput]:
+            print(f"{str(info).capitalize()}: {str(classes[classesInput][info]).capitalize()}")
+        print("_____________________________________________________________________________________")
+        classSelected = True
+        player = classes[classesInput]
+    print("Game starting in 5 seconds...")
+    sleep(5)
     #Shows map to player at start of game
     printMap(playerMap)
 
-    # INITIALISE PLAYER AND PLAYER INPUT
-    player = inputCharacter
     playerInput = ""
 
     # MAP CONTROLS
@@ -545,10 +927,10 @@ def main(inputMap, inputCharacter):
 
         if playerInput == "character":
             consumeTurn = False
-            print("____________________________")
+            print("______________________________________")
             for info in player:
                 print(f"{str(info).capitalize()}: {str(player[info]).capitalize()}")
-            print("____________________________")
+            print("______________________________________")
 
         if playerInput == "inventory":
             consumeTurn = False
@@ -590,14 +972,34 @@ def main(inputMap, inputCharacter):
             x += 1
 
         # HANDLE MAP EVENTS HERE
-        print("______________________________________")
-        print(f"Turn {turn}:")
-        print("______________________________________")
         if currentMap[y][x] == " ":
-            if player['torch'] > 0 :
+            if player['torch']['current'] > 5 :
                 print("Your torch shines brightly, illuminating the room with its radiance.")
+            elif player['torch']['current'] > 0:
+                print("Your torch reveals the room as it flickers and wavers...")
             else:
                 print("You grope your way into a dark room.")
+
+        if currentMap[y][x] == "K":
+            player['inventory'].append('dungeon key')
+            print("You found the Dungeon Key! You pick it up and place it in your inventory.")
+
+        if currentMap[y][x] == "C":
+            #returns random element from maploot
+            lootType = choice(list(mapLoot))
+            print(f"You found a {lootType}!")
+            lootFound = False
+            goldReceived = randint(mapLoot[lootType]['gold'][0],mapLoot[lootType]['gold'][1]) 
+            player['gold'] += goldReceived
+            print(f"You looted {goldReceived} gold from the {lootType}.")
+            for loot in mapLoot[lootType]['possible loot']:
+                if randint(0,100) < mapLoot[lootType]['possible loot'][loot]:
+                    lootFound = True
+                    player['inventory'].append(loot)
+                    print(f"You found a {loot} from the {lootType}.")
+            if lootFound == False:
+                print(f"You found nothing else from the {lootType}. Bummer...")
+            sleep(5)
 
         # 0 is a wall
         if currentMap[y][x] == "0":
@@ -612,10 +1014,18 @@ def main(inputMap, inputCharacter):
 
         # E is an exit
         if currentMap[y][x] == "E":
-            playerMap[y][x] = currentMap[y][x]
-            printMap(playerMap)
-            print("You reached the exit and escaped from the Dungeon! You win!")
-            break
+
+            if "dungeon key" in player['inventory']:
+                currentMap = updateMap(currentMap,x,y,prevX,prevY)
+                printMap(currentMap)
+                print(f"You reached the exit and escaped from the Dungeon with {player['gold']} Gold! You win!")
+                break
+            else:
+                #Reveals the exit that player hit (in case they lacked vision)
+                playerMap[y][x] = currentMap[y][x]
+                print("You reached the exit, but the door is locked...")
+                x = prevX
+                y = prevY
 
         # Starts encounter if tile is an NPC
         if currentMap[y][x] in nonPlayableCharacters:
@@ -624,41 +1034,59 @@ def main(inputMap, inputCharacter):
                 print("You were defeated by a denizen of the Dungeon. Game Over.")
                 break
             elif outcome == "retreated":
+                #Reveals the character that player retreated from
+                playerMap[y][x] = currentMap[y][x]
                 x = prevX
                 y = prevY
             elif outcome == "victory":
                 print("You emerged victorious in combat!")
-
+            print(f"You have {player['health']['current']} health left.")
+            sleep(5)
 
         #Update map and player states below if turn is consumed
         if consumeTurn:
             turn += 1
+            print("______________________________________")
+            print(f"Turn {turn}:")
+            print("______________________________________")
             currentMap = updateMap(currentMap,x,y,prevX,prevY)
 
             # Handles player's torch level
-            if player['torch'] > 0 :
+            if 0 < player['torch']['current'] < 6:
+                print("Your torch is flickering...")
+            if player['torch']['current'] > 0 :
                 torchLit = True
-                player['torch'] -= 1
-                if player['torch'] == 0:
-                    print("Your torch has ran out!")
+                player['torch']['current'] -= 1
+                if player['torch']['current'] == 0:
+                    print("Your torch has ran out of fuel!")
             else: 
                 print("Darkness surrounds you...You can't see anything.")
                 torchLit = False
+
+            # Handles player's food level
+            if player['food']['current'] > 0 :
+                player['food']['current'] -= 1
+                if player['food']['current'] < 10:
+                    print("You are feeling hungry...")
+            else: 
+                print("You are starving!!!")
+                player['health']['current'] -= 1
+                if player['health']['current'] <= 0:
+                    print("You starved to death...Game Over.")
+                    break
 
             playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,torchLit)
 
             
             #Describe what player sees
-            describeSurroundings(playerMap,x,y)
-            #printMap(playerMap)
-            #printMap(playerMap)
-            print(f"Player position: x = {x}, y = {y}. Health: {player['health']} Torch level: {player['torch']}.")
             
-
-
-
-# printMap(fogMap(testMap))
-
+            #printMap(playerMap)
+            printMap(playerMap)
+            describeSurroundings(playerMap,x,y)
+            print(f"Player position: x = {x}, y = {y}. Health: {player['health']['current']}/{player['health']['max']}. Food: {player['food']['current']}/{player['food']['max']}. Torch: {player['torch']['current']}/{player['torch']['max']}.")
+            
 # Starts Game. Takes in
-main(testMap, yourCharacterOrClass)
+
+
+main(testMap2)
 

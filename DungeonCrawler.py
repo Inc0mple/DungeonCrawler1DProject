@@ -151,8 +151,8 @@ attack, defence,speed,vision,dodge,accuracy
 weapons = {
     # Structured by how much they increase lower and upper dmg bound
     "empty":(0,0),
-    "dagger":(2,1),
-    "gladius":(2,2),
+    "dagger":(1,1),
+    "gladius":(2,1),
     "short sword":(1,3),
     "sword":(2,3),
     "spear":(1,5),
@@ -250,23 +250,24 @@ mapLoot = {
         "gold": [1,5],
         "possible loot": {
             "dagger":80,
-            "short sword":55,
+            "short sword":40,
             "spear":30,
             "gladius":30,
-            "sword":40,
-            "halberd":15,
-            "longsword":15,
+            "sword":20,
+            "halberd":10,
+            "longsword":10,
             "leather armor":75,
             "chainmail":40,
-            "scale armor":20,
-            "plate armor":10
+            "scale armor":15,
+            "plate armor":5
         }
     },
     "fuel box": {
         "gold": [1,5],
         "possible loot": {
             "small torch fuel":50,
-            "small torch fuel":50,
+            "small torch fuel":40,
+            "small torch fuel":20,
             "torch fuel":40,
             "large torch fuel":30,
         }  
@@ -277,7 +278,6 @@ mapLoot = {
         "gold": [1,5],
         "possible loot": {
             "small health potion":90,
-            "small health potion":50,
             "small health potion":50,
             "small health potion":30,
             "health potion":40,
@@ -355,7 +355,7 @@ classes = {
             "max":40,
             "current":40
         },
-        "attack": [4,8],
+        "attack": [3,8],
         "defence": 0,
         "speed": 6,
         "accuracy": 75,
@@ -444,7 +444,7 @@ nonPlayableCharacters = {
             "max":30,
             "current":30
         },
-        "attack": [1,4],
+        "attack": [2,4],
         "defence": 0,
         "speed": 4,
         "accuracy": 65,
@@ -569,14 +569,14 @@ def handleUse(inputCharacter, inputItem):
             inputCharacter["inventory"].append(inputCharacter["equipments"]["main hand"])
             print(f"You remove your {inputCharacter['equipments']['main hand']} and put it in your inventory.")
         inputCharacter["equipments"]["main hand"] = inputItem
-        print(f"You equipped your {inputItem} in your Main Hand slot")
+        print(f"You equipped your {inputItem} in your Main Hand slot ( + {weapons[inputItem][0]}-{weapons[inputItem][0]} attack ).")
 
     elif inputItem in armor:
         if inputCharacter["equipments"]["armor"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["armor"])
             print(f"You remove your {inputCharacter['equipments']['armor']} and put it in your inventory.")
         inputCharacter["equipments"]["armor"] = inputItem
-        print(f"You equipped your {inputItem} in your Armor slot")
+        print(f"You equipped your {inputItem} in your Armor slot ( + {armor[inputItem]} defence ).")
 
     elif inputItem in trinket:
         if inputCharacter["equipments"]["trinket"] != "empty":
@@ -809,11 +809,13 @@ def handleEncounter(inputCharacter, inputNPC):
 # Updates player-visible map. When vision is True, reveal 1 tile around player for each movement
 def updateFog(inputPlayerMap, inputCurrentMap, inputX, inputY, inputPrevX, inputPrevY, vision=False):
 
+    #Replace tile player was previously on with an empty space
+    inputPlayerMap[inputPrevY][inputPrevX] = inputCurrentMap[inputPrevY][inputPrevX]
+    
     #Reveal player's current tile
     inputPlayerMap[inputY][inputX] = inputCurrentMap[inputY][inputX]
 
-    #Replace tile player was previously on with an empty space
-    inputPlayerMap[inputPrevY][inputPrevX] = inputCurrentMap[inputPrevY][inputPrevX]
+    
 
     if vision:
         #Reveals surounding tiles by setting those tiles in player map to be equal to the actual map
@@ -899,10 +901,11 @@ def main(inputMap):
         print("_____________________________________________________________________________________")
         classSelected = True
         player = classes[classesInput]
-    print("Game starting in 5 seconds...")
-    sleep(5)
+    sleep(1)
+    input("Press enter to continue.")
+    
     #Shows map to player at start of game
-    printMap(playerMap)
+    
 
     playerInput = ""
 
@@ -923,8 +926,10 @@ def main(inputMap):
     x = 1
     y = 1
     turn = 1
-    # prevX = x
-    # prevY = y
+    prevX = x
+    prevY = y
+    playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,True)
+    printMap(playerMap)
 
     while playerInput != "quit":
         prevX = x
@@ -1034,6 +1039,7 @@ def main(inputMap):
             #Teleports player back to previous position due to them hitting the wall
             x = prevX
             y = prevY
+            sleep(1)
 
         # E is an exit
         if currentMap[y][x] == "E":
@@ -1055,6 +1061,8 @@ def main(inputMap):
             outcome = handleEncounter(player, nonPlayableCharacters[currentMap[y][x]])
             if outcome == "defeat":
                 print("You were defeated by a denizen of the Dungeon. Game Over.")
+                sleep(1)
+                input("Press enter to leave the game.")
                 break
             elif outcome == "retreated":
                 #Reveals the character that player retreated from

@@ -491,7 +491,7 @@ nonPlayableCharacters = {
         },
         "attack": [4,7],
         "defence": 1,
-        "speed": 9,
+        "speed": 10,
         "accuracy": 80,
         "dodge": 10,
         "status": [],
@@ -845,9 +845,12 @@ def main(inputMap):
 
     if tutorialInput.lower() == "yes" :
         # tutorial goes here
-        print("Tutorial goes here")
+        print("Too bad the tutorial isn't done yet. Pick it up as you go along.")
+        sleep(3)
+    else:
+        print("Great! lets go!")
         
-    print("Great! lets go!")
+    
     sleep(1)
     playerName = input("Please select a name for your character: ")
 
@@ -858,8 +861,8 @@ def main(inputMap):
     Available classes:
 
     Warrior: Good all-rounder.
-    Rogue: Dextrous and survival-savvy but sacrificing power and durability.
-    Beserker: Powerful in combat, neglects defence and supplies.
+    Rogue: Dextrous and survival-savvy but sacrifices power and durability.
+    Beserker: Powerful in combat but neglects defences and supplies.
     Survivalist: Durable and start with more supplies, less combat oriented.
     _____________________________________________________________________________________
     
@@ -1052,16 +1055,16 @@ def main(inputMap):
             currentMap = updateMap(currentMap,x,y,prevX,prevY)
 
             # Handles player's torch level
-            if 0 < player['torch']['current'] < 6:
-                print("Your torch is flickering...")
             if player['torch']['current'] > 0 :
                 torchLit = True
                 player['torch']['current'] -= 1
                 if player['torch']['current'] == 0:
                     print("Your torch has ran out of fuel!")
             else: 
-                print("Darkness surrounds you...You can't see anything.")
                 torchLit = False
+
+            playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,torchLit)
+            printMap(playerMap)
 
             # Handles player's food level
             if player['food']['current'] > 0 :
@@ -1074,14 +1077,16 @@ def main(inputMap):
                 if player['health']['current'] <= 0:
                     print("You starved to death...Game Over.")
                     break
-
-            playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,torchLit)
-
+                
+            if (0 < player['torch']['current'] < 6) and torchLit:
+                print("Your torch is flickering...")
             
-            #Describe what player sees
+            if not torchLit:
+                print("Darkness surrounds you...You can't see through the fog.")
             
-            #printMap(playerMap)
-            printMap(playerMap)
+            
+            
+            # Describes what player sees
             describeSurroundings(playerMap,x,y)
             print(f"Player position: x = {x}, y = {y}. Health: {player['health']['current']}/{player['health']['max']}. Food: {player['food']['current']}/{player['food']['max']}. Torch: {player['torch']['current']}/{player['torch']['max']}.")
             

@@ -36,14 +36,17 @@ win condition
 
 IMPORTANT:
 fog-of-war (done)
-health, monsters and combat system (somewhat done)
-inventory system
-script writing and flavor texts
+health, monsters and combat system (basics done)
+inventory system (done)
+script writing and flavor texts (partially done)
 
 GOOD TO HAVE:
-variable torch level (torch runs out of fuel = cannot reveal fog)
-hunger
+loot and score system
 random events from chests/object interactions
+character creation
+variable torch level (torch runs out of fuel = cannot reveal fog)
+hunger (after hunger bar runs out, slowly depletes health until reaches 1)
+
 
 
 IF GOT TIME:
@@ -62,11 +65,17 @@ COLIN TIER:
 smart enemy behaviours
 procedually generated maps
 procedually generated item effects
-
+torchlight radius system
 
 
 player stats ideas:
 attack, defence,speed,vision,dodge,accuracy
+
+item ideas:
+torch fuel -> refuel torch when used
+health potion -> restore 20 health
+glow ring trinket -> increase light radius, if not acts as permanent torch (Idk how to implement scaling light radius yet tho)
+some powerup that permanently increases a stat when used? (also a version that increases stat temporarily...idk how to implement yet )
 """
 
 import math
@@ -78,11 +87,11 @@ testMap = [
 ["0", "P", " ", "G", "0", " ", " ", " ", " ", "0"],
 ["0", " ", " ", " ", "0", " ", "0", " ", " ", "0"],
 ["0", " ", "S", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", "0", "G", " ", "0", " ", " ", " ", "0"],
 ["0", " ", "0", " ", " ", "0", " ", " ", " ", "0"],
-["0", " ", "0", " ", " ", "0", " ", " ", " ", "0"],
-["0", " ", "0", " ", " ", " ", " ", " ", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
 ["0", " ", "0", "0", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", "S", " ", " ", " ", " ", "G", "E"],
+["0", " ", " ", "S", " ", " ", "0", " ", "G", "E"],
 ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
 ]
 
@@ -123,19 +132,46 @@ armor = {
     "empty":0,
     "leather armor":1,
     "chainmail":2,
-    "plate armor":3
+    "scale armor":3,
+    "plate armor":4
 }
 
 trinket = {
 
 }
 
+consumables = {
+    "small health potion": {
+        "health": 15,
+    },
+    "health potion": {
+        "health": 30,
+    },
+    "large health potion": {
+        "health": 50,
+    },
+    "small torch fuel": {
+        "torch": 5,
+    },
+    "torch fuel": {
+        "torch": 10,
+    },
+    "small food ration": {
+        "food": 8,
+        "health": 2
+    },
+    "food ration": {
+        "food": 16,
+        "health": 4
+    },
+}
+
 yourCharacterOrClass = {
-    "name": "Prof. Zheng Kai",
+    "name": "Mr Meeseeks",
     "health": 50,
-    "attack": (4,6),
+    "attack": [4,6],
     "defence": 0,
-    "speed": 1,
+    "speed": 7,
     "equipments": {
         "armor":"empty",
         "main hand":"empty",
@@ -145,31 +181,35 @@ yourCharacterOrClass = {
     "status": [],
     "inventory": ["dagger","chainmail","short sword"],
     "gold": 0,
-    "torch":10
+    "torch":20,
+    "max food":40,
+    "food":30
 }
 
 nonPlayableCharacters = {
     "G": {
         "name": "Goblin",
+        "max health":25,
         "health": 25,
-        "attack": (1,6),
+        "attack": [1,6],
         "defence": 1,
-        "speed": 2,
+        "speed": 8,
         "status": [],
         "inventory": [],
-        "gold": 0,
+        "gold": 5,
         "intent": "hostile",
         "behaviour": "simple"
     },
     "S": {
         "name": "Slime",
+        "max health":40,
         "health": 40,
-        "attack": (1,3),
+        "attack": [1,3],
         "defence": 0,
-        "speed": 0,
+        "speed": 4,
         "status": [],
         "inventory": [],
-        "gold": 0,
+        "gold": 3,
         "intent": "hostile",
         "behaviour": "simple"
     }
@@ -206,22 +246,33 @@ def updateMap(inputMap, inputX, inputY, inputPrevX, inputPrevY):
     inputMap[inputY][inputX] = "P"
     return inputMap
 
-def handleEquip(inputCharacter, inputItem):
+def handleUse(inputCharacter, inputItem):
     inputCharacter["inventory"].remove(inputItem)
+
+    # Possible optimisation with a for loop?
     
+    
+    
+    #if inputItem in consumables:
+        #for effect in consumables[inputItem]:
+
+
     # To implement choice of equipping in either main hand or off hand (perhaps)
+    # First, check which slot equipment belongs. If current equipment slot not empty, remove current equipment first before replacing with new equipment
     if inputItem in weapons:
         if inputCharacter["equipments"]["main hand"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["main hand"])
             print(f"You remove your {inputCharacter['equipments']['main hand']} and put it in your inventory.")
         inputCharacter["equipments"]["main hand"] = inputItem
         print(f"You equipped your {inputItem} in your Main Hand slot")
+
     if inputItem in armor:
         if inputCharacter["equipments"]["armor"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["armor"])
             print(f"You remove your {inputCharacter['equipments']['armor']} and put it in your inventory.")
         inputCharacter["equipments"]["armor"] = inputItem
         print(f"You equipped your {inputItem} in your Armor slot")
+
     if inputItem in trinket:
         if inputCharacter["equipments"]["trinket"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["trinket"])
@@ -231,6 +282,7 @@ def handleEquip(inputCharacter, inputItem):
 
 def describeSurroundings(inputPlayerMap,x,y):
 
+    # Add object descriptions here
     objectDescriptions = {
         "0":"a solid wall",
         "G":"a hidious goblin",
@@ -244,23 +296,28 @@ def describeSurroundings(inputPlayerMap,x,y):
     south = inputPlayerMap[y+1][x]
     west = inputPlayerMap[y][x-1]
 
+    # Possible optimisation with a for loop?
+    
     if north in objectDescriptions:
         print(f"You see {objectDescriptions[north]} to your North.")
-    else:
-        print(f"You see an undocumented object '{north}' to your North.")
+    else: #Handles unknown object
+        print(f"You see an undocumented/unknown object '{north}' to your North.")
+
     if east in objectDescriptions:
         print(f"You see {objectDescriptions[east]} to your East.")
     else:
-        print(f"You see an undocumented object '{east}' to your East.")
+        print(f"You see an undocumented/unknown object '{east}' to your East.")
+
     if south in objectDescriptions:
         print(f"You see {objectDescriptions[south]} to your South.")
     else:
-        print(f"You see an undocumented object '{south}' to your South.")
+        print(f"You see an undocumented/unknown object '{south}' to your South.")
+
     if west in objectDescriptions:
         print(f"You see {objectDescriptions[west]} to your West.")
     else:
-        print(f"You see an undocumented object '{west}' to your West.")
-    
+        print(f"You see an undocumented/unknown object '{west}' to your West.")
+
     
 
 #Future update may include handling encounters with neutral or friendly characters that you can interact with.
@@ -284,9 +341,15 @@ def handleEncounter(inputCharacter, inputNPC):
             print(f"{player['name']}\'s health: {player['health']}.")
             print(f"{enemy['name']}\'s health: {enemy['health']}.")
 
+            consumeTurn = True
+
             combatControls = {
                 "A": "Attack",
                 "W":"Wait",
+                "D":"Describe",
+                "I":"Inventory",
+                "C":"Character",
+                "E":"Equipment",
                 #"D": "Defend",
                 "R": "Run",
             }
@@ -301,7 +364,7 @@ def handleEncounter(inputCharacter, inputNPC):
             # Handle player inputs
             if playerInput == "attack":
                 # Maybe calculate dodge and accuracy, whether attack hits, here.
-                # Calculates lower and upper bound of damage based on base attack + main weapon dmg ( + half of offhand Weapon dmg rounded down if its ever reimplemented)
+                # Calculates lower and upper bound of damage based on base attack + main weapon dmg (+ half of offhand Weapon dmg rounded down if it's ever reimplemented)
                 lowerBoundDamage = player['attack'][0] + weapons[player["equipments"]["main hand"]][0] # + math.floor(weapons[player["equipments"]["offHand"]][0]/2)
                 upperBoundDamage = player['attack'][1] + weapons[player["equipments"]["main hand"]][1] # + math.floor(weapons[player["equipments"]["offHand"]][1]/2)
                 damage = max(randint(lowerBoundDamage,upperBoundDamage) - (enemy['defence']),0)
@@ -313,7 +376,7 @@ def handleEncounter(inputCharacter, inputNPC):
                 print("You bide your time...")
 
             if playerInput == "run":
-                chanceToRun = max(35 + 7 * (player['speed'] - enemy['speed']),10)
+                chanceToRun = max(40 + 9 * (player['speed'] - enemy['speed']),15)
                 print(f"({chanceToRun}%) You try to run...")
                 if randint(0,100) < chanceToRun:
                     print("...and retreated succesfully!")
@@ -321,27 +384,74 @@ def handleEncounter(inputCharacter, inputNPC):
                 else:
                     print("...but you were unsuccessful...")
 
-            if playerInput == "enemyInitiative":
-                print(f"The enemy {enemy['name']} acted first!")
+            
+            if playerInput == "character":
+                consumeTurn = False
+                print("____________________________")
+                for info in player:
+                    print(f"{str(info).capitalize()}: {str(player[info]).capitalize()}")
+                print("____________________________")
 
-            # Handle combat-ending event
+            if playerInput == "describe":
+                consumeTurn = False
+                print("____________________________")
+                for info in enemy:
+                    print(f"{str(info).capitalize()}: {str(enemy[info]).capitalize()}")
+                print("____________________________")
+
+            if playerInput == "inventory":
+                consumeTurn = False
+                inventoryControls = {'X':"Go Back"}
+                for idx,item in enumerate(player['inventory']):
+                    inventoryControls[str(idx)] = item
+                print("Select item to equip/consume.")
+                inventoryInput = playerAction(inventoryControls)
+                if inventoryInput != "go back":
+                    #Consumes a turn in combat if player decides to use/equip an item
+                    consumeTurn = True
+                    handleUse(player, inventoryInput)
+
+            if playerInput == "equipment":
+                consumeTurn = False
+                equipmentsControls = {'X':"Go Back"}
+                for idx,slot in enumerate(player['equipments']):
+                    if player['equipments'][slot] != "empty":     
+                        equipmentsControls[str(idx)] = player['equipments'][slot]
+                print(f"Select item to unequip.")
+                equipmentsInput = playerAction(equipmentsControls)
+                if equipmentsInput != "go back":
+                    #Consumes a turn in combat if player decides to unequip an item
+                    consumeTurn = True
+                    # Handles unequipping (consider replacing with a function to make it neater?)
+                    for slot in player['equipments']:
+                        if player['equipments'][slot] == equipmentsInput:
+                            print(f"You remove your {player['equipments'][slot]} from your {slot} slot and put it in your inventory.")
+                            player['inventory'].append(equipmentsInput)
+                            player['equipments'][slot] = "empty"
+
+            # Handle combat-ending event in your turn
             if enemy['health'] <= 0:
                 inCombat = False
                 print(f"You slew the {enemy['name']}.")
                 break
 
-            # Enemy's turn
-            enemyInput = enemyAction(enemy)
-            enemyInitiative = False
-            # Handle enemy inputs
-            if enemyInput == "attack":
-                # Calculate damage, hit, dodge etc?
-                lowerBoundDamage = enemy['attack'][0]
-                upperBoundDamage = enemy['attack'][1]
-                damage = max(randint(lowerBoundDamage,upperBoundDamage) - (player['defence'] + armor[player["equipments"]["armor"]]),0)
+            #Informs player that enemy acted first due to them having higher speed
+            if playerInput == "enemyInitiative":
+                print(f"The enemy {enemy['name']} acted first!")
 
-                player['health'] -= damage
-                print(f"The {enemy['name']} attacked you for {damage} damage!")
+            if consumeTurn:
+                # Enemy's turn
+                enemyInput = enemyAction(enemy)
+                enemyInitiative = False
+
+                # Handle enemy inputs
+                if enemyInput == "attack":
+                    # Calculate damage, hit, dodge etc?
+                    lowerBoundDamage = enemy['attack'][0]
+                    upperBoundDamage = enemy['attack'][1]
+                    damage = max(randint(lowerBoundDamage,upperBoundDamage) - (player['defence'] + armor[player["equipments"]["armor"]]),0)
+                    player['health'] -= damage
+                    print(f"The {enemy['name']} attacked you for {damage} damage!")
 
             # Handle combat-ending event
             if player['health'] <= 0:
@@ -391,7 +501,7 @@ def main(inputMap, inputCharacter):
     #Shows map to player at start of game
     printMap(playerMap)
 
-    # INITIALISE PLAYER
+    # INITIALISE PLAYER AND PLAYER INPUT
     player = inputCharacter
     playerInput = ""
 
@@ -404,39 +514,51 @@ def main(inputMap, inputCharacter):
         "M": "Map",
         "I": "Inventory",
         "E": "Equipment",
+        "C": "Character",
         "Q": "Quit"
         }
 
-    # INITIALISE POSITION
+    # INITIALISE POSITION AND TURN COUNTER
     x = 1
     y = 1
+    turn = 1
     # prevX = x
     # prevY = y
 
     while playerInput != "quit":
         prevX = x
         prevY = y
+
+        # Whichever action that doesnt consume a turn should set this as false
         consumeTurn = True
+
         #Prompt player for input
         playerInput = playerAction(mapControls)
 
         if playerInput == "quit":
-            print("Game Over")
+            print("You succumbed to the dangers of the Dungeon...Game Over.")
             break
 
         if playerInput == "map":
             consumeTurn = False
             printMap(playerMap)
 
+        if playerInput == "character":
+            consumeTurn = False
+            print("____________________________")
+            for info in player:
+                print(f"{str(info).capitalize()}: {str(player[info]).capitalize()}")
+            print("____________________________")
+
         if playerInput == "inventory":
             consumeTurn = False
             inventoryControls = {'X':"Go Back"}
             for idx,item in enumerate(player['inventory']):
                 inventoryControls[str(idx)] = item
-            print("Select item to equip.")
+            print("Select item to equip/consume.")
             inventoryInput = playerAction(inventoryControls)
             if inventoryInput != "go back":
-                handleEquip(player, inventoryInput)
+                handleUse(player, inventoryInput)
 
         if playerInput == "equipment":
             consumeTurn = False
@@ -468,11 +590,14 @@ def main(inputMap, inputCharacter):
             x += 1
 
         # HANDLE MAP EVENTS HERE
+        print("______________________________________")
+        print(f"Turn {turn}:")
+        print("______________________________________")
         if currentMap[y][x] == " ":
             if player['torch'] > 0 :
-                print("Your torch shines brightly, illuminating the room")
+                print("Your torch shines brightly, illuminating the room with its radiance.")
             else:
-                print("You grope your way into a dark room")
+                print("You grope your way into a dark room.")
 
         # 0 is a wall
         if currentMap[y][x] == "0":
@@ -489,14 +614,14 @@ def main(inputMap, inputCharacter):
         if currentMap[y][x] == "E":
             playerMap[y][x] = currentMap[y][x]
             printMap(playerMap)
-            print("You reached the exit! You win!")
+            print("You reached the exit and escaped from the Dungeon! You win!")
             break
 
         # Starts encounter if tile is an NPC
         if currentMap[y][x] in nonPlayableCharacters:
             outcome = handleEncounter(player, nonPlayableCharacters[currentMap[y][x]])
             if outcome == "defeat":
-                "You were defeated. Game Over."
+                print("You were defeated by a denizen of the Dungeon. Game Over.")
                 break
             elif outcome == "retreated":
                 x = prevX
@@ -507,6 +632,7 @@ def main(inputMap, inputCharacter):
 
         #Update map and player states below if turn is consumed
         if consumeTurn:
+            turn += 1
             currentMap = updateMap(currentMap,x,y,prevX,prevY)
 
             # Handles player's torch level
@@ -516,7 +642,7 @@ def main(inputMap, inputCharacter):
                 if player['torch'] == 0:
                     print("Your torch has ran out!")
             else: 
-                print("Darkness surrounds you...")
+                print("Darkness surrounds you...You can't see anything.")
                 torchLit = False
 
             playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,torchLit)
@@ -524,9 +650,10 @@ def main(inputMap, inputCharacter):
             
             #Describe what player sees
             describeSurroundings(playerMap,x,y)
-            printMap(playerMap)
-            # printMap(playerMap)
+            #printMap(playerMap)
+            #printMap(playerMap)
             print(f"Player position: x = {x}, y = {y}. Health: {player['health']} Torch level: {player['torch']}.")
+            
 
 
 

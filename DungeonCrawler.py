@@ -99,15 +99,19 @@ def printMap(map):
     print("_"*2*len(map[0]))
 
 
-# Use this whenever you want player input
+# Use this whenever you want player input.
 def playerAction(availableActions):
+    # Takes in a dictionary with key/value pair corresponding with control/action
+    # Input will be convereted to upperCase. Output will be lower case.
     print(f"Available actions: {availableActions}")
+    # If player doesnt give valid action, continue the loop of prompting player
     while True:
         playerInput = input("Enter your action: ").upper()
         if playerInput not in availableActions:
             print(f"{playerInput} is an invalid action. Please try again.")
         else:
             break
+    # Outputs an action in the form of a lowercase string
     return availableActions[playerInput].lower()
 
 # Used to determine enemy actions
@@ -126,19 +130,22 @@ def updateMap(inputMap, inputX, inputY, inputPrevX, inputPrevY):
 
 # Handles using of inventory items
 def handleUse(inputCharacter, inputItem):
+    # First removes the used item from the inventory
     inputCharacter["inventory"].remove(inputItem)
     # Possible optimisation with a for loop?
-    
+    # Check what type of item is used/equipped, with different behaviours for each.
     if inputItem in consumables:
         for effect in consumables[inputItem]:
+            # Calculate difference between current and max to prevent over-restoration of stat.
             difference = inputCharacter[effect]["max"] - inputCharacter[effect]["current"]
+            # Take the smaller number between effect of consumable and 
             amountRestored = min(consumables[inputItem][effect], difference)
             inputCharacter[effect]["current"] += amountRestored
             print(f"Restored {inputCharacter['name']}'s {effect} by {amountRestored}.")
 
 
     # To implement choice of equipping in either main hand or off hand (perhaps)
-    # First, check which slot equipment belongs. If current equipment slot not empty, remove current equipment first before replacing with new equipment
+    # Check which slot equipment belongs. If current equipment slot not empty, remove current equipment first before replacing with new equipment
     elif inputItem in weapons:
         if inputCharacter["equipments"]["main hand"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["main hand"])
@@ -180,32 +187,32 @@ def describeSurroundings(inputPlayerMap,x,y):
         "C":"some dungeon loot",
         " ":"an empty room"
     }
-    north = inputPlayerMap[y-1][x]
-    east = inputPlayerMap[y][x+1]
-    south = inputPlayerMap[y+1][x]
-    west = inputPlayerMap[y][x-1]
+    northObject = inputPlayerMap[y-1][x]
+    eastObject = inputPlayerMap[y][x+1]
+    southObject = inputPlayerMap[y+1][x]
+    westObject = inputPlayerMap[y][x-1]
 
     # Possible optimisation with a for loop?
     
-    if north in objectDescriptions:
-        print(f"You see {objectDescriptions[north]} to your North.")
+    if northObject in objectDescriptions:
+        print(f"You see {objectDescriptions[northObject]} to your North.")
     else: #Handles unknown object
-        print(f"You see an undocumented/unknown object '{north}' to your North.")
+        print(f"You see an undocumented/unknown object '{northObject}' to your North.")
 
-    if east in objectDescriptions:
-        print(f"You see {objectDescriptions[east]} to your East.")
+    if eastObject in objectDescriptions:
+        print(f"You see {objectDescriptions[eastObject]} to your East.")
     else:
-        print(f"You see an undocumented/unknown object '{east}' to your East.")
+        print(f"You see an undocumented/unknown object '{eastObject}' to your East.")
 
-    if south in objectDescriptions:
-        print(f"You see {objectDescriptions[south]} to your South.")
+    if southObject in objectDescriptions:
+        print(f"You see {objectDescriptions[southObject]} to your South.")
     else:
-        print(f"You see an undocumented/unknown object '{south}' to your South.")
+        print(f"You see an undocumented/unknown object '{southObject}' to your South.")
 
-    if west in objectDescriptions:
-        print(f"You see {objectDescriptions[west]} to your West.")
+    if westObject in objectDescriptions:
+        print(f"You see {objectDescriptions[westObject]} to your West.")
     else:
-        print(f"You see an undocumented/unknown object '{west}' to your West.")
+        print(f"You see an undocumented/unknown object '{westObject}' to your West.")
 
     
 
@@ -279,6 +286,7 @@ def handleEncounter(inputCharacter, inputNPC):
                 else:
                     print("You missed!")
 
+            # This is a dumb move now, but maybe can be made useful in the future
             if playerInput == "wait":
                 print("You bide your time...")
 
@@ -292,7 +300,7 @@ def handleEncounter(inputCharacter, inputNPC):
                 else:
                     print("...but you were unsuccessful...")
 
-            
+            # Print description of your character
             if playerInput == "character":
                 consumeTurn = False
                 print("______________________________________")
@@ -300,6 +308,7 @@ def handleEncounter(inputCharacter, inputNPC):
                     print(f"{str(info).capitalize()}: {str(player[info]).capitalize()}")
                 print("______________________________________")
 
+            # Print description of your enemy
             if playerInput == "describe":
                 consumeTurn = False
                 print("______________________________________")
@@ -383,6 +392,7 @@ def handleEncounter(inputCharacter, inputNPC):
     return "defeat" if playerDefeat else "victory"
 
 # Updates player-visible map. When vision is True, reveal 1 tile around player for each movement
+# Requires player map, current map, current position, previous position and a boolean for if ppl can see
 def updateFog(inputPlayerMap, inputCurrentMap, inputX, inputY, inputPrevX, inputPrevY, vision=False):
 
     #Replace tile player was previously on with an empty space
@@ -390,8 +400,6 @@ def updateFog(inputPlayerMap, inputCurrentMap, inputX, inputY, inputPrevX, input
     
     #Reveal player's current tile
     inputPlayerMap[inputY][inputX] = inputCurrentMap[inputY][inputX]
-
-    
 
     if vision:
         #Reveals surounding tiles by setting those tiles in player map to be equal to the actual map
@@ -493,10 +501,11 @@ def main():
         classSelected = True
         player = classes[classesInput]
     sleep(1)
+
+    # To give player chance to read the stats
     input("Press enter to continue.")
     
     #Shows map to player at start of game
-    
 
     playerInput = ""
 

@@ -1,1 +1,2 @@
-sleep
+
+def handleUse(inputCharacter, inputItem):

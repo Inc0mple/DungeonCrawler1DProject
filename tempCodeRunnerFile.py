@@ -1,1 +1,1 @@
-handleInventoryDescription
+small

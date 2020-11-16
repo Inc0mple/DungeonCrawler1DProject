@@ -1,7 +1,7 @@
 mapLoot = {
     # Strucured by the type of lootbox u can find and what is inside them, with gold by range its loot by possibility in perecentage
     "treasure chest": {
-        "gold": [25,100],
+        "gold": [50,125],
         "possible loot": {
             "scale armor":5,
             "dragonscale armor":1,
@@ -17,6 +17,9 @@ mapLoot = {
             "small torch fuel":15,
             "small health potion":15,
             "small food ration":15,
+            "small torch fuel":10,
+            "small health potion":10,
+            "small food ration":10,
             "health potion":10,
             "torch fuel":10,
             "food ration":10
@@ -24,7 +27,7 @@ mapLoot = {
     },
 
     "box of supplies": {
-        "gold": [1,10],
+        "gold": [6,15],
         "possible loot": {
             "large torch fuel":10,
             "large health potion":10,
@@ -55,7 +58,7 @@ mapLoot = {
         }
     },
     "fuel box": {
-        "gold": [1,5],
+        "gold": [1,25],
         "possible loot": {
             "small torch fuel":50,
             "small torch fuel":40,
@@ -67,7 +70,7 @@ mapLoot = {
     },
     
     "potion pouch": {
-        "gold": [1,5],
+        "gold": [1,12],
         "possible loot": {
             "small health potion":90,
             "small health potion":50,

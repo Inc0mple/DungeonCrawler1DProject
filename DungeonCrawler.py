@@ -133,15 +133,15 @@ def updateMap(inputMap, inputX, inputY, inputPrevX, inputPrevY):
 
 # Handles viewing of inventory items
 def handleInventoryDescription(inputCharacter):
-    print("\nItems in your inventory:\n")
+    print("\nUsable/Equippable items in your inventory:\n")
     message = ""
     for item in inputCharacter['inventory']:
         if item in weapons:
-            message += f"Weapon: {item} +{weapons[item][0]}-{weapons[item][1]} attack\n"
+            message += f"Weapon: {Fore.CYAN}{item}{Style.RESET_ALL} ({Fore.GREEN}+{weapons[item][0]}-{weapons[item][1]}{Style.RESET_ALL} attack when equipped)\n"
         elif item in armor:
-            message += f"Armor: {item} +{armor[item]} defence\n"
+            message += f"Armor: {Fore.CYAN}{item}{Style.RESET_ALL} ({Fore.GREEN}+{armor[item]}{Style.RESET_ALL} defence when equipped)\n"
         elif item in consumables:
-            message += f"Consumable: {item} restores {consumables[item]}\n"
+            message += f"Consumable: {Fore.YELLOW}{item}{Style.RESET_ALL} (restores {Fore.GREEN}{consumables[item]}{Style.RESET_ALL} when used)\n"
     print(message)
 
 # Handles using of inventory items
@@ -157,7 +157,7 @@ def handleUse(inputCharacter, inputItem):
             # Take the smaller number between effect of consumable and 
             amountRestored = min(consumables[inputItem][effect], difference)
             inputCharacter[effect]["current"] += amountRestored
-            print(f"Restored {inputCharacter['name']}'s {effect} by {amountRestored}.")
+            print(f"{Fore.GREEN}Restored {inputCharacter['name']}'s {effect} by {amountRestored}.{Style.RESET_ALL}")
 
 
     # To implement choice of equipping in either main hand or off hand (perhaps)
@@ -187,20 +187,116 @@ def handleUse(inputCharacter, inputItem):
         print("You can't use that item!")
         inputCharacter["inventory"].append(inputItem)
 
-def describeSurroundings(inputPlayerMap,x,y):
+def handleMerchant(inputPlayer):
+    shopInput = ""
+    #Sell price = buy price/5
+    priceSheet = {
+        "weapons": {
+            "dagger":50,
+            "gladius":85,
+            "short sword":100,
+            "sword":140,
+            "spear":190,
+            "longsword":275,
+            "halberd":275
+        },
+        "armor": {
+            "leather armor":70,
+            "chainmail":140,
+            "scale armor":210,
+            "plate armor":280,
+            "dragonscale armor":350
 
-    # Add object descriptions here
+        },
+        "consumables": {
+            "small torch fuel":30,
+            "small food ration":40,
+            "small health potion":50,
+            "torch fuel":65,
+            "food ration":80,
+            "health potion":90,
+            "large torch fuel":100,
+            "large food ration":150,
+            "large health potion":190
+        }
+
+    }
+    print(f"{Fore.CYAN}Merchant: Welcome to my shop! Which category would you like to browse?{Style.RESET_ALL}")
+    while shopInput != "leave":
+        
+        shopControls = {"1":"Weapons","2":"Armor","3":"Consumables","4":"Sell","X":"Leave"}
+        print(f"Gold: {inputPlayer['gold']}")
+        shopInput = playerAction(shopControls)
+        if shopInput == "leave":
+            print(f"{Fore.CYAN}Merchant: Thanks for your patronage, please come again!{Style.RESET_ALL}")
+            break
+        elif shopInput != "sell":
+            print(f"\n{Fore.CYAN}Merchant: What would you like to buy?{Style.RESET_ALL}")
+            buyControls = {"X": "Go Back"}
+            print("_____________________________________________________________________________________")
+            for idx,item in enumerate(priceSheet[shopInput], start = 1):
+                buyControls[str(idx)] = str(item)
+                # Eval() converts a string like "weapons" to the variable weapons
+                costPrice = priceSheet[shopInput][item]
+                print(f"{item.capitalize()}: {Fore.GREEN}+{eval(shopInput)[item]}.{Style.RESET_ALL} {Fore.YELLOW}Cost Price: {costPrice} Gold.{Style.RESET_ALL}")
+            print("_____________________________________________________________________________________")
+            buyInput = playerAction(buyControls)
+            if buyInput != "go back":
+                if inputPlayer['gold'] >= priceSheet[shopInput][buyInput]:
+                    print(f"You bought {buyInput} for {priceSheet[shopInput][buyInput]} Gold!")
+                    inputPlayer['gold'] -= priceSheet[shopInput][buyInput]
+                    inputPlayer['inventory'].append(buyInput)
+                else:
+                    print(f"{Fore.RED}You need {priceSheet[shopInput][buyInput] - inputPlayer['gold']} more Gold to buy the {buyInput}!{Style.RESET_ALL}")
+        else:
+            print(f"What would you like to sell?")
+            sellControls = {"X": "Go Back"}
+            print("_____________________________________________________________________________________")
+            for idx,item in enumerate(list(inputPlayer['inventory']), start = 1):
+                sellControls[str(idx)] = str(item)
+                if item in weapons:
+                    sellPrice = math.floor(priceSheet["weapons"][item]/5)
+                    print(f"{item.capitalize()}: {Fore.GREEN}{weapons[item]}.{Style.RESET_ALL} {Fore.YELLOW}Sell Price: {sellPrice} Gold.{Style.RESET_ALL}")
+                elif item in armor:
+                    sellPrice = math.floor(priceSheet["armor"][item]/5)
+                    print(f"{item.capitalize()}: {Fore.GREEN}{armor[item]}.{Style.RESET_ALL} {Fore.YELLOW}Sell Price: {sellPrice} Gold.{Style.RESET_ALL}")
+                elif item in consumables:
+                    sellPrice = math.floor(priceSheet["consumables"][item]/5)
+                    print(f"{item.capitalize()}: {Fore.GREEN}{consumables[item]}.{Style.RESET_ALL} {Fore.YELLOW}Sell Price: {sellPrice} Gold.{Style.RESET_ALL}")
+                else:
+                    print(f"{item.capitalize()}: {Fore.RED}This item can't be sold.{Style.RESET_ALL}")
+            print("_____________________________________________________________________________________")
+            sellInput = playerAction(sellControls)
+            if sellInput in weapons:
+                soldItemType = "weapons"
+            elif sellInput in armor:
+                soldItemType = "armor"
+            elif sellInput in consumables:
+                soldItemType = "consumables"
+            else:
+                soldItemType = "unsellable"
+            if sellInput != "go back":
+                if soldItemType != "unsellable":
+                    print(f"{Fore.GREEN}You sold {sellInput} for {math.floor(priceSheet[soldItemType][sellInput]/5)} Gold!{Style.RESET_ALL}")
+                    inputPlayer['gold'] += math.floor(priceSheet[soldItemType][sellInput]/5)
+                    inputPlayer['inventory'].remove(sellInput)
+                else:
+                    print(f"{Fore.CYAN}Merchant. Sorry, I don't accept this item.{Style.RESET_ALL}")
+
+def describeSurroundings(inputPlayerMap,x,y):
+    # Add object descriptions
     objectDescriptions = {
         "0":f"a solid wall",
-        "G":f"{Fore.YELLOW}a hidious goblin{Style.RESET_ALL}",
-        "H":f"{Fore.YELLOW}a mischievous hobgoblin{Style.RESET_ALL}",
+        "G":f"{Fore.YELLOW}a hideous goblin{Style.RESET_ALL}",
+        "H":f"{Fore.YELLOW}a brawny hobgoblin{Style.RESET_ALL}",
         "D":f"{Fore.YELLOW}an agile dire wolf{Style.RESET_ALL}",
         "S":f"{Fore.YELLOW}a glob of slime{Style.RESET_ALL}",
-        "R":f"{Fore.RED}a dangerous undead revenant{Style.RESET_ALL}",
-        "E":f"{Fore.GREEN}a way out{Style.RESET_ALL}",
+        "R":f"{Fore.RED}the dungeon boss, a dangerous undead revenant,{Style.RESET_ALL}",
+        "E":f"{Fore.GREEN}the exit{Style.RESET_ALL}",
         ".":f"nothing",
         "K":f"{Fore.GREEN}the dungeon key{Style.RESET_ALL}",
-        "C":f"{Fore.GREEN}some dungeon loot{Style.RESET_ALL}",
+        "C":f"{Fore.CYAN}some dungeon loot{Style.RESET_ALL}",
+        "M":f"{Fore.CYAN}a merchant{Style.RESET_ALL}",
         " ":f"an empty room"
     }
     northObject = inputPlayerMap[y-1][x]
@@ -252,8 +348,8 @@ def handleEncounter(inputCharacter, inputNPC):
         while inCombat:
             combatLog =  (
                 f"\n"
-                f"{player['name']}\'s health: {player['health']['current']}/{player['health']['max']}\n"
-                f"{enemy['name']}\'s health: {enemy['health']['current']}/{enemy['health']['max']}\n"
+                f"{player['name']}\'s health: {Fore.RED if player['health']['current'] < 15 else Fore.WHITE}{player['health']['current']}/{player['health']['max']}{Style.RESET_ALL}\n"
+                f"{enemy['name']}\'s health: {Fore.RED if enemy['health']['current'] < 10 else Fore.WHITE}{enemy['health']['current']}/{enemy['health']['max']}{Style.RESET_ALL}\n"
                 f"{player['name']}\'s chance to hit: {max(math.floor(((player['accuracy'] - enemy['dodge'])/player['accuracy'])*100) + (player['speed'] - enemy['speed']),10)}%\n"
                 f"{player['name']}\'s chance to dodge: {100 - max(math.floor(((enemy['accuracy'] - player['dodge'])/enemy['accuracy'])*100) + (enemy['speed'] - player['speed']),5)}%\n"
                 f"{player['name']}\'s damage: {player['attack'][0] + weapons[player['equipments']['main hand']][0]} - {player['attack'][1] + weapons[player['equipments']['main hand']][1]}\n"
@@ -300,10 +396,10 @@ def handleEncounter(inputCharacter, inputNPC):
                     # max is to prevent negative damage from being dealt
                     damage = max(randint(lowerBoundDamage,upperBoundDamage) - (enemy['defence']),0)
                     enemy['health']['current'] -= damage
-                    print(f"You hit the {enemy['name']} for {damage} damage!")
+                    print(f"{Fore.CYAN}You hit the {enemy['name']} for {damage} damage!{Style.RESET_ALL}")
                 
                 else:
-                    print(f"{Fore.YELLOW}You missed!{Style.RESET_ALL}")
+                    print(f"{Fore.RED}You missed!{Style.RESET_ALL}")
                     
 
             # This is a dumb move now, but maybe can be made useful in the future
@@ -325,7 +421,7 @@ def handleEncounter(inputCharacter, inputNPC):
                 consumeTurn = False
                 print("______________________________________")
                 for info in player:
-                    print(f"{str(info).capitalize()}: {str(player[info]).capitalize()}")
+                    print(f"{Fore.CYAN}{str(info).capitalize()}: {str(player[info]).capitalize()}{Style.RESET_ALL}")
                 print("______________________________________")
                 input("Press enter to continue...")
 
@@ -334,7 +430,7 @@ def handleEncounter(inputCharacter, inputNPC):
                 consumeTurn = False
                 print("______________________________________")
                 for info in enemy:
-                    print(f"{str(info).capitalize()}: {str(enemy[info]).capitalize()}")
+                    print(f"{Fore.CYAN}{str(info).capitalize()}: {str(enemy[info]).capitalize()}{Style.RESET_ALL}")
                 print("______________________________________")
                 input("Press enter to continue...")
 
@@ -342,7 +438,7 @@ def handleEncounter(inputCharacter, inputNPC):
                 consumeTurn = False
                 handleInventoryDescription(player)
                 inventoryControls = {'X':"Go Back"}
-                for idx,item in enumerate(player['inventory']):
+                for idx,item in enumerate(player['inventory'], start = 1):
                     inventoryControls[str(idx)] = item
                 print("Select item to equip/consume:")
                 inventoryInput = playerAction(inventoryControls)
@@ -354,7 +450,7 @@ def handleEncounter(inputCharacter, inputNPC):
             if playerInput == "equipment":
                 consumeTurn = False
                 equipmentsControls = {'X':"Go Back"}
-                for idx,slot in enumerate(player['equipments']):
+                for idx,slot in enumerate(player['equipments'], start = 1):
                     if player['equipments'][slot] != "empty":     
                         equipmentsControls[str(idx)] = player['equipments'][slot]
                 print(f"Select item to unequip.")
@@ -377,10 +473,10 @@ def handleEncounter(inputCharacter, inputNPC):
                 for loot in enemy['possible loot']:
                     if randint(0,100) < enemy['possible loot'][loot]:
                         player['inventory'].append(loot)
-                        print(f"You take the {loot} from the dead {enemy['name']}.")
+                        print(f"{Fore.CYAN}You take the {loot} from the dead {enemy['name']}.{Style.RESET_ALL}")
                 goldReceived = randint(enemy['gold'][0],enemy['gold'][1]) 
                 player['gold'] += goldReceived
-                print(f"You received {goldReceived} gold from the dead {enemy['name']}.")
+                print(f"{Fore.WHITE}You received {goldReceived} gold from the dead {enemy['name']}.{Style.RESET_ALL}")
                 break
 
             #Informs player that enemy acted first due to them having higher speed
@@ -401,7 +497,7 @@ def handleEncounter(inputCharacter, inputNPC):
                         upperBoundDamage = enemy['attack'][1]
                         damage = max(randint(lowerBoundDamage,upperBoundDamage) - (player['defence'] + armor[player["equipments"]["armor"]]),0)
                         player['health']['current'] -= damage
-                        print(f"The {enemy['name']} hit you for {damage} damage!")
+                        print(f"{Fore.YELLOW if damage > 0 else Fore.CYAN}The {enemy['name']} hits you for {damage} damage!{Style.RESET_ALL}")
                     else:
                         print(f"{Fore.GREEN}You dodged the {enemy['name']}'s attack!{Style.RESET_ALL}")
             
@@ -409,7 +505,7 @@ def handleEncounter(inputCharacter, inputNPC):
             if player['health']['current'] <= 0:
                 inCombat = False
                 playerDefeat = True
-                print(f"You were slain by the {enemy['name']}!")
+                print(f"{Fore.RED}You were slain by the {enemy['name']}!{Style.RESET_ALL}")
                 break
 
     return "defeat" if playerDefeat else "victory"
@@ -419,26 +515,27 @@ def handleEncounter(inputCharacter, inputNPC):
 # Requires player map, current map, current position, previous position and a vision level
 def updateFog(inputPlayerMap, inputCurrentMap, inputX, inputY, inputPrevX, inputPrevY, vision=0):
 
-    #Replace tile player was previously on with an empty space
+    # Replace tile player was previously on with an empty space
     inputPlayerMap[inputPrevY][inputPrevX] = inputCurrentMap[inputPrevY][inputPrevX]
     
-    #Reveal player's current tile
+    # Reveal player's current tile
     inputPlayerMap[inputY][inputX] = inputCurrentMap[inputY][inputX]
-
+    # When vision > 1 , reveal 8 surrounding tiles around player for each movement
     if vision > 1:
         inputPlayerMap[inputY+1][inputX+1] = inputCurrentMap[inputY+1][inputX+1]
         inputPlayerMap[inputY-1][inputX-1] = inputCurrentMap[inputY-1][inputX-1]
         inputPlayerMap[inputY-1][inputX+1] = inputCurrentMap[inputY-1][inputX+1]
         inputPlayerMap[inputY+1][inputX-1] = inputCurrentMap[inputY+1][inputX-1]
+    # When vision = 1 , reveal 4 surrounding tiles around player for each movement   
     if vision > 0:
-        #Reveals surounding tiles by setting those tiles in player map to be equal to the actual map
+        # Reveals surounding tiles by setting those tiles in player map to be equal to the actual map
         inputPlayerMap[inputY+1][inputX] = inputCurrentMap[inputY+1][inputX]
         inputPlayerMap[inputY-1][inputX] = inputCurrentMap[inputY-1][inputX]
         inputPlayerMap[inputY][inputX+1] = inputCurrentMap[inputY][inputX+1]
         inputPlayerMap[inputY][inputX-1] = inputCurrentMap[inputY][inputX-1]
         
 
-    #returns updated map
+    # returns updated map
     return inputPlayerMap
 
 #Initialises a fogged version of the current Map
@@ -456,39 +553,43 @@ def main():
 
     # NAME SELECT
     welcomeText = """
-    _____________________________________________________________________________________
+    _______________________________________________________________________________________
 
-    Welcome! The goal is to escape the Dungeon by finding the key and unlocking the exit.
+    Welcome! The goal is to escape the Dungeon by finding the key to unlock the exit
+    in the least amount of turns while looting as much gold as possible!
 
     Howver, the dungeon is foggy, and despite having a torch, you can only reveal a small area
     around you. There will be monsters and loot scattered across the play area.
 
     Pay close attention to your health, food and torch level as you traverse the Dungeon.
-    _____________________________________________________________________________________
+
+    Find loot on the map and slay enemies to recieve gold, supplies and equipments.
+    Also look out for Merchants to buy and sell items.
+    _______________________________________________________________________________________
     
-    Is this your first time playing? (Enter 1 for 'Yes' or 0 for 'No')
     """
     print(welcomeText)
-    tutorialInput =  playerAction({"0":"No","1":"Yes"})
+    input("Press enter to continue...")
 
+    """
+    tutorialInput =  playerAction({"0":"No","1":"Yes"})
     if tutorialInput.lower() == "yes" :
         # tutorial goes here
         print("Too bad the tutorial isn't done yet. Pick it up as you go along.")
         sleep(1)
     else:
         print("Great! lets go!")
-        
+    """ 
     
-    sleep(1)
     print("_____________________________________________________________________________________")
-    playerName = input("Please select a name for your character: ")
+    playerName = input("Please enter a name for your character: ")
 
     # INITIALISE MAP
     mapSelectControls = {}
-    for idx,mapChoice in enumerate(maps):    
+    for idx,mapChoice in enumerate(maps, start = 1):    
         mapSelectControls[str(idx)] = mapChoice
     print("_____________________________________________________________________________________")
-    print("Please select a map: ")
+    print("Please select a map by entering the corresponding digits: ")
     selectedMap = playerAction(mapSelectControls)
     currentMap = maps[selectedMap]
     # Go back functionality not yet implemented
@@ -513,7 +614,7 @@ def main():
     print(classSelectText)
     classSelected = False
     classesControls = {}
-    for idx,classChoice in enumerate(classes):    
+    for idx,classChoice in enumerate(classes,start = 1):    
         classesControls[str(idx)] = classChoice
     print("Please select a character class by entering the corresponding digit: ")
     classesInput = playerAction(classesControls)
@@ -521,10 +622,10 @@ def main():
     if classesInput != "go back":
         classes[classesInput]['name'] = playerName
         print(f"Class selected: {classesInput}!")
-        print("_____________________________________________________________________________________")
+        print(f"{Fore.GREEN}_____________________________________________________________________________________")
         for info in classes[classesInput]:
             print(f"{str(info).capitalize()}: {str(classes[classesInput][info]).capitalize()}")
-        print("_____________________________________________________________________________________")
+        print(f"_____________________________________________________________________________________{Style.RESET_ALL}")
         classSelected = True
         player = classes[classesInput]
     sleep(1)
@@ -558,7 +659,26 @@ def main():
     playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,True)
     printMap(playerMap)
     print("_____________________________________________________________________________________")
-    print("Input WASD and enter to move. Always check your available actions to see what you can do. Good Luck!")
+    print("""
+    See that "P" on the map? That represents you, the Player.
+    "0" represents impassable walls while "." represents unrevealed terrain.
+
+    Commands inputted are case insensitive.
+    Input WASD and enter to move in the corresponding directions.
+    Useful information will be shown below the map as your character moves.
+
+    Enter "M", "I", "E" and "C" to check your Map, Inventory, Equipment and Character respectively.
+    Remember to use/equip items in your inventory by pressing to restore your vitals.
+    Always check your available actions to see what you can do.
+    Controls are different for different events (Map, Combat, Shop etc.)
+
+    Hint: 
+    Try to be efficient with your movements to prevent wasting resources (Torch and Food).
+    Low torch levels impedes vision while low food levels prevents regeneration and leads to starvation.
+    You can always run away from a tough battle and regenerate your health.
+    
+    Try entering one of the available actions below to proceed. Good luck!
+    """)
     print("_____________________________________________________________________________________")
     while playerInput != "quit":
         prevX = x
@@ -571,7 +691,7 @@ def main():
         playerInput = playerAction(mapControls)
 
         if playerInput == "quit":
-            print("You succumbed to the dangers of the Dungeon...Game Over.")
+            print(f"{Fore.RED}You succumbed to the dangers of the Dungeon...Game Over.{Style.RESET_ALL}")
             break
 
         if playerInput == "map":
@@ -590,7 +710,7 @@ def main():
             consumeTurn = False
             handleInventoryDescription(player)
             inventoryControls = {'X':"Go Back"}
-            for idx,item in enumerate(player['inventory']):
+            for idx,item in enumerate(player['inventory'],start = 1):
                 inventoryControls[str(idx)] = item
             print("Select item to equip/consume.")
             inventoryInput = playerAction(inventoryControls)
@@ -608,7 +728,7 @@ def main():
         if playerInput == "equipment":
             consumeTurn = False
             equipmentsControls = {'X':"Go Back"}
-            for idx,slot in enumerate(player['equipments']):
+            for idx,slot in enumerate(player['equipments'],start = 1):
                 if player['equipments'][slot] != "empty":     
                     equipmentsControls[str(idx)] = player['equipments'][slot]
             print(f"Select item to unequip.")
@@ -638,7 +758,7 @@ def main():
         message = ""
         if currentMap[y][x] == " ":
             if player['torch']['current'] >= 10 :
-                message += ("Your torch shines brightly, illuminating the room with its radiance.")
+                message += (f"{Fore.GREEN}Your torch shines brightly, illuminating the room with its radiance.{Style.RESET_ALL}")
             elif player['torch']['current'] > 0:
                 message += (f"{Fore.YELLOW}Your torch reveals the room as it flickers and wavers...{Style.RESET_ALL}")
             else:
@@ -654,16 +774,16 @@ def main():
         if currentMap[y][x] == "C":
             #returns random element from maploot
             lootType = choice(list(mapLoot))
-            print(f"You found a {lootType}!")
+            print(f"{Fore.CYAN}You found a {lootType}!{Style.RESET_ALL}")
             lootFound = False
             goldReceived = randint(mapLoot[lootType]['gold'][0],mapLoot[lootType]['gold'][1]) 
             player['gold'] += goldReceived
-            print(f"You looted {goldReceived} gold from the {lootType}.")
+            print(f"{Fore.WHITE}You looted {goldReceived} gold from the {lootType}.{Style.RESET_ALL}")
             for loot in mapLoot[lootType]['possible loot']:
                 if randint(0,100) < mapLoot[lootType]['possible loot'][loot]:
                     lootFound = True
                     player['inventory'].append(loot)
-                    print(f"You found a {loot} from the {lootType}.")
+                    print(f"{Fore.GREEN}You take the {loot} from the {lootType}.{Style.RESET_ALL}")
             if lootFound == False:
                 print(f"{Fore.YELLOW}You found nothing else from the {lootType}. Bummer...{Style.RESET_ALL}")
             sleep(1)
@@ -681,13 +801,26 @@ def main():
             y = prevY
             sleep(1)
 
+        if currentMap[y][x] == "M":
+
+            print(f"{Fore.CYAN}You meet the Merchant and start trading!{Style.RESET_ALL}")
+            #Reveals the wall that player hit (in case they lacked vision)
+            playerMap[y][x] = currentMap[y][x]
+            handleMerchant(player)
+
+            #Teleports player back to previous position
+            x = prevX
+            y = prevY
+            sleep(1)
+
         # E is an exit
         if currentMap[y][x] == "E":
 
             if "dungeon key" in player['inventory']:
                 currentMap = updateMap(currentMap,x,y,prevX,prevY)
                 printMap(currentMap)
-                print(f"You reached the exit at turn {turn} and escaped from the Dungeon with {player['gold']} Gold! You win!")
+                print(f"{Fore.GREEN}You reached the exit at turn {turn} and escaped from the Dungeon with {player['gold']} Gold! You win!{Style.RESET_ALL}")
+                print(f"{Fore.CYAN}Your score: {1000-turn+player['gold']}{Style.RESET_ALL}")
                 break
             else:
                 #Reveals the exit that player hit (in case they lacked vision)
@@ -728,7 +861,7 @@ def main():
                 torchLit = 2
                 player['torch']['current'] -= 1
                 if player['torch']['current'] == 0:
-                    print("Your torch has ran out of fuel!")
+                    print(f"{Fore.RED}Your torch has ran out of fuel!{Style.RESET_ALL}")
             elif 1 < player['torch']['current'] < 10: 
                 torchLit = 1
             else:
@@ -741,10 +874,13 @@ def main():
             # Handles player's food level
             if player['food']['current'] > 0 :
                 player['food']['current'] -= 1
-                if player['food']['current'] < 10:
-                    print(f"{Fore.YELLOW}You are feeling hungry...{Style.RESET_ALL}")
+                if player['food']['current'] >= 10 and player['health']['current'] < player['health']['max']:
+                    player['health']['current'] += 1
+                    print(f"{Fore.GREEN}Regenerated 1 health from being satiated{Style.RESET_ALL}.")
+                elif player['food']['current'] < 10:
+                    print(f"{Fore.YELLOW}You are feeling hungry...no longer regenerating health...{Style.RESET_ALL}")
             else: 
-                print("You are starving!!!")
+                print(f"{Fore.RED}You are starving!!!{Style.RESET_ALL}")
                 player['health']['current'] -= 1
                 if player['health']['current'] <= 0:
                     print(f"{Fore.RED}You starved to death...Game Over.{Style.RESET_ALL}")
@@ -758,12 +894,21 @@ def main():
         
         if torchLit == 0:
             print(f"{Fore.RED}Darkness surrounds you...You can't see through the fog.{Style.RESET_ALL}")
+
+        if player['health']['current'] < 15:
+            print(f"{Fore.RED}You feel weak...Find some way to restore your health!{Style.RESET_ALL}")
             
+        
         # Describes what player sees
         describeSurroundings(playerMap,x,y)
         print(message)
-        print(f"Player position: x = {x}, y = {y}. Health: {player['health']['current']}/{player['health']['max']}. Food: {player['food']['current']}/{player['food']['max']}. Torch: {player['torch']['current']}/{player['torch']['max']}.")
 
+        print("")
+        print(f"{Fore.YELLOW if player['health']['current'] < 15 else Fore.WHITE}   Health:{Style.RESET_ALL}{player['health']['current']}/{player['health']['max']}.")
+        print(f"{Fore.YELLOW if player['food']['current'] < 10 else Fore.WHITE}   Food:{Style.RESET_ALL}{player['food']['current']}/{player['food']['max']}.")
+        print(f"{Fore.YELLOW if player['torch']['current'] < 10 else Fore.WHITE}   Torch:{Style.RESET_ALL}{player['torch']['current']}/{player['torch']['max']}.")
+        print(f"   Gold: {player['gold']}. ")
+        print("_____________________________________________________________________________________")
             
 # Starts Game. Takes in
 

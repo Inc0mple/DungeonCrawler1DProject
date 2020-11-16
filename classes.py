@@ -8,8 +8,8 @@ classes = {
         },
         "attack": [4,6],
         "defence": 1,
-        "speed": 7,
-        "accuracy": 80,
+        "speed": 8,
+        "accuracy": 85,
         "dodge": 7,
         "equipments": {
             "armor":"empty",
@@ -17,8 +17,8 @@ classes = {
             "trinket":"empty"
         },
         "status": [],
-        "inventory": ["small health potion","small food ration","dagger","leather armor"],
-        "gold": 0,
+        "inventory": ["small health potion","small food ration"],
+        "gold": 50,
         "torch":{
             "max":20,
             "current":15
@@ -48,7 +48,7 @@ classes = {
         },
         "status": [],
         "inventory": ["small health potion","small food ration"],
-        "gold": 0,
+        "gold": 50,
         "torch":{
             "max":25,
             "current":20
@@ -63,13 +63,13 @@ classes = {
         "name": "PlaceholderName",
         "class":"beserker",
         "health": {
-            "max":40,
-            "current":40
+            "max":45,
+            "current":45
         },
         "attack": [3,8],
         "defence": 0,
-        "speed": 6,
-        "accuracy": 75,
+        "speed": 7,
+        "accuracy": 80,
         "dodge": 5,
         "equipments": {
             "armor":"empty",
@@ -78,7 +78,7 @@ classes = {
         },
         "status": [],
         "inventory": ["small health potion","small food ration"],
-        "gold": 0,
+        "gold": 50,
         "torch":{
             "max":15,
             "current":15
@@ -100,7 +100,7 @@ classes = {
         "defence": 1,
         "speed": 10,
         "accuracy": 80,
-        "dodge": 15,
+        "dodge": 13,
         "equipments": {
             "armor":"empty",
             "main hand":"empty",
@@ -108,7 +108,7 @@ classes = {
         },
         "status": [],
         "inventory": ["small health potion","small torch fuel","food ration"],
-        "gold": 0,
+        "gold": 60,
         "torch":{
             "max":30,
             "current":25

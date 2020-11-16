@@ -24,7 +24,7 @@ nonPlayableCharacters = {
             "gladius":5,
             "short sword":2
         },
-        "gold": [4,12],
+        "gold": [5,20],
         "intent": "hostile",
         "behaviour": "simple"
     },
@@ -48,7 +48,7 @@ nonPlayableCharacters = {
             "small food ration":5,
             "small health potion":5
         },
-        "gold": [2,8],
+        "gold": [3,15],
         "intent": "hostile",
         "behaviour": "simple"
     },
@@ -102,7 +102,7 @@ nonPlayableCharacters = {
             "short sword":15,
             "spear":5,
         },
-        "gold": [10,25],
+        "gold": [15,40],
         "intent": "hostile",
         "behaviour": "simple"
     },
@@ -132,7 +132,7 @@ nonPlayableCharacters = {
             "short sword":20,
             "spear":15
         },
-        "gold": [10,25],
+        "gold": [75,150],
         "intent": "hostile",
         "behaviour": "simple"
     }

@@ -100,8 +100,8 @@ testMap = [
 testMap2 = [
 ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
 ["0", "P", " ", "0", "D", "S", "0", "C", "0", "0", "K", "0"],
-["0", " ", " ", " ", " ", " ", " ", "G", "D", "0", "G", "0"],
-["0", " ", " ", "S", "0", "0", "0", " ", " ", "0", " ", "0"],
+["0", " ", " ", " ", " ", " ", " ", "G", " ", "D", " ", "0"],
+["0", " ", " ", "S", "0", "0", "0", " ", " ", "0", "G", "0"],
 ["0", " ", "G", " ", "G", "0", " ", " ", "S", "0", " ", "0"],
 ["0", "S", " ", " ", " ", "C", " ", "0", " ", "S", " ", "0"],
 ["0", " ", "0", "0", " ", " ", " ", " ", " ", "C", " ", "0"],
@@ -161,6 +161,7 @@ weapons = {
 }
 
 armor = {
+    # Structured by how much they increase defence
     "empty":0,
     "leather armor":1,
     "chainmail":2,
@@ -169,6 +170,7 @@ armor = {
     "dragonscale armor":5
 }
 
+# To be done?
 trinket = {
 
 }
@@ -207,7 +209,9 @@ consumables = {
     },
 }
 
+
 mapLoot = {
+    # Strucured by the type of lootbox u can find and what is inside them, with gold by range its loot by possibility in perecentage
     "treasure chest": {
         "gold": [25,100],
         "possible loot": {
@@ -290,7 +294,7 @@ mapLoot = {
 # CHARACTER CLASSES:
 classes = {
     "warrior": {
-        "name": "PlaceholderName",
+        "name": "Aragon",
         "class":"warrior",
         "health": {
             "max":50,
@@ -319,9 +323,9 @@ classes = {
         }
     },
 
-    "rogue": {
+    "ranger": {
         "name": "PlaceholderName",
-        "class":"rogue",
+        "class":"ranger",
         "health": {
             "max":35,
             "current":35
@@ -348,6 +352,7 @@ classes = {
             "current":20
         }
     },
+
     "beserker": {
         "name": "PlaceholderName",
         "class":"beserker",
@@ -410,7 +415,7 @@ classes = {
 
 }
 
-
+# Add new monsters/encounters here
 nonPlayableCharacters = {
     "G": {
         "name": "Goblin",
@@ -569,7 +574,7 @@ def playerAction(availableActions):
             break
     return availableActions[playerInput].lower()
 
-# Used to determine enemy aictions
+# Used to determine enemy actions
 def enemyAction(inputEnemy):
     # Add smart enemy behaviours and logic here in the future perhaps
     if inputEnemy["behaviour"] == "simple":
@@ -583,9 +588,9 @@ def updateMap(inputMap, inputX, inputY, inputPrevX, inputPrevY):
     inputMap[inputY][inputX] = "P"
     return inputMap
 
+# Handles using of inventory items
 def handleUse(inputCharacter, inputItem):
     inputCharacter["inventory"].remove(inputItem)
-
     # Possible optimisation with a for loop?
     
     if inputItem in consumables:
@@ -917,7 +922,7 @@ def main(inputMap):
     Available classes:
 
     Warrior: Good all-rounder.
-    Rogue: Dextrous and survival-savvy but sacrifices power and durability.
+    Ranger: Dextrous and survival-savvy but sacrifices power and durability.
     Beserker: Powerful in combat but neglects defences and supplies.
     Survivalist: Durable and start with more supplies, less combat oriented.
     _____________________________________________________________________________________
@@ -1003,6 +1008,8 @@ def main(inputMap):
             inventoryInput = playerAction(inventoryControls)
             if inventoryInput != "go back":
                 handleUse(player, inventoryInput)
+                torchLit = True if player['torch']['current'] > 0 else False
+                playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,torchLit)
 
         if playerInput == "equipment":
             consumeTurn = False
@@ -1090,7 +1097,7 @@ def main(inputMap):
             else:
                 #Reveals the exit that player hit (in case they lacked vision)
                 playerMap[y][x] = currentMap[y][x]
-                print("You reached the exit, but the door is locked...")
+                print("You reached the exit, but the door is locked...Find the key first!")
                 x = prevX
                 y = prevY
 
@@ -1133,6 +1140,7 @@ def main(inputMap):
             playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,torchLit)
             printMap(playerMap)
 
+            # Descriptions below
             # Handles player's food level
             if player['food']['current'] > 0 :
                 player['food']['current'] -= 1
@@ -1144,18 +1152,20 @@ def main(inputMap):
                 if player['health']['current'] <= 0:
                     print("You starved to death...Game Over.")
                     break
-                
-            if (0 < player['torch']['current'] < 6) and torchLit:
-                print("Your torch is flickering...")
+        else:
+            printMap(playerMap)
+
+        # Describes current state and surroundings, regardless if turn is consumed
+        if (0 < player['torch']['current'] < 6) and torchLit:
+            print("Your torch is flickering...")
             
-            if not torchLit:
-                print("Darkness surrounds you...You can't see through the fog.")
+        if not torchLit:
+            print("Darkness surrounds you...You can't see through the fog.")
             
-            
-            
-            # Describes what player sees
-            describeSurroundings(playerMap,x,y)
-            print(f"Player position: x = {x}, y = {y}. Health: {player['health']['current']}/{player['health']['max']}. Food: {player['food']['current']}/{player['food']['max']}. Torch: {player['torch']['current']}/{player['torch']['max']}.")
+        # Describes what player sees
+        describeSurroundings(playerMap,x,y)
+        print(f"Player position: x = {x}, y = {y}. Health: {player['health']['current']}/{player['health']['max']}. Food: {player['food']['current']}/{player['food']['max']}. Torch: {player['torch']['current']}/{player['torch']['max']}.")
+
             
 # Starts Game. Takes in
 

@@ -17,7 +17,7 @@ classes = {
             "trinket":"empty"
         },
         "status": [],
-        "inventory": ["small health potion"],
+        "inventory": ["small health potion","small food ration","dagger","leather armor"],
         "gold": 0,
         "torch":{
             "max":20,
@@ -47,7 +47,7 @@ classes = {
             "trinket":"empty"
         },
         "status": [],
-        "inventory": ["small health potion"],
+        "inventory": ["small health potion","small food ration"],
         "gold": 0,
         "torch":{
             "max":25,
@@ -77,7 +77,7 @@ classes = {
             "trinket":"empty"
         },
         "status": [],
-        "inventory": ["small health potion"],
+        "inventory": ["small health potion","small food ration"],
         "gold": 0,
         "torch":{
             "max":15,
@@ -107,7 +107,7 @@ classes = {
             "trinket":"empty"
         },
         "status": [],
-        "inventory": ["small health potion","small torch fuel","small health potion"],
+        "inventory": ["small health potion","small torch fuel","food ration"],
         "gold": 0,
         "torch":{
             "max":30,

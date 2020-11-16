@@ -79,6 +79,7 @@ some powerup that permanently increases a stat when used? (also a version that i
 """
 
 import math
+from colorama import Fore, Style
 from random import randint
 from random import choice
 from copy import deepcopy
@@ -88,6 +89,7 @@ from classes import classes
 from maps import maps,testMap, testMap2, testMap3
 from nonPlayableCharacters import nonPlayableCharacters
 from items import weapons,armor,trinket,consumables
+
 
 
 # use this function to print map in human-readable format
@@ -128,6 +130,20 @@ def updateMap(inputMap, inputX, inputY, inputPrevX, inputPrevY):
     inputMap[inputY][inputX] = "P"
     return inputMap
 
+
+# Handles viewing of inventory items
+def handleInventoryDescription(inputCharacter):
+    print("\nItems in your inventory:\n")
+    message = ""
+    for item in inputCharacter['inventory']:
+        if item in weapons:
+            message += f"Weapon: {item} +{weapons[item][0]}-{weapons[item][1]} attack\n"
+        elif item in armor:
+            message += f"Armor: {item} +{armor[item]} defence\n"
+        elif item in consumables:
+            message += f"Consumable: {item} restores {consumables[item]}\n"
+    print(message)
+
 # Handles using of inventory items
 def handleUse(inputCharacter, inputItem):
     # First removes the used item from the inventory
@@ -151,7 +167,7 @@ def handleUse(inputCharacter, inputItem):
             inputCharacter["inventory"].append(inputCharacter["equipments"]["main hand"])
             print(f"You remove your {inputCharacter['equipments']['main hand']} and put it in your inventory.")
         inputCharacter["equipments"]["main hand"] = inputItem
-        print(f"You equipped your {inputItem} in your Main Hand slot ( + {weapons[inputItem][0]}-{weapons[inputItem][0]} attack ).")
+        print(f"You equipped your {inputItem} in your Main Hand slot ( + {weapons[inputItem][0]}-{weapons[inputItem][1]} attack ).")
 
     elif inputItem in armor:
         if inputCharacter["equipments"]["armor"] != "empty":
@@ -175,17 +191,17 @@ def describeSurroundings(inputPlayerMap,x,y):
 
     # Add object descriptions here
     objectDescriptions = {
-        "0":"a solid wall",
-        "G":"a hidious goblin",
-        "H":"a mischievous hobgoblin",
-        "D":"an agile dire wolf",
-        "S":"a glob of slime",
-        "R":"a dangerous undead revenant",
-        "E":"a way out",
-        ".":"nothing",
-        "K":"the dungeon key",
-        "C":"some dungeon loot",
-        " ":"an empty room"
+        "0":f"a solid wall",
+        "G":f"{Fore.YELLOW}a hidious goblin{Style.RESET_ALL}",
+        "H":f"{Fore.YELLOW}a mischievous hobgoblin{Style.RESET_ALL}",
+        "D":f"{Fore.YELLOW}an agile dire wolf{Style.RESET_ALL}",
+        "S":f"{Fore.YELLOW}a glob of slime{Style.RESET_ALL}",
+        "R":f"{Fore.RED}a dangerous undead revenant{Style.RESET_ALL}",
+        "E":f"{Fore.GREEN}a way out{Style.RESET_ALL}",
+        ".":f"nothing",
+        "K":f"{Fore.GREEN}the dungeon key{Style.RESET_ALL}",
+        "C":f"{Fore.GREEN}some dungeon loot{Style.RESET_ALL}",
+        " ":f"an empty room"
     }
     northObject = inputPlayerMap[y-1][x]
     eastObject = inputPlayerMap[y][x+1]
@@ -220,7 +236,7 @@ def describeSurroundings(inputPlayerMap,x,y):
 def handleEncounter(inputCharacter, inputNPC):
     player = inputCharacter
     print(
-        f"{player['name']} has encountered a {inputNPC['intent']} {inputNPC['name']}!")
+        f"{Fore.YELLOW}{player['name']} has encountered a {inputNPC['intent']} {inputNPC['name']}!{Style.RESET_ALL}")
 
     if inputNPC['intent'] == "hostile":
         inCombat = True
@@ -244,7 +260,9 @@ def handleEncounter(inputCharacter, inputNPC):
                 f"{player['name']}\'s defence: {player['defence'] + armor[player['equipments']['armor']]}\n"
 
             )
+            print("______________________________________")
             print(combatLog)
+            print("______________________________________")
             #print(f"{player['name']}\'s health: {player['health']['current']}.")
             #print(f"{enemy['name']}\'s health: {enemy['health']['current']}.")
 
@@ -264,6 +282,7 @@ def handleEncounter(inputCharacter, inputNPC):
             # Allow player input if enemy is not acting first
             if not enemyInitiative:
                 playerInput = playerAction(combatControls)
+                print("______________________________________")
             else:
                 playerInput = "enemyInitiative"
 
@@ -284,7 +303,8 @@ def handleEncounter(inputCharacter, inputNPC):
                     print(f"You hit the {enemy['name']} for {damage} damage!")
                 
                 else:
-                    print("You missed!")
+                    print(f"{Fore.YELLOW}You missed!{Style.RESET_ALL}")
+                    
 
             # This is a dumb move now, but maybe can be made useful in the future
             if playerInput == "wait":
@@ -295,10 +315,10 @@ def handleEncounter(inputCharacter, inputNPC):
                 chanceToRun = max(math.floor((player['speed']/enemy['speed'])*100),10)
                 print(f"({chanceToRun}%) You try to run...")
                 if randint(0,100) < chanceToRun:
-                    print("...and retreated succesfully!")
+                    print(f"{Fore.GREEN}...and retreated succesfully!{Style.RESET_ALL}")
                     return "retreated"
                 else:
-                    print("...but you were unsuccessful...")
+                    print(f"{Fore.RED}...but you were unsuccessful...{Style.RESET_ALL}")
 
             # Print description of your character
             if playerInput == "character":
@@ -307,6 +327,7 @@ def handleEncounter(inputCharacter, inputNPC):
                 for info in player:
                     print(f"{str(info).capitalize()}: {str(player[info]).capitalize()}")
                 print("______________________________________")
+                input("Press enter to continue...")
 
             # Print description of your enemy
             if playerInput == "describe":
@@ -315,13 +336,15 @@ def handleEncounter(inputCharacter, inputNPC):
                 for info in enemy:
                     print(f"{str(info).capitalize()}: {str(enemy[info]).capitalize()}")
                 print("______________________________________")
+                input("Press enter to continue...")
 
             if playerInput == "inventory":
                 consumeTurn = False
+                handleInventoryDescription(player)
                 inventoryControls = {'X':"Go Back"}
                 for idx,item in enumerate(player['inventory']):
                     inventoryControls[str(idx)] = item
-                print("Select item to equip/consume.")
+                print("Select item to equip/consume:")
                 inventoryInput = playerAction(inventoryControls)
                 if inventoryInput != "go back":
                     #Consumes a turn in combat if player decides to use/equip an item
@@ -350,7 +373,7 @@ def handleEncounter(inputCharacter, inputNPC):
             if enemy['health']['current'] <= 0:
                 inCombat = False
                 print("______________________________________")
-                print(f"You slew the {enemy['name']}!")
+                print(f"{Fore.GREEN}You slew the {enemy['name']}!{Style.RESET_ALL}")
                 for loot in enemy['possible loot']:
                     if randint(0,100) < enemy['possible loot'][loot]:
                         player['inventory'].append(loot)
@@ -362,7 +385,7 @@ def handleEncounter(inputCharacter, inputNPC):
 
             #Informs player that enemy acted first due to them having higher speed
             if playerInput == "enemyInitiative":
-                print(f"The enemy {enemy['name']} acted first!")
+                print(f"{Fore.YELLOW}The enemy {enemy['name']} acted first!{Style.RESET_ALL}")
 
             if consumeTurn:
                 # Enemy's turn
@@ -380,8 +403,8 @@ def handleEncounter(inputCharacter, inputNPC):
                         player['health']['current'] -= damage
                         print(f"The {enemy['name']} hit you for {damage} damage!")
                     else:
-                        print(f"You dodged the {enemy['name']}'s attack!")
-
+                        print(f"{Fore.GREEN}You dodged the {enemy['name']}'s attack!{Style.RESET_ALL}")
+            
             # Handle combat-ending event
             if player['health']['current'] <= 0:
                 inCombat = False
@@ -391,9 +414,10 @@ def handleEncounter(inputCharacter, inputNPC):
 
     return "defeat" if playerDefeat else "victory"
 
-# Updates player-visible map. When vision is True, reveal 1 tile around player for each movement
-# Requires player map, current map, current position, previous position and a boolean for if ppl can see
-def updateFog(inputPlayerMap, inputCurrentMap, inputX, inputY, inputPrevX, inputPrevY, vision=False):
+# Updates player-visible map. When vision is  2, reveal 1 tile around player for each movement
+# When vision is 1, reveal only 1 tile north, south, east and west of player
+# Requires player map, current map, current position, previous position and a vision level
+def updateFog(inputPlayerMap, inputCurrentMap, inputX, inputY, inputPrevX, inputPrevY, vision=0):
 
     #Replace tile player was previously on with an empty space
     inputPlayerMap[inputPrevY][inputPrevX] = inputCurrentMap[inputPrevY][inputPrevX]
@@ -401,12 +425,18 @@ def updateFog(inputPlayerMap, inputCurrentMap, inputX, inputY, inputPrevX, input
     #Reveal player's current tile
     inputPlayerMap[inputY][inputX] = inputCurrentMap[inputY][inputX]
 
-    if vision:
+    if vision > 1:
+        inputPlayerMap[inputY+1][inputX+1] = inputCurrentMap[inputY+1][inputX+1]
+        inputPlayerMap[inputY-1][inputX-1] = inputCurrentMap[inputY-1][inputX-1]
+        inputPlayerMap[inputY-1][inputX+1] = inputCurrentMap[inputY-1][inputX+1]
+        inputPlayerMap[inputY+1][inputX-1] = inputCurrentMap[inputY+1][inputX-1]
+    if vision > 0:
         #Reveals surounding tiles by setting those tiles in player map to be equal to the actual map
         inputPlayerMap[inputY+1][inputX] = inputCurrentMap[inputY+1][inputX]
         inputPlayerMap[inputY-1][inputX] = inputCurrentMap[inputY-1][inputX]
         inputPlayerMap[inputY][inputX+1] = inputCurrentMap[inputY][inputX+1]
         inputPlayerMap[inputY][inputX-1] = inputCurrentMap[inputY][inputX-1]
+        
 
     #returns updated map
     return inputPlayerMap
@@ -423,8 +453,6 @@ def fogMap(inputMap):
 
 # Main game 
 def main():
-
-    
 
     # NAME SELECT
     welcomeText = """
@@ -456,7 +484,6 @@ def main():
     playerName = input("Please select a name for your character: ")
 
     # INITIALISE MAP
-    
     mapSelectControls = {}
     for idx,mapChoice in enumerate(maps):    
         mapSelectControls[str(idx)] = mapChoice
@@ -503,7 +530,7 @@ def main():
     sleep(1)
 
     # To give player chance to read the stats
-    input("Press enter to continue.")
+    input("Press enter to continue...")
     
     #Shows map to player at start of game
 
@@ -557,19 +584,26 @@ def main():
             for info in player:
                 print(f"{str(info).capitalize()}: {str(player[info]).capitalize()}")
             print("______________________________________")
+            input("Press enter to continue...")
 
         if playerInput == "inventory":
             consumeTurn = False
+            handleInventoryDescription(player)
             inventoryControls = {'X':"Go Back"}
             for idx,item in enumerate(player['inventory']):
                 inventoryControls[str(idx)] = item
             print("Select item to equip/consume.")
             inventoryInput = playerAction(inventoryControls)
+            if player['torch']['current'] >= 10:
+                torchLit = 2
+            elif 1 < player['torch']['current'] < 10: 
+                torchLit = 1
+            else:
+                torchLit = 0
             if inventoryInput != "go back":
                 handleUse(player, inventoryInput)
-                torchLit = True if player['torch']['current'] > 0 else False
                 playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,torchLit)
-                sleep(1)
+                input("Press enter to continue...")
 
         if playerInput == "equipment":
             consumeTurn = False
@@ -601,20 +635,21 @@ def main():
             x += 1
 
         # HANDLE MAP EVENTS HERE
+        message = ""
         if currentMap[y][x] == " ":
-            if player['torch']['current'] > 5 :
-                print("Your torch shines brightly, illuminating the room with its radiance.")
+            if player['torch']['current'] >= 10 :
+                message += ("Your torch shines brightly, illuminating the room with its radiance.")
             elif player['torch']['current'] > 0:
-                print("Your torch reveals the room as it flickers and wavers...")
+                message += (f"{Fore.YELLOW}Your torch reveals the room as it flickers and wavers...{Style.RESET_ALL}")
             else:
-                print("You grope your way into a dark room.")
+                message += (f"{Fore.RED}You grope your way into a dark room.{Style.RESET_ALL}")
 
         if currentMap[y][x] == "K":
             player['inventory'].append('dungeon key')
             print("\n")
-            print("You found the Dungeon Key! You pick it up and place it in your inventory.")
+            print(f"{Fore.GREEN}You found the Dungeon Key! You pick it up and place it in your inventory.{Style.RESET_ALL}")
             sleep(1)
-            input("Press enter to continue")
+            input("Press enter to continue...")
 
         if currentMap[y][x] == "C":
             #returns random element from maploot
@@ -630,14 +665,14 @@ def main():
                     player['inventory'].append(loot)
                     print(f"You found a {loot} from the {lootType}.")
             if lootFound == False:
-                print(f"You found nothing else from the {lootType}. Bummer...")
+                print(f"{Fore.YELLOW}You found nothing else from the {lootType}. Bummer...{Style.RESET_ALL}")
             sleep(1)
-            input("Press enter to continue")
+            input("Press enter to continue...")
 
         # 0 is a wall
         if currentMap[y][x] == "0":
 
-            print("You bumped into a wall. Ouch!")
+            print(f"{Fore.YELLOW}You bumped into a wall. Ouch!{Style.RESET_ALL}")
             #Reveals the wall that player hit (in case they lacked vision)
             playerMap[y][x] = currentMap[y][x]
 
@@ -657,7 +692,7 @@ def main():
             else:
                 #Reveals the exit that player hit (in case they lacked vision)
                 playerMap[y][x] = currentMap[y][x]
-                print("You reached the exit, but the door is locked...Find the key first!")
+                print(f"{Fore.YELLOW}You reached the exit, but the door is locked...Find the key first!{Style.RESET_ALL}")
                 x = prevX
                 y = prevY
 
@@ -665,7 +700,7 @@ def main():
         if currentMap[y][x] in nonPlayableCharacters:
             outcome = handleEncounter(player, nonPlayableCharacters[currentMap[y][x]])
             if outcome == "defeat":
-                print("You were defeated by a denizen of the Dungeon. Game Over.")
+                print(f"{Fore.RED}You were defeated by a denizen of the Dungeon. Game Over.{Style.RESET_ALL}")
                 sleep(1)
                 input("Press enter to leave the game.")
                 break
@@ -675,10 +710,10 @@ def main():
                 x = prevX
                 y = prevY
             elif outcome == "victory":
-                print("You emerged victorious in combat!")
+                print(f"{Fore.GREEN}You emerged victorious in combat!{Style.RESET_ALL}")
             print(f"You have {player['health']['current']} health left.")
             sleep(1)
-            input("Press enter to continue")
+            input("Press enter to continue...")
 
         #Update map and player states below if turn is consumed
         if consumeTurn:
@@ -689,13 +724,15 @@ def main():
             currentMap = updateMap(currentMap,x,y,prevX,prevY)
 
             # Handles player's torch level
-            if player['torch']['current'] > 0 :
-                torchLit = True
+            if player['torch']['current'] >= 10 :
+                torchLit = 2
                 player['torch']['current'] -= 1
                 if player['torch']['current'] == 0:
                     print("Your torch has ran out of fuel!")
-            else: 
-                torchLit = False
+            elif 1 < player['torch']['current'] < 10: 
+                torchLit = 1
+            else:
+                torchLit = 0
 
             playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,torchLit)
             printMap(playerMap)
@@ -705,25 +742,26 @@ def main():
             if player['food']['current'] > 0 :
                 player['food']['current'] -= 1
                 if player['food']['current'] < 10:
-                    print("You are feeling hungry...")
+                    print(f"{Fore.YELLOW}You are feeling hungry...{Style.RESET_ALL}")
             else: 
                 print("You are starving!!!")
                 player['health']['current'] -= 1
                 if player['health']['current'] <= 0:
-                    print("You starved to death...Game Over.")
+                    print(f"{Fore.RED}You starved to death...Game Over.{Style.RESET_ALL}")
                     break
         else:
             printMap(playerMap)
 
         # Describes current state and surroundings, regardless if turn is consumed
-        if (0 < player['torch']['current'] < 6) and torchLit:
-            print("Your torch is flickering...")
-            
-        if not torchLit:
-            print("Darkness surrounds you...You can't see through the fog.")
+        if (0 < player['torch']['current'] < 10) and torchLit > 0:
+            print(f"{Fore.YELLOW}Your torch is flickering...you can't see as far as before...{Style.RESET_ALL}")
+        
+        if torchLit == 0:
+            print(f"{Fore.RED}Darkness surrounds you...You can't see through the fog.{Style.RESET_ALL}")
             
         # Describes what player sees
         describeSurroundings(playerMap,x,y)
+        print(message)
         print(f"Player position: x = {x}, y = {y}. Health: {player['health']['current']}/{player['health']['max']}. Food: {player['food']['current']}/{player['food']['max']}. Torch: {player['torch']['current']}/{player['torch']['max']}.")
 
             

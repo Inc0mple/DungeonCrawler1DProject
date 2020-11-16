@@ -1,2 +1,1 @@
-
-def handleUse(inputCharacter, inputItem):
+handleInventoryDescription

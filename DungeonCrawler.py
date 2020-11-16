@@ -595,12 +595,14 @@ def handleUse(inputCharacter, inputItem):
     
     if inputItem in consumables:
         for effect in consumables[inputItem]:
-            offset = 0
-            inputCharacter[effect]["current"] += consumables[inputItem][effect]
-            if inputCharacter[effect]["current"] > inputCharacter[effect]["max"]:
-                offset = inputCharacter[effect]["current"] - inputCharacter[effect]["max"]
-                inputCharacter[effect]["current"] -= offset
-            amountRestored = consumables[inputItem][effect] - offset
+            #offset = 0
+            #inputCharacter[effect]["current"] += consumables[inputItem][effect]
+            #if inputCharacter[effect]["current"] > inputCharacter[effect]["max"]:
+                #offset = inputCharacter[effect]["current"] - inputCharacter[effect]["max"]
+                #inputCharacter[effect]["current"] -= offset
+            difference = inputCharacter[effect]["max"] - inputCharacter[effect]["current"]
+            amountRestored = min(consumables[inputItem][effect], difference)
+            inputCharacter[effect]["current"] += amountRestored
             print(f"Restored {inputCharacter['name']}'s {effect} by {amountRestored}.")
 
 
@@ -1010,6 +1012,7 @@ def main(inputMap):
                 handleUse(player, inventoryInput)
                 torchLit = True if player['torch']['current'] > 0 else False
                 playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,torchLit)
+                sleep(1)
 
         if playerInput == "equipment":
             consumeTurn = False

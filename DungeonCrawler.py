@@ -83,484 +83,20 @@ from random import randint
 from random import choice
 from copy import deepcopy
 from time import sleep
-
-testMap = [
-["0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-["0", "P", " ", "G", "0", " ", " ", " ", " ", "0"],
-["0", " ", "K", " ", "0", " ", "0", " ", " ", "0"],
-["0", "C", "S", " ", " ", " ", " ", " ", " ", "0"],
-["0", "C", "0", "G", " ", "0", " ", " ", " ", "0"],
-["0", "C", "0", " ", " ", "0", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", "0", "0", " ", " ", " ", " ", " ", "0"],
-["0", "H", " ", "S", " ", " ", "0", " ", "G", "E"],
-["0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
-]
-
-testMap2 = [
-["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-["0", "P", " ", "0", "D", "S", "0", "C", "0", "0", "K", "0"],
-["0", " ", " ", " ", " ", " ", " ", "G", " ", "D", " ", "0"],
-["0", " ", " ", "S", "0", "0", "0", " ", " ", "0", "G", "0"],
-["0", " ", "G", " ", "G", "0", " ", " ", "S", "0", " ", "0"],
-["0", "S", " ", " ", " ", "C", " ", "0", " ", "S", " ", "0"],
-["0", " ", "0", "0", " ", " ", " ", " ", " ", "C", " ", "0"],
-["0", "C", "0", "C", "D", "0", "G", " ", "S", "0", "H", "0"],
-["0", "0", "0", "0", "0", "0", "0", "0", " ", "D", " ", "0"],
-["0", "C", "D", " ", " ", " ", "0", "C", "S", "C", "S", "0"],
-["0", "G", "0", "0", "0", " ", "G", "H", " ", " ", " ", "0"],
-["0", "C", "H", " ", "S", "S", "C", "S", "G", "0", " ", "0"],
-["0", "0", "0", " ", "C", " ", " ", " ", " ", "0", " ", "0"],
-["0", "E", "R", "D", "0", " ", "0", "H", " ", "0", "D", "0"],
-["0", "0", "H", " ", "0", "C", "0", "C", " ", "0", "C", "0"],
-["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
-]
-
-testMap3 = [
-["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-["0", "P", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "0"],
-["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
-]
-
-
-"""
-player stats ideas:
-attack, defence,speed,vision,dodge,accuracy
-
-"dagger","chainmail","short sword","small health potion","small food ration","torch fuel"
-
-"""
-#
-
-weapons = {
-    # Structured by how much they increase lower and upper dmg bound
-    "empty":(0,0),
-    "dagger":(1,1),
-    "gladius":(2,1),
-    "short sword":(1,3),
-    "sword":(2,3),
-    "spear":(1,5),
-    "halberd":(2,6),
-    "longsword":(3,5)
-}
-
-armor = {
-    # Structured by how much they increase defence
-    "empty":0,
-    "leather armor":1,
-    "chainmail":2,
-    "scale armor":3,
-    "plate armor":4,
-    "dragonscale armor":5
-}
-
-# To be done?
-trinket = {
-
-}
-
-consumables = {
-    # Structured by the stat they restore and by how much
-    "small health potion": {
-        "health": 15,
-    },
-    "health potion": {
-        "health": 25,
-    },
-    "large health potion": {
-        "health": 35,
-    },
-    "small torch fuel": {
-        "torch": 5,
-    },
-    "torch fuel": {
-        "torch": 10,
-    },
-    "large torch fuel": {
-        "torch": 20,
-    },
-    "small food ration": {
-        "food": 8,
-        "health": 2
-    },
-    "food ration": {
-        "food": 16,
-        "health": 4
-    },
-    "large food ration": {
-        "food": 24,
-        "health": 6
-    },
-}
-
-
-mapLoot = {
-    # Strucured by the type of lootbox u can find and what is inside them, with gold by range its loot by possibility in perecentage
-    "treasure chest": {
-        "gold": [25,100],
-        "possible loot": {
-            "scale armor":5,
-            "dragonscale armor":1,
-            "plate armor":2,
-            "chainmail":5,
-            "gladius":5,
-            "large torch fuel":10,
-            "large health potion":10,
-            "large food ration":10,
-            "health potion":10,
-            "torch fuel":10,
-            "food ration":10,
-            "small torch fuel":15,
-            "small health potion":15,
-            "small food ration":15,
-            "health potion":10,
-            "torch fuel":10,
-            "food ration":10
-        }
-    },
-
-    "box of supplies": {
-        "gold": [1,10],
-        "possible loot": {
-            "large torch fuel":10,
-            "large health potion":10,
-            "large food ration":10,
-            "health potion":25,
-            "torch fuel":25,
-            "food ration":25,
-            "small torch fuel":50,
-            "small health potion":50,
-            "small food ration":50
-        }
-        
-    },
-    "box of equipment": {
-        "gold": [1,5],
-        "possible loot": {
-            "dagger":55,
-            "short sword":30,
-            "spear":15,
-            "gladius":15,
-            "sword":10,
-            "halberd":5,
-            "longsword":5,
-            "leather armor":55,
-            "chainmail":15,
-            "scale armor":7,
-            "plate armor":3
-        }
-    },
-    "fuel box": {
-        "gold": [1,5],
-        "possible loot": {
-            "small torch fuel":50,
-            "small torch fuel":40,
-            "small torch fuel":20,
-            "torch fuel":40,
-            "large torch fuel":30,
-        }  
-        
-    },
-    
-    "potion pouch": {
-        "gold": [1,5],
-        "possible loot": {
-            "small health potion":90,
-            "small health potion":50,
-            "small health potion":30,
-            "health potion":40,
-            "health potion":20,
-            "large health potion":20,
-        }       
-    }
-}
-
-# CHARACTER CLASSES:
-classes = {
-    "warrior": {
-        "name": "Aragon",
-        "class":"warrior",
-        "health": {
-            "max":50,
-            "current":50
-        },
-        "attack": [4,6],
-        "defence": 1,
-        "speed": 7,
-        "accuracy": 80,
-        "dodge": 7,
-        "equipments": {
-            "armor":"empty",
-            "main hand":"empty",
-            "trinket":"empty"
-        },
-        "status": [],
-        "inventory": ["small health potion"],
-        "gold": 0,
-        "torch":{
-            "max":20,
-            "current":15
-        },
-        "food": {
-            "max":25,
-            "current":20
-        }
-    },
-
-    "ranger": {
-        "name": "PlaceholderName",
-        "class":"ranger",
-        "health": {
-            "max":35,
-            "current":35
-        },
-        "attack": [3,6],
-        "defence": 0,
-        "speed": 11,
-        "accuracy": 90,
-        "dodge": 20,
-        "equipments": {
-            "armor":"empty",
-            "main hand":"empty",
-            "trinket":"empty"
-        },
-        "status": [],
-        "inventory": ["small health potion"],
-        "gold": 0,
-        "torch":{
-            "max":25,
-            "current":20
-        },
-        "food": {
-            "max":25,
-            "current":20
-        }
-    },
-
-    "beserker": {
-        "name": "PlaceholderName",
-        "class":"beserker",
-        "health": {
-            "max":40,
-            "current":40
-        },
-        "attack": [3,8],
-        "defence": 0,
-        "speed": 6,
-        "accuracy": 75,
-        "dodge": 5,
-        "equipments": {
-            "armor":"empty",
-            "main hand":"empty",
-            "trinket":"empty"
-        },
-        "status": [],
-        "inventory": ["small health potion"],
-        "gold": 0,
-        "torch":{
-            "max":15,
-            "current":15
-        },
-        "food": {
-            "max":20,
-            "current":20
-        }
-    },
-
-    "survivalist": {
-        "name": "PlaceholderName",
-        "class":"survivalist",
-        "health": {
-            "max":55,
-            "current":55
-        },
-        "attack": [3,5],
-        "defence": 1,
-        "speed": 10,
-        "accuracy": 80,
-        "dodge": 15,
-        "equipments": {
-            "armor":"empty",
-            "main hand":"empty",
-            "trinket":"empty"
-        },
-        "status": [],
-        "inventory": ["small health potion","small torch fuel","small health potion"],
-        "gold": 0,
-        "torch":{
-            "max":30,
-            "current":25
-        },
-        "food": {
-            "max":35,
-            "current":30
-        }
-    }
-
-}
-
-# Add new monsters/encounters here
-nonPlayableCharacters = {
-    "G": {
-        "name": "Goblin",
-        "health": {
-            "max":23,
-            "current":23
-        },
-        "attack": [2,6],
-        "defence": 0,
-        "speed": 7,
-        "accuracy": 75,
-        "dodge": 10,
-        "status": [],
-        "possible loot": {
-            # Structured by loot and loot chance
-            "small food ration":45,
-            "small torch fuel":20,
-            "food ration":10,
-            "small health potion":20,
-            "health potion":5,
-            "dagger":20,
-            "leather armor":10,
-            "gladius":5,
-            "short sword":2
-        },
-        "gold": [4,12],
-        "intent": "hostile",
-        "behaviour": "simple"
-    },
-
-    "S": {
-        "name": "Slime",
-        "health": {
-            "max":30,
-            "current":30
-        },
-        "attack": [2,4],
-        "defence": 0,
-        "speed": 4,
-        "accuracy": 65,
-        "dodge": 0,
-        "status": [],
-        "possible loot": {
-            "small torch fuel":50,
-            "torch fuel":10,
-            "large torch fuel":5,
-            "small food ration":5,
-            "small health potion":5
-        },
-        "gold": [2,8],
-        "intent": "hostile",
-        "behaviour": "simple"
-    },
-
-    "D": {
-        "name": "Dire Wolf",
-        "health": {
-            "max":20,
-            "current":20
-        },
-        "attack": [4,7],
-        "defence": 0,
-        "speed": 12,
-        "accuracy": 75,
-        "dodge": 16,
-        "status": [],
-        "possible loot": {
-            # Structured by loot and loot chance
-            "small food ration":85,
-            "food ration":40,
-            "large food ration":20,
-            "small food ration":5,
-            "small health potion":5
-        },
-        "gold": [8,20],
-        "intent": "hostile",
-        "behaviour": "simple"
-    },
-
-    "H": {
-        "name": "Hobgoblin",
-        "health": {
-            "max":40,
-            "current":40
-        },
-        "attack": [4,8],
-        "defence": 1,
-        "speed": 10,
-        "accuracy": 80,
-        "dodge": 10,
-        "status": [],
-        "possible loot": {
-            "small food ration":95,
-            "food ration":25,
-            "small health potion":45,
-            "health potion":25,
-            "dagger":75,
-            "leather armor":55,
-            "chainmail":5,
-            "gladius":10,
-            "short sword":15,
-            "spear":5,
-        },
-        "gold": [10,25],
-        "intent": "hostile",
-        "behaviour": "simple"
-    },
-
-    "R": {
-        "name": "Revenant",
-        "health": {
-            "max":50,
-            "current":50
-        },
-        "attack": [5,10],
-        "defence": 2,
-        "speed": 7,
-        "accuracy": 75,
-        "dodge": 5,
-        "status": [],
-        "possible loot": {
-            "small torch fuel":50,
-            "torch fuel":10,
-            "small health potion":90,
-            "health potion":30,
-            "large health potion":10,
-            "dagger":75,
-            "leather armor":60,
-            "chainmail":40,
-            "gladius":20,
-            "short sword":20,
-            "spear":15
-        },
-        "gold": [10,25],
-        "intent": "hostile",
-        "behaviour": "simple"
-    }
-    
-}
+from mapLoot import mapLoot
+from classes import classes
+from maps import maps,testMap, testMap2, testMap3
+from nonPlayableCharacters import nonPlayableCharacters
+from items import weapons,armor,trinket,consumables
 
 
 # use this function to print map in human-readable format
 def printMap(map):
+    print("_"*(len(map[0])-2)+"Map:"+"_"*(len(map[0])-2))
+    #print("_"*2*len(map[0]))
     for row in map:
         print(' '.join(row))
+    print("_"*2*len(map[0]))
 
 
 # Use this whenever you want player input
@@ -595,11 +131,6 @@ def handleUse(inputCharacter, inputItem):
     
     if inputItem in consumables:
         for effect in consumables[inputItem]:
-            #offset = 0
-            #inputCharacter[effect]["current"] += consumables[inputItem][effect]
-            #if inputCharacter[effect]["current"] > inputCharacter[effect]["max"]:
-                #offset = inputCharacter[effect]["current"] - inputCharacter[effect]["max"]
-                #inputCharacter[effect]["current"] -= offset
             difference = inputCharacter[effect]["max"] - inputCharacter[effect]["current"]
             amountRestored = min(consumables[inputItem][effect], difference)
             inputCharacter[effect]["current"] += amountRestored
@@ -883,11 +414,9 @@ def fogMap(inputMap):
     return outputMap
 
 # Main game 
-def main(inputMap):
+def main():
 
-    # INITIALISE MAP
-    currentMap = inputMap
-    playerMap = fogMap(currentMap)
+    
 
     # NAME SELECT
     welcomeText = """
@@ -915,7 +444,23 @@ def main(inputMap):
         
     
     sleep(1)
+    print("_____________________________________________________________________________________")
     playerName = input("Please select a name for your character: ")
+
+    # INITIALISE MAP
+    
+    mapSelectControls = {}
+    for idx,mapChoice in enumerate(maps):    
+        mapSelectControls[str(idx)] = mapChoice
+    print("_____________________________________________________________________________________")
+    print("Please select a map: ")
+    selectedMap = playerAction(mapSelectControls)
+    currentMap = maps[selectedMap]
+    # Go back functionality not yet implemented
+    if currentMap != "go back":
+        print(f"map selected: {selectedMap}!")
+
+    playerMap = fogMap(currentMap)
 
     # CLASS SELECT
 
@@ -937,6 +482,7 @@ def main(inputMap):
         classesControls[str(idx)] = classChoice
     print("Please select a character class by entering the corresponding digit: ")
     classesInput = playerAction(classesControls)
+    # Go back functionality not yet implemented
     if classesInput != "go back":
         classes[classesInput]['name'] = playerName
         print(f"Class selected: {classesInput}!")
@@ -975,7 +521,9 @@ def main(inputMap):
     prevY = y
     playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,True)
     printMap(playerMap)
-
+    print("_____________________________________________________________________________________")
+    print("Input WASD and enter to move. Always check your available actions to see what you can do. Good Luck!")
+    print("_____________________________________________________________________________________")
     while playerInput != "quit":
         prevX = x
         prevY = y
@@ -1128,7 +676,7 @@ def main(inputMap):
             turn += 1
             print("______________________________________")
             print(f"Turn {turn}:")
-            print("______________________________________")
+            print("______________________________________\n")
             currentMap = updateMap(currentMap,x,y,prevX,prevY)
 
             # Handles player's torch level
@@ -1173,5 +721,5 @@ def main(inputMap):
 # Starts Game. Takes in
 
 
-main(testMap2)
+main()
 

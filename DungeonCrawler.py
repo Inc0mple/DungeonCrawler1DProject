@@ -99,20 +99,20 @@ testMap = [
 
 testMap2 = [
 ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-["0", "P", " ", "0", "D", "G", "0", "C", "0", "0", "K", "0"],
-["0", " ", " ", " ", " ", " ", " ", "S", "D", "0", "G", "0"],
+["0", "P", " ", "0", "D", "S", "0", "C", "0", "0", "K", "0"],
+["0", " ", " ", " ", " ", " ", " ", "G", "D", "0", "G", "0"],
 ["0", " ", " ", "S", "0", "0", "0", " ", " ", "0", " ", "0"],
-["0", " ", "G", " ", " ", "0", " ", " ", "S", "0", " ", "0"],
+["0", " ", "G", " ", "G", "0", " ", " ", "S", "0", " ", "0"],
 ["0", "S", " ", " ", " ", "C", " ", "0", " ", "S", " ", "0"],
 ["0", " ", "0", "0", " ", " ", " ", " ", " ", "C", " ", "0"],
-["0", "C", "0", "C", "D", "0", "G", " ", "S", " ", " ", "0"],
+["0", "C", "0", "C", "D", "0", "G", " ", "S", "0", "H", "0"],
 ["0", "0", "0", "0", "0", "0", "0", "0", " ", "D", " ", "0"],
 ["0", "C", "D", " ", " ", " ", "0", "C", "S", "C", "S", "0"],
-["0", "G", "0", "0", "0", " ", " ", "H", " ", " ", " ", "0"],
-["0", "C", "H", " ", "S", "S", "C", " ", "G", "0", " ", "0"],
+["0", "G", "0", "0", "0", " ", "G", "H", " ", " ", " ", "0"],
+["0", "C", "H", " ", "S", "S", "C", "S", "G", "0", " ", "0"],
 ["0", "0", "0", " ", "C", " ", " ", " ", " ", "0", " ", "0"],
-["E", "H", "D", " ", "0", " ", "0", "H", " ", "0", "D", "0"],
-["0", "0", "S", " ", "0", "C", "0", "C", " ", "0", "C", "0"],
+["0", "E", "R", "D", "0", " ", "0", "H", " ", "0", "D", "0"],
+["0", "0", "H", " ", "0", "C", "0", "C", " ", "0", "C", "0"],
 ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
 ]
 
@@ -420,13 +420,13 @@ nonPlayableCharacters = {
         },
         "attack": [2,6],
         "defence": 0,
-        "speed": 8,
+        "speed": 7,
         "accuracy": 75,
         "dodge": 10,
         "status": [],
         "possible loot": {
             # Structured by loot and loot chance
-            "small food ration":50,
+            "small food ration":45,
             "small torch fuel":20,
             "food ration":10,
             "small health potion":20,
@@ -457,7 +457,8 @@ nonPlayableCharacters = {
             "small torch fuel":50,
             "torch fuel":10,
             "large torch fuel":5,
-            "small food ration":5
+            "small food ration":5,
+            "small health potion":5
         },
         "gold": [2,8],
         "intent": "hostile",
@@ -470,17 +471,19 @@ nonPlayableCharacters = {
             "max":20,
             "current":20
         },
-        "attack": [3,7],
+        "attack": [4,7],
         "defence": 0,
         "speed": 12,
         "accuracy": 75,
-        "dodge": 15,
+        "dodge": 16,
         "status": [],
         "possible loot": {
             # Structured by loot and loot chance
             "small food ration":85,
             "food ration":40,
-            "large food ration":20
+            "large food ration":20,
+            "small food ration":5,
+            "small health potion":5
         },
         "gold": [8,20],
         "intent": "hostile",
@@ -493,7 +496,7 @@ nonPlayableCharacters = {
             "max":40,
             "current":40
         },
-        "attack": [4,7],
+        "attack": [4,8],
         "defence": 1,
         "speed": 10,
         "accuracy": 80,
@@ -502,16 +505,46 @@ nonPlayableCharacters = {
         "possible loot": {
             "small food ration":95,
             "food ration":25,
-            "small health potion":90,
-            "health potion":30,
+            "small health potion":45,
+            "health potion":25,
             "dagger":75,
-            "leather armor":60,
+            "leather armor":55,
             "chainmail":5,
-            "gladius":15,
+            "gladius":10,
             "short sword":15,
             "spear":5,
         },
-        "gold": [2,8],
+        "gold": [10,25],
+        "intent": "hostile",
+        "behaviour": "simple"
+    },
+
+    "R": {
+        "name": "Revenant",
+        "health": {
+            "max":50,
+            "current":50
+        },
+        "attack": [5,10],
+        "defence": 2,
+        "speed": 7,
+        "accuracy": 75,
+        "dodge": 5,
+        "status": [],
+        "possible loot": {
+            "small torch fuel":50,
+            "torch fuel":10,
+            "small health potion":90,
+            "health potion":30,
+            "large health potion":10,
+            "dagger":75,
+            "leather armor":60,
+            "chainmail":40,
+            "gladius":20,
+            "short sword":20,
+            "spear":15
+        },
+        "gold": [10,25],
         "intent": "hostile",
         "behaviour": "simple"
     }
@@ -599,9 +632,10 @@ def describeSurroundings(inputPlayerMap,x,y):
     objectDescriptions = {
         "0":"a solid wall",
         "G":"a hidious goblin",
-        "H":"a strong hobgoblin",
-        "D":"a fast dire wolf",
+        "H":"a mischievous hobgoblin",
+        "D":"an agile dire wolf",
         "S":"a glob of slime",
+        "R":"a dangerous undead revenant",
         "E":"a way out",
         ".":"nothing",
         "K":"the dungeon key",

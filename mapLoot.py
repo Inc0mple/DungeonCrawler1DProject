@@ -8,6 +8,7 @@ mapLoot = {
             "plate armor":2,
             "chainmail":5,
             "gladius":5,
+            "sword":5,
             "large torch fuel":10,
             "large health potion":10,
             "large food ration":10,

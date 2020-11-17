@@ -668,7 +668,7 @@ def main():
     Useful information will be shown below the map as your character moves.
 
     Enter "M", "I", "E" and "C" to check your Map, Inventory, Equipment and Character respectively.
-    Remember to use/equip items in your inventory by pressing to restore your vitals.
+    Remember to use/equip items in your inventory to restore your vitals.
     Always check your available actions to see what you can do.
     Controls are different for different events (Map, Combat, Shop etc.)
 
@@ -864,6 +864,7 @@ def main():
                     print(f"{Fore.RED}Your torch has ran out of fuel!{Style.RESET_ALL}")
             elif 1 < player['torch']['current'] < 10: 
                 torchLit = 1
+                player['torch']['current'] -= 1
             else:
                 torchLit = 0
 

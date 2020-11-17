@@ -656,7 +656,7 @@ def main():
     turn = 1
     prevX = x
     prevY = y
-    playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,True)
+    playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,2)
     printMap(playerMap)
     print("_____________________________________________________________________________________")
     print("""
@@ -862,7 +862,7 @@ def main():
                 player['torch']['current'] -= 1
                 if player['torch']['current'] == 0:
                     print(f"{Fore.RED}Your torch has ran out of fuel!{Style.RESET_ALL}")
-            elif 1 < player['torch']['current'] < 10: 
+            elif 0 < player['torch']['current'] < 10: 
                 torchLit = 1
                 player['torch']['current'] -= 1
             else:

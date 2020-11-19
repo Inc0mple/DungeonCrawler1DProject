@@ -88,7 +88,7 @@ from mapLoot import mapLoot
 from classes import classes
 from maps import maps,testMap, testMap2, testMap3
 from nonPlayableCharacters import nonPlayableCharacters
-from items import weapons,armor,trinket,consumables
+from items import weapon,armor,trinket,consumables
 
 
 
@@ -136,8 +136,8 @@ def handleInventoryDescription(inputCharacter):
     print("\nUsable/Equippable items in your inventory:\n")
     message = ""
     for item in inputCharacter['inventory']:
-        if item in weapons:
-            message += f"Weapon: {Fore.CYAN}{item}{Style.RESET_ALL} ({Fore.GREEN}+{weapons[item][0]}-{weapons[item][1]}{Style.RESET_ALL} attack when equipped)\n"
+        if item in weapon:
+            message += f"Weapon: {Fore.CYAN}{item}{Style.RESET_ALL} ({Fore.GREEN}+{weapon[item][0]}-{weapon[item][1]}{Style.RESET_ALL} attack when equipped)\n"
         elif item in armor:
             message += f"Armor: {Fore.CYAN}{item}{Style.RESET_ALL} ({Fore.GREEN}+{armor[item]}{Style.RESET_ALL} defence when equipped)\n"
         elif item in consumables:
@@ -160,14 +160,14 @@ def handleUse(inputCharacter, inputItem):
             print(f"{Fore.GREEN}Restored {inputCharacter['name']}'s {effect} by {amountRestored}.{Style.RESET_ALL}")
 
 
-    # To implement choice of equipping in either main hand or off hand (perhaps)
+    # To implement choice of equipping in either weapon or off hand (perhaps)
     # Check which slot equipment belongs. If current equipment slot not empty, remove current equipment first before replacing with new equipment
-    elif inputItem in weapons:
-        if inputCharacter["equipments"]["main hand"] != "empty":
-            inputCharacter["inventory"].append(inputCharacter["equipments"]["main hand"])
-            print(f"You remove your {inputCharacter['equipments']['main hand']} and put it in your inventory.")
-        inputCharacter["equipments"]["main hand"] = inputItem
-        print(f"You equipped your {inputItem} in your Main Hand slot ( + {weapons[inputItem][0]}-{weapons[inputItem][1]} attack ).")
+    elif inputItem in weapon:
+        if inputCharacter["equipments"]["weapon"] != "empty":
+            inputCharacter["inventory"].append(inputCharacter["equipments"]["weapon"])
+            print(f"You remove your {inputCharacter['equipments']['weapon']} and put it in your inventory.")
+        inputCharacter["equipments"]["weapon"] = inputItem
+        print(f"You equipped your {inputItem} in your weapon slot ( + {weapon[inputItem][0]}-{weapon[inputItem][1]} attack ).")
 
     elif inputItem in armor:
         if inputCharacter["equipments"]["armor"] != "empty":
@@ -191,7 +191,7 @@ def handleMerchant(inputPlayer):
     shopInput = ""
     #Sell price = buy price/5
     priceSheet = {
-        "weapons": {
+        "weapon": {
             "dagger":50,
             "gladius":85,
             "short sword":100,
@@ -224,7 +224,7 @@ def handleMerchant(inputPlayer):
     print(f"{Fore.CYAN}Merchant: Welcome to my shop! Which category would you like to browse?{Style.RESET_ALL}")
     while shopInput != "leave":
         
-        shopControls = {"1":"Weapons","2":"Armor","3":"Consumables","4":"Sell","X":"Leave"}
+        shopControls = {"1":"weapon","2":"Armor","3":"Consumables","4":"Sell","X":"Leave"}
         print(f"Gold: {inputPlayer['gold']}")
         shopInput = playerAction(shopControls)
         if shopInput == "leave":
@@ -236,7 +236,7 @@ def handleMerchant(inputPlayer):
             print("_____________________________________________________________________________________")
             for idx,item in enumerate(priceSheet[shopInput], start = 1):
                 buyControls[str(idx)] = str(item)
-                # Eval() converts a string like "weapons" to the variable weapons
+                # Eval() converts a string like "weapon" to the variable weapon
                 costPrice = priceSheet[shopInput][item]
                 print(f"{item.capitalize()}: {Fore.GREEN}+{eval(shopInput)[item]}.{Style.RESET_ALL} {Fore.YELLOW}Cost Price: {costPrice} Gold.{Style.RESET_ALL}")
             print("_____________________________________________________________________________________")
@@ -254,9 +254,9 @@ def handleMerchant(inputPlayer):
             print("_____________________________________________________________________________________")
             for idx,item in enumerate(list(inputPlayer['inventory']), start = 1):
                 sellControls[str(idx)] = str(item)
-                if item in weapons:
-                    sellPrice = math.floor(priceSheet["weapons"][item]/5)
-                    print(f"{item.capitalize()}: {Fore.GREEN}{weapons[item]}.{Style.RESET_ALL} {Fore.YELLOW}Sell Price: {sellPrice} Gold.{Style.RESET_ALL}")
+                if item in weapon:
+                    sellPrice = math.floor(priceSheet["weapon"][item]/5)
+                    print(f"{item.capitalize()}: {Fore.GREEN}{weapon[item]}.{Style.RESET_ALL} {Fore.YELLOW}Sell Price: {sellPrice} Gold.{Style.RESET_ALL}")
                 elif item in armor:
                     sellPrice = math.floor(priceSheet["armor"][item]/5)
                     print(f"{item.capitalize()}: {Fore.GREEN}{armor[item]}.{Style.RESET_ALL} {Fore.YELLOW}Sell Price: {sellPrice} Gold.{Style.RESET_ALL}")
@@ -267,8 +267,8 @@ def handleMerchant(inputPlayer):
                     print(f"{item.capitalize()}: {Fore.RED}This item can't be sold.{Style.RESET_ALL}")
             print("_____________________________________________________________________________________")
             sellInput = playerAction(sellControls)
-            if sellInput in weapons:
-                soldItemType = "weapons"
+            if sellInput in weapon:
+                soldItemType = "weapon"
             elif sellInput in armor:
                 soldItemType = "armor"
             elif sellInput in consumables:
@@ -352,7 +352,7 @@ def handleEncounter(inputCharacter, inputNPC):
                 f"{enemy['name']}\'s health: {Fore.RED if enemy['health']['current'] < 10 else Fore.WHITE}{enemy['health']['current']}/{enemy['health']['max']}{Style.RESET_ALL}\n"
                 f"{player['name']}\'s chance to hit: {max(math.floor(((player['accuracy'] - enemy['dodge'])/player['accuracy'])*100) + (player['speed'] - enemy['speed']),10)}%\n"
                 f"{player['name']}\'s chance to dodge: {100 - max(math.floor(((enemy['accuracy'] - player['dodge'])/enemy['accuracy'])*100) + (enemy['speed'] - player['speed']),5)}%\n"
-                f"{player['name']}\'s damage: {player['attack'][0] + weapons[player['equipments']['main hand']][0]} - {player['attack'][1] + weapons[player['equipments']['main hand']][1]}\n"
+                f"{player['name']}\'s damage: {player['attack'][0] + weapon[player['equipments']['weapon']][0]} - {player['attack'][1] + weapon[player['equipments']['weapon']][1]}\n"
                 f"{player['name']}\'s defence: {player['defence'] + armor[player['equipments']['armor']]}\n"
 
             )
@@ -390,8 +390,8 @@ def handleEncounter(inputCharacter, inputNPC):
                 print(f"\n({chanceToHit}%) You attempt to strike...")
                 if randint(0,100) < chanceToHit:
                     # Calculates lower and upper bound of damage based on base attack + main weapon dmg 
-                    lowerBoundDamage = player['attack'][0] + weapons[player["equipments"]["main hand"]][0] # + math.floor(weapons[player["equipments"]["offHand"]][0]/2)
-                    upperBoundDamage = player['attack'][1] + weapons[player["equipments"]["main hand"]][1] # + math.floor(weapons[player["equipments"]["offHand"]][1]/2)
+                    lowerBoundDamage = player['attack'][0] + weapon[player["equipments"]["weapon"]][0] # + math.floor(weapon[player["equipments"]["offHand"]][0]/2)
+                    upperBoundDamage = player['attack'][1] + weapon[player["equipments"]["weapon"]][1] # + math.floor(weapon[player["equipments"]["offHand"]][1]/2)
 
                     # max is to prevent negative damage from being dealt
                     damage = max(randint(lowerBoundDamage,upperBoundDamage) - (enemy['defence']),0)
@@ -449,6 +449,8 @@ def handleEncounter(inputCharacter, inputNPC):
 
             if playerInput == "equipment":
                 consumeTurn = False
+                for slot in player['equipments']:
+                    print(f"{slot.capitalize()} slot: {Fore.CYAN if player['equipments'][slot] != 'empty' else Fore.YELLOW }{player['equipments'][slot]}{Style.RESET_ALL}{Fore.GREEN} (+ {eval(slot)[player['equipments'][slot]]} {'attack' if slot == 'weapon' else 'defence'} ){Style.RESET_ALL} ")
                 equipmentsControls = {'X':"Go Back"}
                 for idx,slot in enumerate(player['equipments'], start = 1):
                     if player['equipments'][slot] != "empty":     
@@ -662,6 +664,7 @@ def main():
     print("""
     See that "P" on the map? That represents you, the Player.
     "0" represents impassable walls while "." represents unrevealed terrain.
+    There are various other objects which will be described as you move next to them.
 
     Commands inputted are case insensitive.
     Input WASD and enter to move in the corresponding directions.
@@ -680,6 +683,8 @@ def main():
     Try entering one of the available actions below to proceed. Good luck!
     """)
     print("_____________________________________________________________________________________")
+    #Initialise torchLit
+    torchLit = 2
     while playerInput != "quit":
         prevX = x
         prevY = y
@@ -714,12 +719,12 @@ def main():
                 inventoryControls[str(idx)] = item
             print("Select item to equip/consume.")
             inventoryInput = playerAction(inventoryControls)
-            if player['torch']['current'] >= 10:
+            """if player['torch']['current'] >= 10:
                 torchLit = 2
             elif 1 < player['torch']['current'] < 10: 
                 torchLit = 1
             else:
-                torchLit = 0
+                torchLit = 0"""
             if inventoryInput != "go back":
                 handleUse(player, inventoryInput)
                 playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,torchLit)
@@ -727,6 +732,8 @@ def main():
 
         if playerInput == "equipment":
             consumeTurn = False
+            for slot in player['equipments']:
+                print(f"{slot.capitalize()} slot: {Fore.CYAN if player['equipments'][slot] != 'empty' else Fore.YELLOW }{player['equipments'][slot]}{Style.RESET_ALL}{Fore.GREEN} (+ {eval(slot)[player['equipments'][slot]]} {'attack' if slot == 'weapon' else 'defence'} ){Style.RESET_ALL} ")
             equipmentsControls = {'X':"Go Back"}
             for idx,slot in enumerate(player['equipments'],start = 1):
                 if player['equipments'][slot] != "empty":     

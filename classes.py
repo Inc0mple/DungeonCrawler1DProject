@@ -8,12 +8,12 @@ classes = {
         },
         "attack": [4,6],
         "defence": 1,
-        "speed": 8,
+        "speed": 7,
         "accuracy": 85,
         "dodge": 7,
         "equipments": {
             "armor":"empty",
-            "main hand":"empty",
+            "weapon":"empty",
             "trinket":"empty"
         },
         "status": [],
@@ -43,7 +43,7 @@ classes = {
         "dodge": 20,
         "equipments": {
             "armor":"empty",
-            "main hand":"empty",
+            "weapon":"empty",
             "trinket":"empty"
         },
         "status": [],
@@ -73,7 +73,7 @@ classes = {
         "dodge": 5,
         "equipments": {
             "armor":"empty",
-            "main hand":"empty",
+            "weapon":"empty",
             "trinket":"empty"
         },
         "status": [],
@@ -103,7 +103,7 @@ classes = {
         "dodge": 13,
         "equipments": {
             "armor":"empty",
-            "main hand":"empty",
+            "weapon":"empty",
             "trinket":"empty"
         },
         "status": [],

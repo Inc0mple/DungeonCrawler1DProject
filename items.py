@@ -1,4 +1,4 @@
-weapons = {
+weapon = {
     # Structured by how much they increase lower and upper dmg bound
     "empty":(0,0),
     "dagger":(1,1),
@@ -22,7 +22,7 @@ armor = {
 
 # To be done?
 trinket = {
-
+    "empty":0
 }
 
 consumables = {

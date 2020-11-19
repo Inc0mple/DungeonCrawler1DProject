@@ -115,7 +115,7 @@ nonPlayableCharacters = {
         },
         "attack": [5,10],
         "defence": 2,
-        "speed": 7,
+        "speed": 8,
         "accuracy": 75,
         "dodge": 5,
         "status": [],

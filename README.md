@@ -1,5 +1,8 @@
 # Dungeon Crawler Game
 
+## Setup
+Download file and unzip. Run DungeonCrawler.py
+
 ## Game Description (TODO)
 
 ### Introduction to Dungeon Crawl Genre

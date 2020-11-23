@@ -3,14 +3,14 @@ nonPlayableCharacters = {
     "G": {
         "name": "Goblin",
         "health": {
-            "max":23,
-            "current":23
+            "max":25,
+            "current":25
         },
         "attack": [2,6],
         "defence": 0,
         "speed": 7,
         "accuracy": 75,
-        "dodge": 10,
+        "dodge": 9,
         "status": [],
         "possible loot": {
             # Structured by loot and loot chance
@@ -32,10 +32,10 @@ nonPlayableCharacters = {
     "S": {
         "name": "Slime",
         "health": {
-            "max":30,
-            "current":30
+            "max":33,
+            "current":33
         },
-        "attack": [2,4],
+        "attack": [1,4],
         "defence": 0,
         "speed": 4,
         "accuracy": 65,
@@ -62,7 +62,7 @@ nonPlayableCharacters = {
         "attack": [4,7],
         "defence": 0,
         "speed": 12,
-        "accuracy": 75,
+        "accuracy": 85,
         "dodge": 16,
         "status": [],
         "possible loot": {
@@ -87,7 +87,7 @@ nonPlayableCharacters = {
         "attack": [4,8],
         "defence": 1,
         "speed": 10,
-        "accuracy": 80,
+        "accuracy": 75,
         "dodge": 10,
         "status": [],
         "possible loot": {
@@ -97,7 +97,7 @@ nonPlayableCharacters = {
             "health potion":25,
             "dagger":75,
             "leather armor":55,
-            "chainmail":5,
+            "chainmail":8,
             "gladius":10,
             "short sword":15,
             "spear":5,
@@ -117,7 +117,7 @@ nonPlayableCharacters = {
         "defence": 2,
         "speed": 8,
         "accuracy": 75,
-        "dodge": 5,
+        "dodge": 9,
         "status": [],
         "possible loot": {
             "small torch fuel":50,

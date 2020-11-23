@@ -22,7 +22,13 @@ armor = {
 
 # To be done?
 trinket = {
-    "empty":0
+    "empty":0,
+    "ring of accuracy": {
+        "accuracy":2
+    },
+    "ring of speed": {
+        "speed":1
+    }
 }
 
 consumables = {

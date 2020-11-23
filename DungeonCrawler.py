@@ -1,83 +1,3 @@
-"""
-
-1D Project Brief:
-https://docs.google.com/document/d/14Yq8YuP0RxB080rZlBmDTTOS-8_ds3UmV0gc3L_Sv4s/edit
-
-Dungeon Crawler Game Tutorial:
-https://www.youtube.com/watch?v=G17XPI6t6kg
-
-Deliverables:
-  1) Game description
-  2) Code Documentation
-  3) Code itself
-  4) 3 minute video
-
-DESCRIPTION
-
-<Insert game description here>
-
-Dungeon Crawler Game?
-
-DOCUMENTATION
-
-
-Controls: WASD. Press M to view map, I to access inventory and C to check player profile/stats.
-
-We can write stuff here to fulfil the documentation requirement
-
-
-FEATURES TO IMPLEMENT:
-
-ESSENTIALS (done):
-map
-input interface
-controllable character
-win condition
-
-IMPORTANT:
-fog-of-war (done)
-health, monsters and combat system (done)
-inventory system (done)
-script writing and flavor texts (basically done)
-
-GOOD TO HAVE:
-loot system (somewhat done)
-random events from chests/object interactions
-character creation (partially done)
-variable torch level (done)
-hunger (done)
-
-
-
-IF GOT TIME:
-more attributes and damage calculations (partially done)
-character classes (partially done)
-load/save system
-powerups
-status effects
-experience/lvl up
-multiple levels
-scaling enemies
-skills and abilities
-
-
-COLIN TIER:
-smart enemy behaviours
-procedually generated maps
-procedually generated item effects
-torchlight radius system
-
-
-player stats ideas:
-attack, defence,speed,vision,dodge,accuracy
-
-item ideas:
-torch fuel -> refuel torch when used
-health potion -> restore 20 health
-glow ring trinket -> increase light radius, if not acts as permanent torch (Idk how to implement scaling light radius yet tho)
-some powerup that permanently increases a stat when used? (also a version that increases stat temporarily...idk how to implement yet )
-"""
-
 import math
 from colorama import Fore, Style
 from random import randint
@@ -86,10 +6,9 @@ from copy import deepcopy
 from time import sleep
 from mapLoot import mapLoot
 from classes import classes
-from maps import maps,testMap, testMap2, testMap3
+from maps import maps
 from nonPlayableCharacters import nonPlayableCharacters
 from items import weapon,armor,trinket,consumables
-
 
 
 # use this function to print map in human-readable format
@@ -105,7 +24,7 @@ def printMap(map):
 def playerAction(availableActions):
     # Takes in a dictionary with key/value pair corresponding with control/action
     # Input will be convereted to upperCase. Output will be lower case.
-    print(f"Available actions: {availableActions}")
+    print(f"Available actions: {f' '.join(f'[{Fore.YELLOW if idx%2==0 else Fore.CYAN}{tup[0]}: {tup[1].capitalize()}{Style.RESET_ALL}] ' for idx,tup in enumerate(availableActions.items()))}")
     # If player doesnt give valid action, continue the loop of prompting player
     while True:
         playerInput = input("Enter your action: ").upper()
@@ -719,14 +638,14 @@ def main():
                 inventoryControls[str(idx)] = item
             print("Select item to equip/consume.")
             inventoryInput = playerAction(inventoryControls)
-            """if player['torch']['current'] >= 10:
-                torchLit = 2
-            elif 1 < player['torch']['current'] < 10: 
-                torchLit = 1
-            else:
-                torchLit = 0"""
             if inventoryInput != "go back":
                 handleUse(player, inventoryInput)
+                if player['torch']['current'] >= 10:
+                    torchLit = 2
+                elif 1 < player['torch']['current'] < 10: 
+                    torchLit = 1
+                else:
+                    torchLit = 0
                 playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,torchLit)
                 input("Press enter to continue...")
 
@@ -810,7 +729,7 @@ def main():
 
         if currentMap[y][x] == "M":
 
-            print(f"{Fore.CYAN}You meet the Merchant and start trading!{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}You meet the Merchant and start trading!{Style.RESET_ALL}")
             #Reveals the wall that player hit (in case they lacked vision)
             playerMap[y][x] = currentMap[y][x]
             handleMerchant(player)
@@ -918,7 +837,7 @@ def main():
         print(f"   Gold: {player['gold']}. ")
         print("_____________________________________________________________________________________")
             
-# Starts Game. Takes in
+# Starts Game.
 
 
 main()

@@ -66,7 +66,7 @@ classes = {
             "max":45,
             "current":45
         },
-        "attack": [3,8],
+        "attack": [3,9],
         "defence": 0,
         "speed": 7,
         "accuracy": 80,
@@ -120,3 +120,4 @@ classes = {
     }
 
 }
+

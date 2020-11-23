@@ -28,15 +28,15 @@ Controls: WASD. Press M to view map, I to access inventory and C to check player
 - 'H': Hobgoblin: Strong version of goblin, fairly dangerous with good attack and defence. 40 HP, 4-8 Atk. Hard.
 - 'R': Revenant: Strongest enemy,Dungeon Boss found blocking the exit. 50 HP 5-10 Attk. Very Hard.
 
-### References
+### References 
 
-## Documentation
+## Documentation (TODO)
 
 ### Imports
 
 ### Functions
 
-## Video Demonstration
+## Video Demonstration (TODO)
 
 ## Notes
 1D Project Brief:
@@ -52,7 +52,7 @@ Deliverables:
   4) 3 minute video
 
 ### Map generator
-1. Make a function, generateMap(x,y), that takes in 2 arguements which will determine the size of the map (Maybe reject if area is below certain number).
+1. Make a function, generateMap(x,y), that takes in 2 arguements which will determine the size of the map (Maybe reject if area is below certain number). Maybe try 20x20 first?
 2. Function returns a list of list. eg:  
 [  
 ["0", "0", "0", "0", "0"],  

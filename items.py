@@ -23,10 +23,14 @@ armor = {
 # To be done?
 trinket = {
     "empty":0,
-    "ring of accuracy": {
-        "accuracy":2
+    "bracelet of accuracy": {
+        "accuracy":5
     },
     "ring of speed": {
+        "speed":2
+    },
+    "cape of evasion": {
+        "dodge":10,
         "speed":1
     }
 }
@@ -63,4 +67,36 @@ consumables = {
         "food": 24,
         "health": 6
     },
+}
+
+priceSheet = {
+    "weapon": {
+        "dagger":55,
+        "gladius":95,
+        "short sword":100,
+        "sword":140,
+        "spear":190,
+        "longsword":275,
+        "halberd":275
+    },
+    "armor": {
+        "leather armor":70,
+        "chainmail":140,
+        "scale armor":210,
+        "plate armor":280,
+        "dragonscale armor":350
+
+    },
+    "consumables": {
+        "small torch fuel":25,
+        "small food ration":40,
+        "small health potion":50,
+        "torch fuel":50,
+        "food ration":85,
+        "health potion":90,
+        "large torch fuel":90,
+        "large food ration":120,
+        "large health potion":145
+    }
+
 }

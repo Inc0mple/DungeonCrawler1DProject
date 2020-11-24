@@ -1,5 +1,5 @@
 import math
-from colorama import Fore, Style
+from colorama import Fore, Style, Back
 from random import randint
 from random import choice
 from copy import deepcopy
@@ -8,7 +8,7 @@ from mapLoot import mapLoot
 from classes import classes
 from maps import maps
 from nonPlayableCharacters import nonPlayableCharacters
-from items import weapon,armor,trinket,consumables
+from items import weapon,armor,trinket,consumables,priceSheet
 
 
 # use this function to print map in human-readable format
@@ -24,7 +24,7 @@ def printMap(map):
 def playerAction(availableActions):
     # Takes in a dictionary with key/value pair corresponding with control/action
     # Input will be convereted to upperCase. Output will be lower case.
-    print(f"Available actions: {f' '.join(f'[{Fore.YELLOW if idx%2==0 else Fore.CYAN}{tup[0]}: {tup[1].capitalize()}{Style.RESET_ALL}] ' for idx,tup in enumerate(availableActions.items()))}")
+    print(f"Available actions: {f' '.join(f'[{Fore.GREEN if idx%2==0 else Fore.YELLOW}{tup[0]}: {tup[1].capitalize()}{Style.RESET_ALL}] ' for idx,tup in enumerate(availableActions.items()))}")
     # If player doesnt give valid action, continue the loop of prompting player
     while True:
         playerInput = input("Enter your action: ").upper()
@@ -106,48 +106,20 @@ def handleUse(inputCharacter, inputItem):
         print("You can't use that item!")
         inputCharacter["inventory"].append(inputItem)
 
-def handleMerchant(inputPlayer):
+def handleMerchant(inputPlayer, startOfGame=False):
     shopInput = ""
     #Sell price = buy price/5
-    priceSheet = {
-        "weapon": {
-            "dagger":50,
-            "gladius":85,
-            "short sword":100,
-            "sword":140,
-            "spear":190,
-            "longsword":275,
-            "halberd":275
-        },
-        "armor": {
-            "leather armor":70,
-            "chainmail":140,
-            "scale armor":210,
-            "plate armor":280,
-            "dragonscale armor":350
-
-        },
-        "consumables": {
-            "small torch fuel":30,
-            "small food ration":40,
-            "small health potion":50,
-            "torch fuel":65,
-            "food ration":80,
-            "health potion":90,
-            "large torch fuel":100,
-            "large food ration":150,
-            "large health potion":190
-        }
-
-    }
-    print(f"{Fore.CYAN}Merchant: Welcome to my shop! Which category would you like to browse?{Style.RESET_ALL}")
+    if startOfGame:
+        print(f"{Fore.CYAN}Merchant: Welcome to my shop! Before you embark, please consider buying some items from my shop!{Style.RESET_ALL}")
+    else:
+        print(f"{Fore.CYAN}Merchant: Fancy meeting you again! Which category would you like to browse?{Style.RESET_ALL}")
     while shopInput != "leave":
         
         shopControls = {"1":"weapon","2":"Armor","3":"Consumables","4":"Sell","X":"Leave"}
         print(f"Gold: {inputPlayer['gold']}")
         shopInput = playerAction(shopControls)
         if shopInput == "leave":
-            print(f"{Fore.CYAN}Merchant: Thanks for your patronage, please come again!{Style.RESET_ALL}")
+            print(f"{Fore.CYAN}Merchant: Thanks for your patronage, good luck!{Style.RESET_ALL}")
             break
         elif shopInput != "sell":
             print(f"\n{Fore.CYAN}Merchant: What would you like to buy?{Style.RESET_ALL}")
@@ -205,14 +177,14 @@ def handleMerchant(inputPlayer):
 def describeSurroundings(inputPlayerMap,x,y):
     # Add object descriptions
     objectDescriptions = {
-        "0":f"a solid wall",
-        "G":f"{Fore.YELLOW}a hideous goblin{Style.RESET_ALL}",
-        "H":f"{Fore.YELLOW}a brawny hobgoblin{Style.RESET_ALL}",
-        "D":f"{Fore.YELLOW}an agile dire wolf{Style.RESET_ALL}",
-        "S":f"{Fore.YELLOW}a glob of slime{Style.RESET_ALL}",
+        "0":f"{Fore.YELLOW}a solid wall{Style.RESET_ALL}",
+        "G":f"{Fore.RED}a hideous goblin{Style.RESET_ALL}",
+        "H":f"{Fore.RED}a brawny hobgoblin{Style.RESET_ALL}",
+        "D":f"{Fore.RED}an agile dire wolf{Style.RESET_ALL}",
+        "S":f"{Fore.RED}a glob of slime{Style.RESET_ALL}",
         "R":f"{Fore.RED}the dungeon boss, a dangerous undead revenant,{Style.RESET_ALL}",
         "E":f"{Fore.GREEN}the exit{Style.RESET_ALL}",
-        ".":f"nothing",
+        ".":f"{Fore.YELLOW}nothing{Style.RESET_ALL}",
         "K":f"{Fore.GREEN}the dungeon key{Style.RESET_ALL}",
         "C":f"{Fore.CYAN}some dungeon loot{Style.RESET_ALL}",
         "M":f"{Fore.CYAN}a merchant{Style.RESET_ALL}",
@@ -503,22 +475,30 @@ def main():
     """ 
     
     print("_____________________________________________________________________________________")
-    playerName = input("Please enter a name for your character: ")
-
+    playerName = input('''
+    Please enter a name for your character: 
+    ''')
+    sleep(1)
+    print("""
+    That's a fine name!
+    """)
+    sleep(1)
     # INITIALISE MAP
     mapSelectControls = {}
     for idx,mapChoice in enumerate(maps, start = 1):    
         mapSelectControls[str(idx)] = mapChoice
     print("_____________________________________________________________________________________")
-    print("Please select a map by entering the corresponding digits: ")
+    print('''
+    Please select a map by entering the corresponding digits: 
+    ''')
     selectedMap = playerAction(mapSelectControls)
     currentMap = maps[selectedMap]
     # Go back functionality not yet implemented
     if currentMap != "go back":
-        print(f"map selected: {selectedMap}!")
+        print(f"{Fore.GREEN}Map selected: {selectedMap.capitalize()}!{Style.RESET_ALL}")
 
     playerMap = fogMap(currentMap)
-
+    sleep(1)
     # CLASS SELECT
 
     classSelectText = """
@@ -537,22 +517,38 @@ def main():
     classesControls = {}
     for idx,classChoice in enumerate(classes,start = 1):    
         classesControls[str(idx)] = classChoice
-    print("Please select a character class by entering the corresponding digit: ")
+    print('''
+    Please select a character class by entering the corresponding digit: 
+    ''')
     classesInput = playerAction(classesControls)
     # Go back functionality not yet implemented
     if classesInput != "go back":
         classes[classesInput]['name'] = playerName
-        print(f"Class selected: {classesInput}!")
-        print(f"{Fore.GREEN}_____________________________________________________________________________________")
+        print(f"{Fore.GREEN}Class selected: {classesInput}!{Style.RESET_ALL}")
+        print(f"{Fore.WHITE}_____________________________________________________________________________________")
         for info in classes[classesInput]:
             print(f"{str(info).capitalize()}: {str(classes[classesInput][info]).capitalize()}")
         print(f"_____________________________________________________________________________________{Style.RESET_ALL}")
         classSelected = True
         player = classes[classesInput]
-    sleep(1)
+    sleep(2)
+
 
     # To give player chance to read the stats
-    input("Press enter to continue...")
+    input('''
+    You may now buy some items from the shop to prepare for the journey ahead.
+    
+    Try to prioritise consumables as they will restore your health, food and torch levels.
+
+    Press enter to continue...''')
+    handleMerchant(player, startOfGame=True)
+    sleep(2)
+    input('''
+    You are now ready for your journey out of the Dungeon.
+
+    Remember to equip any weapon and armor that you bought from the shop!!
+    
+    Good luck! Press enter to continue...''')
     
     #Shows map to player at start of game
 

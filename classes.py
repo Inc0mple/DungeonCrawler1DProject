@@ -25,7 +25,7 @@ classes = {
         },
         "food": {
             "max":25,
-            "current":20
+            "current":25
         }
     },
 
@@ -55,7 +55,7 @@ classes = {
         },
         "food": {
             "max":25,
-            "current":20
+            "current":25
         }
     },
 
@@ -115,7 +115,7 @@ classes = {
         },
         "food": {
             "max":35,
-            "current":30
+            "current":35
         }
     }
 

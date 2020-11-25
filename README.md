@@ -1,7 +1,12 @@
 # Dungeon Crawler Game
 
 ## Setup
-Download file and unzip. Run DungeonCrawler.py
+
+### From Github:
+Download file and unzip. Run DungeonCrawler.py to start the game.
+
+### From Repl.it:
+Click Run at the top of the page to start the game.
 
 ## Game Description (TODO)
 
@@ -17,7 +22,6 @@ Controls: WASD. Press M to view map, I to access inventory and C to check player
 
 ### Tiles
 
-
 - 'P': The player.
 - '0': Impassable Wall.
 - '&nbsp; ': Empty Space.
@@ -31,7 +35,7 @@ Controls: WASD. Press M to view map, I to access inventory and C to check player
 - 'H': Hobgoblin: Strong version of goblin, fairly dangerous with good attack and defence. 40 HP, 4-8 Atk. Hard.
 - 'R': Revenant: Strongest enemy,Dungeon Boss found blocking the exit. 50 HP 5-10 Attk. Very Hard.
 
-### References 
+### References
 
 ## Documentation (TODO)
 
@@ -42,19 +46,22 @@ Controls: WASD. Press M to view map, I to access inventory and C to check player
 ## Video Demonstration (TODO)
 
 ## Notes
+
 1D Project Brief:
-https://docs.google.com/document/d/14Yq8YuP0RxB080rZlBmDTTOS-8_ds3UmV0gc3L_Sv4s/edit
+<https://docs.google.com/document/d/14Yq8YuP0RxB080rZlBmDTTOS-8_ds3UmV0gc3L_Sv4s/edit>
 
 Dungeon Crawler Game Tutorial:
-https://www.youtube.com/watch?v=G17XPI6t6kg
+<https://www.youtube.com/watch?v=G17XPI6t6kg>
 
 Deliverables:
+
   1) Game description
   2) Code Documentation
   3) Code itself
   4) 3 minute video
 
 ### Map generator
+
 1. Make a function, generateMap(x,y), that takes in 2 arguements which will determine the size of the map (Maybe reject if area is below certain number). Maybe try 20x20 first?
 2. Function returns a list of list. eg:  
 [  
@@ -73,9 +80,8 @@ Deliverables:
 - A couple of 'loot rooms' with a chest/chests that is often, but not always, blocked by a monster.
 - Corridors joining rooms that very occasionally has weak enemies blocking it.
 
-
-
 ### Future ideas
+
 IF GOT TIME:
 more attributes and damage calculations (partially done)
 character classes (partially done)
@@ -87,13 +93,11 @@ multiple levels
 scaling enemies
 skills and abilities
 
-
 COLIN TIER:
 smart enemy behaviours
 procedually generated maps
 procedually generated item effects
 torch radius system
-
 
 player stats ideas:
 attack, defence,speed,vision,dodge,accuracy

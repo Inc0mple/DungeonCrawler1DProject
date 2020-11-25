@@ -56,16 +56,16 @@ consumables = {
         "torch": 20,
     },
     "small food ration": {
-        "food": 8,
+        "food": 9,
         "health": 2
     },
     "food ration": {
-        "food": 16,
-        "health": 4
+        "food": 18,
+        "health": 3
     },
     "large food ration": {
-        "food": 24,
-        "health": 6
+        "food": 25,
+        "health": 5
     },
 }
 
@@ -88,15 +88,15 @@ priceSheet = {
 
     },
     "consumables": {
-        "small torch fuel":25,
-        "small food ration":40,
+        "small torch fuel":30,
+        "small food ration":45,
         "small health potion":50,
-        "torch fuel":50,
+        "torch fuel":55,
         "food ration":85,
         "health potion":90,
         "large torch fuel":90,
-        "large food ration":120,
-        "large health potion":145
+        "large food ration":110,
+        "large health potion":125
     }
 
 }

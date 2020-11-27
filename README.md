@@ -2,15 +2,22 @@
 
 ## Setup
 
-### From Github:
+### From Github
+
 Download file and unzip. Run DungeonCrawler.py to start the game.
 
-### From Repl.it:
+### From Repl.it
+
 Click Run at the top of the page to start the game.
 
 ## Game Description (TODO)
 
-### Introduction to Dungeon Crawl Genre
+### To do
+
+Character save system using Firebase  
+Status effects
+Skills system  
+smart enemy behvaiours  
 
 ### Objectives
 

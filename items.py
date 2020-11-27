@@ -22,17 +22,46 @@ armor = {
 
 # To be done?
 trinket = {
-    "empty":0,
+    "empty": {
+        "accuracy":0,
+        "dodge":0,
+        "speed":0
+    },
     "bracelet of accuracy": {
-        "accuracy":5
+        "accuracy":5,
+        "dodge":0,
+        "speed":0
     },
     "ring of speed": {
+        "accuracy":0,
+        "dodge":0,
         "speed":2
     },
-    "cape of evasion": {
+    "focus shard": {
+        "accuracy":15,
+        "dodge":-5,
+        "speed":-1
+    },
+    "gloves of haste": {
+        "accuracy":-10,
+        "dodge":5,
+        "speed":5
+    },
+    "talisman of evasion": {
+        "accuracy":0,
         "dodge":10,
         "speed":1
-    }
+    },
+    "cloak of darkness": {
+        "accuracy":-15,
+        "dodge":25,
+        "speed":-1
+    },
+    "obfuscating shroud": {
+        "accuracy":-55,
+        "dodge":40,
+        "speed":-3
+    },
 }
 
 consumables = {
@@ -71,9 +100,9 @@ consumables = {
 
 priceSheet = {
     "weapon": {
-        "dagger":55,
+        "dagger":50,
         "gladius":95,
-        "short sword":100,
+        "short sword":105,
         "sword":140,
         "spear":190,
         "longsword":275,
@@ -81,10 +110,10 @@ priceSheet = {
     },
     "armor": {
         "leather armor":70,
-        "chainmail":140,
-        "scale armor":210,
-        "plate armor":280,
-        "dragonscale armor":350
+        "chainmail":145,
+        "scale armor":220,
+        "plate armor":300,
+        "dragonscale armor":400
 
     },
     "consumables": {
@@ -97,6 +126,15 @@ priceSheet = {
         "large torch fuel":90,
         "large food ration":110,
         "large health potion":125
+    },
+    "trinket": {
+        "bracelet of accuracy":65,
+        "ring of speed":95,
+        "focus shard":85,
+        "gloves of haste":120,
+        "cloak of darkness":120,
+        "obfuscating shroud":175,
+        "talisman of evasion":125,
     }
 
 }

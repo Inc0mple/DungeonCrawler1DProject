@@ -3,6 +3,13 @@ mapLoot = {
     "treasure chest": {
         "gold": [50,125],
         "possible loot": {
+            "bracelet of accuracy":15,
+            "ring of speed":10,
+            "focus shard":10,
+            "gloves of haste":5,
+            "cloak of darkness":5,
+            "obfuscating shroud":5,
+            "talisman of evasion":5,
             "scale armor":5,
             "dragonscale armor":1,
             "plate armor":2,
@@ -38,14 +45,17 @@ mapLoot = {
             "food ration":25,
             "small torch fuel":50,
             "small health potion":50,
-            "small food ration":50
+            "small food ration":50,
+            "small torch fuel":25,
+            "small health potion":25,
+            "small food ration":25
         }
         
     },
     "box of equipment": {
-        "gold": [1,5],
+        "gold": [5,20],
         "possible loot": {
-            "dagger":55,
+            "dagger":65,
             "short sword":30,
             "spear":15,
             "gladius":15,
@@ -58,14 +68,21 @@ mapLoot = {
             "plate armor":3
         }
     },
-    "fuel box": {
+    "caverneer's stash": {
         "gold": [1,25],
         "possible loot": {
+            "small torch fuel":95,
             "small torch fuel":50,
-            "small torch fuel":40,
             "small torch fuel":20,
             "torch fuel":40,
             "large torch fuel":30,
+            "bracelet of accuracy":25,
+            "ring of speed":15,
+            "focus shard":15,
+            "gloves of haste":10,
+            "cloak of darkness":10,
+            "obfuscating shroud":5,
+            "talisman of evasion":5,
         }  
         
     },
@@ -73,6 +90,7 @@ mapLoot = {
     "potion pouch": {
         "gold": [1,12],
         "possible loot": {
+            "talisman of evasion":5,
             "small health potion":90,
             "small health potion":50,
             "small health potion":30,

@@ -8,9 +8,18 @@ nonPlayableCharacters = {
         },
         "attack": [2,6],
         "defence": 0,
-        "speed": 7,
-        "accuracy": 75,
-        "dodge": 9,
+        "speed": {
+            "current":7,
+            "max":7,
+        },
+        "accuracy": {
+            "current":75,
+            "max":75
+        },
+        "dodge": {
+            "current":9,
+            "max":9
+        },
         "status": [],
         "possible loot": {
             # Structured by loot and loot chance
@@ -37,9 +46,18 @@ nonPlayableCharacters = {
         },
         "attack": [1,4],
         "defence": 0,
-        "speed": 4,
-        "accuracy": 65,
-        "dodge": 0,
+        "speed": {
+            "current":4,
+            "max":4,
+        },
+        "accuracy": {
+            "current":65,
+            "max":65
+        },
+        "dodge": {
+            "current":0,
+            "max":0
+        },
         "status": [],
         "possible loot": {
             "small torch fuel":50,
@@ -61,9 +79,18 @@ nonPlayableCharacters = {
         },
         "attack": [4,7],
         "defence": 0,
-        "speed": 12,
-        "accuracy": 85,
-        "dodge": 16,
+        "speed": {
+            "current":12,
+            "max":12,
+        },
+        "accuracy": {
+            "current":85,
+            "max":85
+        },
+        "dodge": {
+            "current":16,
+            "max":16
+        },
         "status": [],
         "possible loot": {
             # Structured by loot and loot chance
@@ -86,9 +113,18 @@ nonPlayableCharacters = {
         },
         "attack": [4,8],
         "defence": 1,
-        "speed": 10,
-        "accuracy": 75,
-        "dodge": 10,
+        "speed": {
+            "current":10,
+            "max":10,
+        },
+        "accuracy": {
+            "current":75,
+            "max":75
+        },
+        "dodge": {
+            "current":10,
+            "max":10
+        },
         "status": [],
         "possible loot": {
             "small food ration":95,
@@ -115,9 +151,18 @@ nonPlayableCharacters = {
         },
         "attack": [5,10],
         "defence": 2,
-        "speed": 8,
-        "accuracy": 75,
-        "dodge": 9,
+        "speed": {
+            "current":8,
+            "max":8,
+        },
+        "accuracy": {
+            "current":75,
+            "max":75
+        },
+        "dodge": {
+            "current":11,
+            "max":11
+        },
         "status": [],
         "possible loot": {
             "small torch fuel":50,

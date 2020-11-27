@@ -8,9 +8,18 @@ classes = {
         },
         "attack": [4,6],
         "defence": 1,
-        "speed": 7,
-        "accuracy": 85,
-        "dodge": 7,
+        "speed": {
+            "current":7,
+            "max":7
+        },
+        "accuracy": {
+            "current":85,
+            "max":85
+        },
+        "dodge": {
+            "current":10,
+            "max":10
+        },
         "equipments": {
             "armor":"empty",
             "weapon":"empty",
@@ -24,8 +33,8 @@ classes = {
             "current":15
         },
         "food": {
-            "max":25,
-            "current":25
+            "max":30,
+            "current":30
         }
     },
 
@@ -38,9 +47,18 @@ classes = {
         },
         "attack": [3,6],
         "defence": 0,
-        "speed": 11,
-        "accuracy": 90,
-        "dodge": 20,
+        "speed": {
+            "current":11,
+            "max":11
+        },
+        "accuracy": {
+            "current":90,
+            "max":90
+        },
+        "dodge": {
+            "current":20,
+            "max":20
+        },
         "equipments": {
             "armor":"empty",
             "weapon":"empty",
@@ -54,8 +72,8 @@ classes = {
             "current":20
         },
         "food": {
-            "max":25,
-            "current":25
+            "max":27,
+            "current":27
         }
     },
 
@@ -68,9 +86,18 @@ classes = {
         },
         "attack": [3,9],
         "defence": 0,
-        "speed": 7,
-        "accuracy": 80,
-        "dodge": 5,
+        "speed": {
+            "current":7,
+            "max":7
+        },
+        "accuracy": {
+            "current":80,
+            "max":80
+        },
+        "dodge": {
+            "current":10,
+            "max":10
+        },
         "equipments": {
             "armor":"empty",
             "weapon":"empty",
@@ -84,8 +111,8 @@ classes = {
             "current":15
         },
         "food": {
-            "max":20,
-            "current":20
+            "max":25,
+            "current":25
         }
     },
 
@@ -98,9 +125,18 @@ classes = {
         },
         "attack": [3,5],
         "defence": 1,
-        "speed": 10,
-        "accuracy": 80,
-        "dodge": 13,
+        "speed": {
+            "current":10,
+            "max":10
+        },
+        "accuracy": {
+            "current":80,
+            "max":80
+        },
+        "dodge": {
+            "current":13,
+            "max":13
+        },
         "equipments": {
             "armor":"empty",
             "weapon":"empty",

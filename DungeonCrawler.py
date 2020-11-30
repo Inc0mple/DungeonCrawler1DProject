@@ -80,7 +80,7 @@ def handleSkillDescription(inputCharacter):
     print(message)
 
 def handleSkill(castedSkill,casterCharacter,targetCharacter):
-    print(targetCharacter['name'])
+    #print(targetCharacter['name'])
     skills[castedSkill]['function'](casterCharacter,targetCharacter,casterCharacter['skills'][castedSkill]['duration'],casterCharacter['skills'][castedSkill]['magnitude'])
     casterCharacter['skills'][castedSkill]["turnsTillReady"] = casterCharacter['skills'][castedSkill]['cooldown']
     #print(f"{casterCharacter['name']} casts {castedSkill} of power {casterCharacter['skills'][castedSkill]['magnitude']} on {targetCharacter['name']} for {casterCharacter['skills'][castedSkill]['duration']} turns!")
@@ -162,7 +162,7 @@ def handleTurnEnd(inputCharacter):
     for expiredStatusTuple in expiredStatusList:
         expiredEffectName = expiredStatusTuple[0]
         inputCharacter['status'].pop(expiredEffectName)
-        print(f"{inputCharacter['name']} is no longer {expiredEffectName}!")
+        print(f"{Fore.CYAN}{inputCharacter['name']}{Style.RESET_ALL} is no longer {Fore.YELLOW}{expiredEffectName}{Style.RESET_ALL}!")
 
     # handle skill cooldown
     for skill in inputCharacter['skills']:
@@ -331,11 +331,11 @@ def handleEncounter(inputCharacter, inputNPC):
                     player[stat]["modifier"] += trinket[playerTrinket][stat]
                 #Armor modifier:
                 playerArmor = player["equipments"]["armor"]
-                player['defence']["modifier"] = armor[playerArmor]
+                player['defence']["modifier"] += armor[playerArmor]
                 #Weapon modifier:
                 playerWeapon = player["equipments"]["weapon"]
-                player['attack']["modifier"][0] = weapon[playerWeapon][0]
-                player['attack']["modifier"][1] = weapon[playerWeapon][1]
+                player['attack']["modifier"][0] += weapon[playerWeapon][0]
+                player['attack']["modifier"][1] += weapon[playerWeapon][1]
 
                 handleTurnStart(player)
                 handleTurnStart(enemy)
@@ -478,12 +478,12 @@ def handleEncounter(inputCharacter, inputNPC):
                         print (f"Skill is not ready! {player['skills'][skillInput]['turnsTillReady']} more turns needed!")
                     else:
                         targetControls = {'1':player['name'],'2':enemy['name'],'X':"Go back"}
-                        print('Select your target: \n')
+                        print('\nSelect your target: \n')
                         targetInput = playerAction(targetControls)
                         if targetInput != "go back":
                             #Consumes a turn in combat if player decides to use a skill
                             consumeTurn = True
-                            print(targetInput,enemy['name'])
+                            #print(targetInput,enemy['name'])
                             target = enemy if targetInput.lower() == enemy['name'].lower() else player
                             handleSkill(skillInput,player,target)
 

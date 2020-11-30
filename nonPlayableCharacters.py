@@ -40,7 +40,7 @@ nonPlayableCharacters = {
             "food ration":10,
             "small health potion":20,
             "health potion":5,
-            "dagger":20,
+            "dagger":50,
             "leather armor":10,
             "gladius":5,
             "short sword":2

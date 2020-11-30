@@ -48,7 +48,7 @@ def updateMap(inputMap, inputX, inputY, inputPrevX, inputPrevY):
     # replaces player's prev position with a whitespace
     inputMap[inputPrevY][inputPrevX] = " "
     # moves player to latest coordinate
-    inputMap[inputY][inputX] = "P"
+    inputMap[inputY][inputX] = f"{Fore.GREEN}P{Style.RESET_ALL}"
     return inputMap
 
 
@@ -72,11 +72,11 @@ def handleSkillDescription(inputCharacter):
     print("\nSkills in your skillset:\n")
     message = ""
     for skillKey in inputCharacter['skills']:
-        message += f"{skillKey.capitalize()}: {skills[skillKey]['description']}\n"
-        message += f"\tPower: {inputCharacter['skills'][skillKey]['magnitude']}\n"
-        message += f"\tDuration: {inputCharacter['skills'][skillKey]['duration']}\n"
-        message += f"\tCooldown: {inputCharacter['skills'][skillKey]['cooldown']}\n"
-        message += f"\tTurns till ready: {inputCharacter['skills'][skillKey]['turnsTillReady']}\n"
+        message += f"{Fore.GREEN}{skillKey.capitalize()}{Style.RESET_ALL}: {skills[skillKey]['description']}\n"
+        message += f"\t{Fore.YELLOW}Power{Style.RESET_ALL}: {inputCharacter['skills'][skillKey]['magnitude']}\n"
+        message += f"\t{Fore.YELLOW}Duration{Style.RESET_ALL}: {inputCharacter['skills'][skillKey]['duration']}\n"
+        message += f"\t{Fore.YELLOW}Cooldown{Style.RESET_ALL}: {inputCharacter['skills'][skillKey]['cooldown']}\n"
+        message += f"\t{Fore.YELLOW}Turns till ready{Style.RESET_ALL}: {inputCharacter['skills'][skillKey]['turnsTillReady']}\n"
     print(message)
 
 def handleSkill(castedSkill,casterCharacter,targetCharacter):
@@ -106,23 +106,23 @@ def handleUse(inputCharacter, inputItem):
     elif inputItem in weapon:
         if inputCharacter["equipments"]["weapon"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["weapon"])
-            print(f"You remove your {inputCharacter['equipments']['weapon']} and put it in your inventory.")
+            print(f"You remove your {Fore.CYAN}{inputCharacter['equipments']['weapon']}{Style.RESET_ALL} and put it in your inventory.")
         inputCharacter["equipments"]["weapon"] = inputItem
-        print(f"You equipped your {inputItem} in your weapon slot ( + {weapon[inputItem][0]}-{weapon[inputItem][1]} attack ).")
+        print(f"You equipped your {Fore.CYAN}{inputItem}{Style.RESET_ALL} in your {Fore.YELLOW}Weapon{Style.RESET_ALL} slot ( + {Fore.GREEN}{weapon[inputItem][0]}-{weapon[inputItem][1]}{Style.RESET_ALL} attack ).")
 
     elif inputItem in armor:
         if inputCharacter["equipments"]["armor"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["armor"])
-            print(f"You remove your {inputCharacter['equipments']['armor']} and put it in your inventory.")
+            print(f"You remove your {Fore.CYAN}{inputCharacter['equipments']['armor']}{Style.RESET_ALL} and put it in your inventory.")
         inputCharacter["equipments"]["armor"] = inputItem
-        print(f"You equipped your {inputItem} in your Armor slot ( + {armor[inputItem]} defence ).")
+        print(f"You equipped your {Fore.CYAN}{inputItem}{Style.RESET_ALL} in your {Fore.YELLOW}Armor{Style.RESET_ALL} slot ( + {Fore.GREEN}{armor[inputItem]}{Style.RESET_ALL} defence ).")
 
     elif inputItem in trinket:
         if inputCharacter["equipments"]["trinket"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["trinket"])
-            print(f"You remove your {inputCharacter['equipments']['trinket']} and put it in your inventory.")
+            print(f"You remove your {Fore.CYAN}{inputCharacter['equipments']['trinket']}{Style.RESET_ALL} and put it in your inventory.")
         inputCharacter["equipments"]["trinket"] = inputItem
-        print(f"You equipped your {inputItem} in your Trinket slot")
+        print(f"You equipped your {Fore.CYAN}{inputItem}{Style.RESET_ALL} in your {Fore.YELLOW}Trinket{Style.RESET_ALL} slot  ( + {Fore.GREEN}{trinket[inputItem]}{Style.RESET_ALL} defence )")
     
     else:
         print("You can't use that item!")
@@ -141,8 +141,10 @@ def handleTurnEnd(inputCharacter):
     inputCharacter['attack']['modifier'] = 0
     inputCharacter['attack']['current'] = copy(inputCharacter['attack']['max'])
 
+
     temporaryCombatStats = ['defence','speed','accuracy','dodge']
     for stat in temporaryCombatStats:
+        #reset modifier and current stat
         inputCharacter[stat]['modifier'] = 0
         inputCharacter[stat]['current'] = copy(inputCharacter[stat]['max'])
         
@@ -150,16 +152,19 @@ def handleTurnEnd(inputCharacter):
     
     for key,val in inputCharacter['status'].items():
         #print(key,val)
+        # Runs status effect functions on character's stats
         statusEffects[key](inputCharacter,inputCharacter['status'][key]['magnitude'])
         inputCharacter['status'][key]['duration'] -= 1
         if inputCharacter['status'][key]['duration'] <= 0:
             expiredStatusList.append((key,val))
 
+    #handle removing of expired skill
     for expiredStatusTuple in expiredStatusList:
         expiredEffectName = expiredStatusTuple[0]
         inputCharacter['status'].pop(expiredEffectName)
         print(f"{inputCharacter['name']} is no longer {expiredEffectName}!")
 
+    # handle skill cooldown
     for skill in inputCharacter['skills']:
         if inputCharacter['skills'][skill]["turnsTillReady"] > 0:
             inputCharacter['skills'][skill]["turnsTillReady"] -= 1
@@ -169,6 +174,7 @@ def handleMerchant(inputPlayer, startOfGame=False):
     #Sell price = buy price/5
     if startOfGame:
         print(f"{Fore.CYAN}Merchant: Welcome to my shop! Before you embark, please consider buying some items from my shop!{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}Merchant: If you are a beginner, consider pressing 'B' to buy the recommended consumables!{Style.RESET_ALL}\n")
     else:
         print(f"{Fore.CYAN}Merchant: Hi there! Which category would you like to browse?{Style.RESET_ALL}")
     while shopInput != "leave":
@@ -314,15 +320,21 @@ def handleEncounter(inputCharacter, inputNPC):
         #Compare speed to see if enemy will act first
         enemyInitiative = True if enemy['speed']['current'] > player['speed']['current'] else False
 
+        #Reset skill cooldown before combat
+        for skill in player['skills']:
+            player['skills'][skill]['turnsTillReady'] = 0
+        consumeTurn = True
         while inCombat:
             #Handle trinket stat modifier
-            playerTrinket = player["equipments"]["trinket"]
-            for stat in trinket[playerTrinket]:
-                player[stat]["modifier"] += trinket[playerTrinket][stat]
+            if consumeTurn:
+                playerTrinket = player["equipments"]["trinket"]
+                for stat in trinket[playerTrinket]:
+                    player[stat]["modifier"] += trinket[playerTrinket][stat]
+                
+                handleTurnStart(player)
+                handleTurnStart(enemy)
+            message = ""
             
-            handleTurnStart(player)
-            handleTurnStart(enemy)
-
             combatLog =  (
                 f"\n"
                 f"{player['name']}\'s health: {Fore.RED if player['health']['current'] < 15 else Fore.WHITE}{player['health']['current']}/{player['health']['max']}{Style.RESET_ALL}\n"
@@ -336,10 +348,11 @@ def handleEncounter(inputCharacter, inputNPC):
             print("______________________________________")
             print(combatLog)
             print("______________________________________")
+            
             #print(f"{player['name']}\'s health: {player['health']['current']}.")
             #print(f"{enemy['name']}\'s health: {enemy['health']['current']}.")
 
-            consumeTurn = True
+            
             combatControls = {
                 "A": "Attack",
                 "W": "Wait", 
@@ -363,6 +376,7 @@ def handleEncounter(inputCharacter, inputNPC):
 
             # Handle player inputs
             if playerInput == "attack":
+                consumeTurn = True
                 # Maybe calculate dodge and accuracy, whether attack hits, here.
                 # Hit chance formula modified from https://www.gamedev.net/forums/topic/685930-the-simplest-but-most-effective-and-intuitive-way-to-implement-accuracy-and-dodge-chance-in-an-rpg/
                 chanceToHit = max(math.floor(((player['accuracy']['current'] - enemy['dodge']['current'])/player['accuracy']['current'])*100) + (player['speed']['current'] - enemy['speed']['current']),10)
@@ -383,9 +397,11 @@ def handleEncounter(inputCharacter, inputNPC):
 
             # This is a dumb move now, but maybe can be made useful in the future
             if playerInput == "wait":
+                consumeTurn = True
                 print("You skipped your turn...")
 
             if playerInput == "run":
+                consumeTurn = True
                 # minimum chance to run away is 10%
                 chanceToRun = max(math.floor((player['speed']['current']/enemy['speed']['current'])*100),10)
                 print(f"({chanceToRun}%) You try to run...")
@@ -398,19 +414,35 @@ def handleEncounter(inputCharacter, inputNPC):
             # Print description of your character
             if playerInput == "character":
                 consumeTurn = False
-                print("______________________________________")
+                print(f"{Fore.WHITE}_____________________________________________________________________________________")
+                message = ""
                 for info in player:
-                    print(f"{Fore.CYAN}{str(info).capitalize()}: {str(player[info]).capitalize()}{Style.RESET_ALL}")
-                print("______________________________________")
+                    #print(type(player[info]), player[info])
+                    if type(player[info]) is dict:
+                        message += f"{Fore.GREEN}{str(info).capitalize()}{Style.RESET_ALL}: \n"
+                        for nestedInfo in player[info]:
+                            message += f"\t{Fore.YELLOW}{str(nestedInfo).capitalize()}{Style.RESET_ALL}:{player[info][nestedInfo]}\n"
+                    else:
+                        message += f"{Fore.GREEN}{str(info).capitalize()}{Style.RESET_ALL}: {str(player[info]).capitalize()}\n"
+                print(message)
+                print(f"_____________________________________________________________________________________{Style.RESET_ALL}")
                 input("Press enter to continue...")
 
             # Print description of your enemy
             if playerInput == "describe":
                 consumeTurn = False
-                print("______________________________________")
+                print(f"{Fore.WHITE}_____________________________________________________________________________________")
+                message = ""
                 for info in enemy:
-                    print(f"{Fore.CYAN}{str(info).capitalize()}: {str(enemy[info]).capitalize()}{Style.RESET_ALL}")
-                print("______________________________________")
+                    #print(type(enemy[info]), enemy[info])
+                    if type(enemy[info]) is dict:
+                        message += f"{Fore.GREEN}{str(info).capitalize()}{Style.RESET_ALL}: \n"
+                        for nestedInfo in enemy[info]:
+                            message += f"\t{Fore.YELLOW}{str(nestedInfo).capitalize()}{Style.RESET_ALL}:{enemy[info][nestedInfo]}\n"
+                    else:
+                        message += f"{Fore.GREEN}{str(info).capitalize()}{Style.RESET_ALL}: {str(enemy[info]).capitalize()}\n"
+                print(message)
+                print(f"_____________________________________________________________________________________{Style.RESET_ALL}")
                 input("Press enter to continue...")
 
             if playerInput == "inventory":
@@ -454,7 +486,10 @@ def handleEncounter(inputCharacter, inputNPC):
             if playerInput == "equipment":
                 consumeTurn = False
                 for slot in player['equipments']:
-                    print(f"{slot.capitalize()} slot: {Fore.CYAN if player['equipments'][slot] != 'empty' else Fore.YELLOW }{player['equipments'][slot]}{Style.RESET_ALL}{Fore.GREEN if slot != 'trinket' else Fore.YELLOW} ({eval(slot)[player['equipments'][slot]]} {'attack' if slot == 'weapon' else 'defence'} ){Style.RESET_ALL} ")
+                    if slot != 'trinket':
+                        print(f"{slot.capitalize()} slot: {Fore.CYAN if player['equipments'][slot] != 'empty' else Fore.YELLOW }{player['equipments'][slot]}{Style.RESET_ALL}{Fore.GREEN} ({eval(slot)[player['equipments'][slot]]} {'attack' if slot == 'weapon' else 'defence'} ){Style.RESET_ALL} ")
+                    else:
+                        print(f"{slot.capitalize()} slot: {Fore.CYAN if player['equipments'][slot] != 'empty' else Fore.YELLOW }{player['equipments'][slot]}{Style.RESET_ALL}{Fore.YELLOW} ({eval(slot)[player['equipments'][slot]]} stats ){Style.RESET_ALL} ")
                 equipmentsControls = {'X':"Go Back"}
                 for idx,slot in enumerate(player['equipments'], start = 1):
                     if player['equipments'][slot] != "empty":     
@@ -467,7 +502,7 @@ def handleEncounter(inputCharacter, inputNPC):
                     # Handles unequipping (consider replacing with a function to make it neater?)
                     for slot in player['equipments']:
                         if player['equipments'][slot] == equipmentsInput:
-                            print(f"You remove your {player['equipments'][slot]} from your {slot} slot and put it in your inventory.")
+                            print(f"You remove your {Fore.CYAN}{player['equipments'][slot]}{Style.RESET_ALL} from your {slot} slot and put it in your inventory.")
                             player['inventory'].append(equipmentsInput)
                             player['equipments'][slot] = "empty"
 
@@ -585,7 +620,7 @@ def main():
     Welcome! The goal is to escape the Dungeon by finding the key to unlock the exit
     in the least amount of turns while looting as much gold as possible!
 
-    Howver, the dungeon is foggy, and despite having a torch, you can only reveal a small area
+    However, the dungeon is foggy, and despite having a torch, you can only reveal a small area
     around you. There will be monsters and loot scattered across the play area.
 
     Pay close attention to your health, food and torch level as you traverse the Dungeon.
@@ -639,10 +674,10 @@ def main():
     _____________________________________________________________________________________
     Available classes:
 
-    Warrior: Good all-rounder.
-    Ranger: Dextrous and survival-savvy but sacrifices power and durability.
-    Beserker: Powerful in combat but neglects defences and supplies.
-    Survivalist: Durable and start with more supplies, less combat oriented.
+    Warrior: Good all-rounder. Can use Guard and Disarm.
+    Ranger: Dextrous at the sacrifice of power and durability. Casts Poison and Inner Focus.
+    Beserker: Powerful in combat but neglects defences and supplies. Can use Empower.
+    Survivalist: Durable and starts with more supplies. Can Daze and Slow.
     _____________________________________________________________________________________
     
     """
@@ -660,8 +695,16 @@ def main():
         classes[classesInput]['name'] = playerName
         print(f"{Fore.GREEN}Class selected: {classesInput}!{Style.RESET_ALL}")
         print(f"{Fore.WHITE}_____________________________________________________________________________________")
+        message = ""
         for info in classes[classesInput]:
-            print(f"{str(info).capitalize()}: {str(classes[classesInput][info]).capitalize()}")
+            #print(type(classes[classesInput][info]), classes[classesInput][info])
+            if type(classes[classesInput][info]) is dict or type(classes[classesInput][info]) is list:
+                message += f"{Fore.GREEN}{str(info).capitalize()}{Style.RESET_ALL}: \n"
+                for nestedInfo in classes[classesInput][info]:
+                    message += f"\t{Fore.YELLOW}{str(nestedInfo).capitalize()}{Style.RESET_ALL}:{classes[classesInput][info][nestedInfo]}\n"
+            else:
+                message += f"{Fore.GREEN}{str(info).capitalize()}{Style.RESET_ALL}: {str(classes[classesInput][info]).capitalize()}\n"
+        print(message)
         print(f"_____________________________________________________________________________________{Style.RESET_ALL}")
         classSelected = True
         player = classes[classesInput]
@@ -674,7 +717,10 @@ def main():
     
     Try to prioritise consumables as they will restore your health, food and torch levels.
 
-    Press enter to continue...''')
+    If you are new, we recommed that you use the 'Buy recommended consumables' option by
+    pressing 'B' in the next menu.
+
+    Press enter to continue...\n''')
     handleMerchant(player, startOfGame=True)
     sleep(2)
     input('''
@@ -759,10 +805,18 @@ def main():
 
         if playerInput == "character":
             consumeTurn = False
-            print("______________________________________")
+            print(f"{Fore.WHITE}_____________________________________________________________________________________")
+            message = ""
             for info in player:
-                print(f"{str(info).capitalize()}: {str(player[info]).capitalize()}")
-            print("______________________________________")
+                #print(type(player[info]), player[info])
+                if type(player[info]) is dict:
+                    message += f"{Fore.GREEN}{str(info).capitalize()}{Style.RESET_ALL}: \n"
+                    for nestedInfo in player[info]:
+                        message += f"\t{Fore.YELLOW}{str(nestedInfo).capitalize()}{Style.RESET_ALL}:{player[info][nestedInfo]}\n"
+                else:
+                    message += f"{Fore.GREEN}{str(info).capitalize()}{Style.RESET_ALL}: {str(player[info]).capitalize()}\n"
+            print(message)
+            print(f"_____________________________________________________________________________________{Style.RESET_ALL}")
             input("Press enter to continue...")
 
         if playerInput == "inventory":
@@ -798,7 +852,7 @@ def main():
                 # Handles unequipping (consider replacing with a function to make it neater?)
                 for slot in player['equipments']:
                     if player['equipments'][slot] == equipmentsInput:
-                        print(f"You remove your {player['equipments'][slot]} from your {slot} slot and put it in your inventory.")
+                        print(f"You remove your {Fore.CYAN}{player['equipments'][slot]}{Style.RESET_ALL} from your {Fore.YELLOW}{slot}{Style.RESET_ALL} slot and put it in your inventory.")
                         player['inventory'].append(equipmentsInput)
                         player['equipments'][slot] = "empty"
                         

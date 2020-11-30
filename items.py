@@ -38,7 +38,7 @@ trinket = {
         "speed":2
     },
     "focus shard": {
-        "accuracy":15,
+        "accuracy":25,
         "dodge":-5,
         "speed":-1
     },

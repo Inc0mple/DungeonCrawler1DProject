@@ -1,35 +1,35 @@
-
+from colorama import Fore, Style, Back
 
 
 def poisoned(targetCharacter,magnitude):
     targetCharacter["health"]["current"] -=  magnitude
-    print(f"{targetCharacter['name']} is poisoned for {magnitude} health!({targetCharacter['status']['poisoned']['duration']} turns left)")
+    print(f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} is {Fore.RED}Poisoned{Style.RESET_ALL} for {magnitude} health! ({targetCharacter['status']['poisoned']['duration']} turns left)")
 
 def dazed(targetCharacter,magnitude):
     targetCharacter["accuracy"]["modifier"] -= magnitude * 5
-    print(f"{targetCharacter['name']} is dazed! Accuracy reduced by {magnitude}!({targetCharacter['status']['dazed']['duration']} turns left)")
+    print(f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} is {Fore.YELLOW}Dazed{Style.RESET_ALL}! Accuracy reduced by {magnitude * 5}! ({targetCharacter['status']['dazed']['duration']} turns left)")
 
 def slowed(targetCharacter,magnitude):
     targetCharacter["dodge"]["modifier"] -= magnitude * 5 
     targetCharacter["speed"]["modifier"] -= magnitude
-    print(f"{targetCharacter['name']} is slowed! Dodge reduced by {magnitude * 5} and speed reduced by {magnitude}!({targetCharacter['status']['slowed']['duration']} turns left)")
+    print(f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} is {Fore.YELLOW}Slowed{Style.RESET_ALL}! Dodge reduced by {magnitude * 5} and speed reduced by {magnitude}! ({targetCharacter['status']['slowed']['duration']} turns left)")
 
 def focused(targetCharacter,magnitude):
     targetCharacter["accuracy"]["modifier"] += magnitude * 5
     targetCharacter["dodge"]["modifier"] += magnitude * 5
-    print(f"{targetCharacter['name']} is focused! Accuracy increased by {magnitude * 5}  and dodge increased by {magnitude}!({targetCharacter['status']['focused']['duration']} turns left)")
+    print(f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} is {Fore.GREEN}Focused{Style.RESET_ALL}! Accuracy increased by {magnitude * 5}  and dodge increased by {magnitude * 5}! ({targetCharacter['status']['focused']['duration']} turns left)")
 
 def empowered(targetCharacter,magnitude):
     targetCharacter["attack"]["modifier"] += magnitude
-    print(f"{targetCharacter['name']} is empowered! Attack increased by ({magnitude},{magnitude})!({targetCharacter['status']['empowered']['duration']} turns left)")
+    print(f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} is {Fore.GREEN}Empowered{Style.RESET_ALL}! Attack increased by ({magnitude},{magnitude})! ({targetCharacter['status']['empowered']['duration']} turns left)")
 
 def sturdy(targetCharacter,magnitude):
     targetCharacter["defence"]["modifier"] += magnitude
-    print(f"{targetCharacter['name']} is sturdy! Defence increased by {magnitude}!({targetCharacter['status']['sturdy']['duration']} turns left)")
+    print(f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} is {Fore.GREEN}Sturdy{Style.RESET_ALL}! Defence increased by {magnitude}! ({targetCharacter['status']['sturdy']['duration']} turns left)")
 
 def disarmed(targetCharacter,magnitude):
     targetCharacter["attack"]["modifier"] -= magnitude
-    print(f"{targetCharacter['name']} is disarmed! Attack decreased by ({magnitude},{magnitude})!({targetCharacter['status']['disarmed']['duration']} turns left)")
+    print(f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} is {Fore.YELLOW}Disarmed{Style.RESET_ALL}! Attack decreased by ({magnitude},{magnitude})! ({targetCharacter['status']['disarmed']['duration']} turns left)")
 
 def resistant(targetCharacter,magnitude):
     negativeStatus = ['poisoned','dazed','slowed','disarmed','stunned']
@@ -37,7 +37,7 @@ def resistant(targetCharacter,magnitude):
         if statusKey in negativeStatus:
             targetCharacter["status"][statusKey]["duration"] = max(0,targetCharacter["status"][statusKey]["duration"] - magnitude)
             #resistedStatus = targetCharacter["status"].pop(statusKey)
-            print (f"{targetCharacter['name']} resisted {statusKey} effect, decreasing its duration by {magnitude} turns!({targetCharacter['status']['resistant']['duration']} turns left)")
+            print (f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} {Fore.GREEN}resisted {Style.RESET_ALL}{statusKey} effect, decreasing its duration by {magnitude} turns!({targetCharacter['status']['resistant']['duration']} turns left)")
 
 statusEffects = {
     "poisoned":poisoned,
@@ -73,28 +73,28 @@ def poison(casterCharacter,targetCharacter, duration, magnitude):
         "duration":duration,
         "magnitude":magnitude,
         }
-    print(f"{casterCharacter['name']} used poison with power {magnitude} on {targetCharacter['name']} for {duration} turns!")
+    print(f"{Fore.CYAN}{casterCharacter['name']}{Style.RESET_ALL} used {Fore.GREEN}Poison{Style.RESET_ALL} of power {magnitude} on {Fore.YELLOW}{targetCharacter['name']}{Style.RESET_ALL} for {duration} turns!")
 
 def daze(casterCharacter,targetCharacter, duration, magnitude):
     targetCharacter["status"]["dazed"] = {
         "duration":duration,
         "magnitude":magnitude,
     }
-    print(f"{casterCharacter['name']} used daze of power {magnitude} on {targetCharacter['name']} for {duration} turns!")
+    print(f"{Fore.CYAN}{casterCharacter['name']}{Style.RESET_ALL} used {Fore.GREEN}Daze{Style.RESET_ALL} of power {magnitude} on {Fore.YELLOW}{targetCharacter['name']}{Style.RESET_ALL} for {duration} turns!")
 
 def slow(casterCharacter,targetCharacter, duration, magnitude):
     targetCharacter["status"]["slowed"] = {
         "duration":duration,
         "magnitude":magnitude,
     }
-    print(f"{casterCharacter['name']} used slow of power {magnitude} on {targetCharacter['name']} for {duration} turns!")
+    print(f"{Fore.CYAN}{casterCharacter['name']}{Style.RESET_ALL} used {Fore.GREEN}Slow{Style.RESET_ALL} of power {magnitude} on {Fore.YELLOW}{targetCharacter['name']}{Style.RESET_ALL} for {duration} turns!")
 
 def focus(casterCharacter,targetCharacter, duration, magnitude):
     targetCharacter["status"]["focused"] = {
         "duration":duration,
         "magnitude":magnitude,
     }
-    print(f"{casterCharacter['name']} used inner focus of power {magnitude} on {targetCharacter['name']} for {duration} turns!")
+    print(f"{Fore.CYAN}{casterCharacter['name']}{Style.RESET_ALL} used {Fore.GREEN}Inner Focus{Style.RESET_ALL} of power {magnitude} on {Fore.YELLOW}{targetCharacter['name']}{Style.RESET_ALL} for {duration} turns!")
 
 def empower(casterCharacter,targetCharacter, duration, magnitude):
     targetCharacter["status"]['empowered'] = {
@@ -102,28 +102,28 @@ def empower(casterCharacter,targetCharacter, duration, magnitude):
         "magnitude":magnitude,
 
     }
-    print(f"{casterCharacter['name']} used empower of power {magnitude} on {targetCharacter['name']} for {duration} turns!")
+    print(f"{Fore.CYAN}{casterCharacter['name']}{Style.RESET_ALL} used {Fore.GREEN}Empower{Style.RESET_ALL} of power {magnitude} on {Fore.YELLOW}{targetCharacter['name']}{Style.RESET_ALL} for {duration} turns!")
 
 def guard(casterCharacter,targetCharacter, duration, magnitude):
     targetCharacter["status"]['sturdy'] = {
         "duration":duration,
         "magnitude":magnitude,
     }
-    print(f"{casterCharacter['name']} used guard of power {magnitude} on {targetCharacter['name']} for {duration} turns!")
+    print(f"{Fore.CYAN}{casterCharacter['name']}{Style.RESET_ALL} used {Fore.GREEN}Guard{Style.RESET_ALL} of power {magnitude} on {Fore.YELLOW}{targetCharacter['name']}{Style.RESET_ALL} for {duration} turns!")
 
 def disarm(casterCharacter,targetCharacter, duration, magnitude):
     targetCharacter["status"]['disarmed'] = {
         "duration":duration,
         "magnitude":magnitude,
     }
-    print(f"{casterCharacter['name']} used disarm of power {magnitude} on {targetCharacter['name']} for {duration} turns!")
+    print(f"{Fore.CYAN}{casterCharacter['name']}{Style.RESET_ALL} used {Fore.GREEN}Disarm{Style.RESET_ALL} of power {magnitude} on {Fore.YELLOW}{targetCharacter['name']}{Style.RESET_ALL} for {duration} turns!")
 
 def resist(casterCharacter,targetCharacter, duration, magnitude):
     targetCharacter["status"]['resistant'] = {
         "duration":duration,
         "magnitude":magnitude,
     }
-    print(f"{casterCharacter['name']} used resist of power {magnitude} on {targetCharacter['name']} for {duration} turns!")
+    print(f"{Fore.CYAN}{casterCharacter['name']}{Style.RESET_ALL} used {Fore.GREEN}Resist{Style.RESET_ALL} of power {magnitude} on {Fore.YELLOW}{targetCharacter['name']}{Style.RESET_ALL} for {duration} turns!")
 
 skills = {
     "poison":{

@@ -39,15 +39,15 @@ classes = {
         "status": {},
         "skills":{
             "guard": {
-                "duration":5,
+                "duration":4,
                 "magnitude":1,
-                "cooldown":5,
+                "cooldown":7,
                 "turnsTillReady":0,
             },
             "disarm": {
-                "duration":5,
+                "duration":4,
                 "magnitude":1,
-                "cooldown":3,
+                "cooldown":7,
                 "turnsTillReady":0,
             }
         },
@@ -105,13 +105,13 @@ classes = {
             "poison": {
                 "duration":5,
                 "magnitude":2,
-                "cooldown":5,
+                "cooldown":6,
                 "turnsTillReady":0,
             },
-            "inner focus": {
-                "duration":5,
-                "magnitude":1,
-                "cooldown":3,
+            "heighten senses": {
+                "duration":4,
+                "magnitude":2,
+                "cooldown":4,
                 "turnsTillReady":0,
             }
         },
@@ -172,7 +172,7 @@ classes = {
             "empower": {
                 "duration":5,
                 "magnitude":1,
-                "cooldown":3,
+                "cooldown":5,
                 "turnsTillReady":0,
             },
         },
@@ -228,14 +228,14 @@ classes = {
         "status": {},
         "skills":{
             "daze": {
-                "duration":5,
+                "duration":4,
                 "magnitude":4,
                 "cooldown":3,
                 "turnsTillReady":0,
             },
             "slow": {
-                "duration":5,
-                "magnitude":3,
+                "duration":6,
+                "magnitude":4,
                 "cooldown":5,
                 "turnsTillReady":0,
             }

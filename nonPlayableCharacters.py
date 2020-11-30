@@ -6,21 +6,33 @@ nonPlayableCharacters = {
             "max":25,
             "current":25
         },
-        "attack": [2,6],
-        "defence": 0,
+        "attack":{
+            "max":[2,6],
+            "modifier":0,
+            "current":[2,6],
+        } ,
+        "defence": {
+            "max":0,
+            "modifier":0,
+            "current":0,
+        },
         "speed": {
-            "current":7,
             "max":7,
+            "modifier":0,
+            "current":7,
         },
         "accuracy": {
+            "max":75,
+            "modifier":0,
             "current":75,
-            "max":75
         },
         "dodge": {
+            "max":9,
+            "modifier":0,
             "current":9,
-            "max":9
         },
-        "status": [],
+        "status": {},
+        "skills":{},
         "possible loot": {
             # Structured by loot and loot chance
             "small food ration":45,
@@ -44,21 +56,33 @@ nonPlayableCharacters = {
             "max":33,
             "current":33
         },
-        "attack": [1,4],
-        "defence": 0,
+        "attack":{
+            "max":[1,4],
+            "modifier":0,
+            "current":[1,4],
+        } ,
+        "defence": {
+            "max":0,
+            "modifier":0,
+            "current":0,
+        },
         "speed": {
-            "current":4,
             "max":4,
+            "modifier":0,
+            "current":4,
         },
         "accuracy": {
+            "max":65,
+            "modifier":0,
             "current":65,
-            "max":65
         },
         "dodge": {
+            "max":0,
+            "modifier":0,
             "current":0,
-            "max":0
         },
-        "status": [],
+        "status": {},
+        "skills":{},
         "possible loot": {
             "small torch fuel":50,
             "torch fuel":10,
@@ -77,21 +101,33 @@ nonPlayableCharacters = {
             "max":20,
             "current":20
         },
-        "attack": [4,7],
-        "defence": 0,
+        "attack":{
+            "max":[4,7],
+            "modifier":0,
+            "current":[4,7],
+        } ,
+        "defence": {
+            "max":0,
+            "modifier":0,
+            "current":0,
+        },
         "speed": {
-            "current":12,
             "max":12,
+            "current":12,
+            "modifier":0,
         },
         "accuracy": {
+            "max":85,
             "current":85,
-            "max":85
+            "modifier":0,
         },
         "dodge": {
+            "max":16,
             "current":16,
-            "max":16
+            "modifier":0,
         },
-        "status": [],
+        "status": {},
+        "skills":{},
         "possible loot": {
             # Structured by loot and loot chance
             "small food ration":85,
@@ -111,21 +147,34 @@ nonPlayableCharacters = {
             "max":40,
             "current":40
         },
-        "attack": [4,8],
-        "defence": 1,
+        "attack":{
+            "max":[4,8],
+            "modifier":0,
+            "current":[4,8],
+        } ,
+        "defence": {
+            "max":1,
+            "modifier":0,
+            "current":1,
+        },
         "speed": {
-            "current":10,
             "max":10,
+            "modifier":0,
+            "current":10,
         },
         "accuracy": {
+            "max":75,
+            "modifier":0,
             "current":75,
-            "max":75
+            
         },
         "dodge": {
-            "current":10,
-            "max":10
+            "max":10,
+            "modifier":0,
+            "current":10, 
         },
-        "status": [],
+        "status": {},
+        "skills":{},
         "possible loot": {
             "small food ration":95,
             "food ration":25,
@@ -149,21 +198,33 @@ nonPlayableCharacters = {
             "max":50,
             "current":50
         },
-        "attack": [5,10],
-        "defence": 2,
+        "attack":{
+            "max":[5,10],
+            "modifier":0,
+            "current":[5,10],
+        } ,
+        "defence": {
+            "max":2,
+            "modifier":0,
+            "current":2,
+        },
         "speed": {
-            "current":8,
             "max":8,
+            "modifier":0,
+            "current":8,
         },
         "accuracy": {
+            "max":75,
+            "modifier":0,
             "current":75,
-            "max":75
         },
         "dodge": {
+            "max":11,
+            "modifier":0,
             "current":11,
-            "max":11
         },
-        "status": [],
+        "status": {},
+        "skills":{},
         "possible loot": {
             "small torch fuel":50,
             "torch fuel":10,

@@ -62,10 +62,17 @@ mapLoot = {
             "sword":10,
             "halberd":5,
             "longsword":5,
-            "leather armor":55,
+            "leather armor":60,
             "chainmail":15,
             "scale armor":7,
-            "plate armor":3
+            "plate armor":3,
+            "bracelet of accuracy":10,
+            "ring of speed":10,
+            "focus shard":10,
+            "gloves of haste":5,
+            "cloak of darkness":5,
+            "obfuscating shroud":5,
+            "talisman of evasion":5
         }
     },
     "caverneer's stash": {

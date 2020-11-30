@@ -9,6 +9,7 @@ from classes import classes
 from maps import maps
 from nonPlayableCharacters import nonPlayableCharacters
 from items import weapon,armor,trinket,consumables,priceSheet
+from statusSkill import *
 
 
 # use this function to print map in human-readable format
@@ -65,6 +66,23 @@ def handleInventoryDescription(inputCharacter):
             message += f"Consumable: {Fore.YELLOW}{item}{Style.RESET_ALL} (restores {Fore.GREEN}{consumables[item]}{Style.RESET_ALL} when used)\n"
     print(message)
 
+#Copy inventory description for skilldescription
+def handleSkillDescription(inputCharacter):
+    print("\nSkills in your skillset:\n")
+    message = ""
+    for skillKey in inputCharacter['skills']:
+        message += f"{skillKey.capitalize()}: {skills[skillKey]['description']} Power: {inputCharacter['skills'][skillKey]['magnitude']}\n"
+        message += f"\tPower: {inputCharacter['skills'][skillKey]['magnitude']}\n"
+        message += f"\tDuration: {inputCharacter['skills'][skillKey]['duration']}\n"
+        message += f"\tCooldown: {inputCharacter['skills'][skillKey]['cooldown']}\n"
+        message += f"\tTurns till ready: {inputCharacter['skills'][skillKey]['turnsTillReady']}\n"
+    print(message)
+
+def handleSkill(castedSkill,casterCharacter,targetCharacter):
+    skills[castedSkill]['function'](casterCharacter,targetCharacter,casterCharacter['skills']['duration'],casterCharacter['skills']['magnitude'])
+    casterCharacter['skills'][castedSkill]["turnsTillReady"] = casterCharacter['skills'][castedSkill]['cooldown']
+    print(f"{casterCharacter['name']} casts {castedSkill} of power {casterCharacter['skills']['magnitude']} on {targetCharacter['name']} for {casterCharacter['skills']['duration']} turns!")
+
 # Handles using of inventory items
 def handleUse(inputCharacter, inputItem):
     # First removes the used item from the inventory
@@ -107,6 +125,30 @@ def handleUse(inputCharacter, inputItem):
     else:
         print("You can't use that item!")
         inputCharacter["inventory"].append(inputItem)
+
+def handleTurnStart(inputCharacter):
+    temporaryCombatStats = ['attack','defence','speed','accuracy','dodge']
+    for stat in temporaryCombatStats:
+        inputCharacter[stat]['current'] = max(0,inputCharacter[stat]['max'] + inputCharacter[stat]['modifier'])
+
+def handleTurnEnd(inputCharacter):
+    temporaryCombatStats = ['attack','defence','speed','accuracy','dodge']
+    for stat in temporaryCombatStats:
+        inputCharacter[stat]['modifier'] = 0
+        inputCharacter[stat]['current'] = inputCharacter[stat]['max']
+        for effect in inputCharacter['status']:
+            statusEffects[effect](inputCharacter,inputCharacter['status'][effect]['magnitude'])
+
+    for effect in inputCharacter['status']:
+        inputCharacter['status'][effect]['duration'] -= 1
+        if inputCharacter['status'][effect]['duration'] <= 0:
+            expiredStatus = inputCharacter['status'].pop(effect)
+            print(f"{inputCharacter} is no longer {expiredStatus}!")
+
+    for skill in inputCharacter['skills']:
+        if inputCharacter['skills'][skill]["turnsTillReady"] > 0:
+            inputCharacter['skills'][skill]["turnsTillReady"] -= 1
+        
 
 def handleMerchant(inputPlayer, startOfGame=False):
     shopInput = ""
@@ -156,7 +198,7 @@ def handleMerchant(inputPlayer, startOfGame=False):
                 else:
                     print(f"{Fore.RED}You need {priceSheet[shopInput][buyInput] - inputPlayer['gold']} more Gold to buy the {buyInput}!{Style.RESET_ALL}")
         else:
-            print(f"What would you like to sell?")
+            print(f"{Fore.CYAN}What would you like to sell?{Style.RESET_ALL}")
             sellControls = {"X": "Go Back"}
             print("_____________________________________________________________________________________")
             for idx,item in enumerate(list(inputPlayer['inventory']), start = 1):
@@ -236,14 +278,17 @@ def describeSurroundings(inputPlayerMap,x,y):
     else:
         print(f"You see an undocumented/unknown object '{westObject}' to your West.")
 
-    
+# Function to handle status effects ( TO DO )
+def handleStatus(inputCharacter):
+    return None
+    #for key,val in inputCharacter["status"]:
+
 
 #Future update may include handling encounters with neutral or friendly characters that you can interact with.
 def handleEncounter(inputCharacter, inputNPC):
     player = inputCharacter
     print(
         f"{Fore.YELLOW}{player['name']} has encountered a {inputNPC['intent']} {inputNPC['name']}!{Style.RESET_ALL}")
-
     if inputNPC['intent'] == "hostile":
         inCombat = True
         playerDefeat = False
@@ -259,16 +304,16 @@ def handleEncounter(inputCharacter, inputNPC):
             #Handle trinket stat modifier
             playerTrinket = player["equipments"]["trinket"]
             for stat in trinket[playerTrinket]:
-                player[stat]["current"] = player[stat]["max"] + trinket[playerTrinket][stat]
-                
+                player[stat]["modifier"] += trinket[playerTrinket][stat]
+            
             combatLog =  (
                 f"\n"
                 f"{player['name']}\'s health: {Fore.RED if player['health']['current'] < 15 else Fore.WHITE}{player['health']['current']}/{player['health']['max']}{Style.RESET_ALL}\n"
                 f"{enemy['name']}\'s health: {Fore.RED if enemy['health']['current'] < 10 else Fore.WHITE}{enemy['health']['current']}/{enemy['health']['max']}{Style.RESET_ALL}\n"
                 f"{player['name']}\'s chance to hit: {max(math.floor(((player['accuracy']['current'] - enemy['dodge']['current'])/player['accuracy']['current'])*100) + (player['speed']['current'] - enemy['speed']['current']),10)}%\n"
                 f"{player['name']}\'s chance to dodge: {100 - max(math.floor(((enemy['accuracy']['current'] - player['dodge']['current'])/enemy['accuracy']['current'])*100) + (enemy['speed']['current'] - player['speed']['current']),5)}%\n"
-                f"{player['name']}\'s damage: {player['attack'][0] + weapon[player['equipments']['weapon']][0]} - {player['attack'][1] + weapon[player['equipments']['weapon']][1]}\n"
-                f"{player['name']}\'s defence: {player['defence'] + armor[player['equipments']['armor']]}\n"
+                f"{player['name']}\'s damage: {player['attack']['current'][0] + weapon[player['equipments']['weapon']][0]} - {player['attack']['current'][1] + weapon[player['equipments']['weapon']][1]}\n"
+                f"{player['name']}\'s defence: {player['defence']['current'] + armor[player['equipments']['armor']]}\n"
 
             )
             print("______________________________________")
@@ -281,11 +326,12 @@ def handleEncounter(inputCharacter, inputNPC):
             combatControls = {
                 "A": "Attack",
                 "W": "Wait", 
+                "S": "Skill",
                 "D": "Describe",
                 "I": "Inventory",
                 "C": "Character",
                 "E": "Equipment",
-                "R": "Run",
+                "R": "Run"
             }
             # Player's turn
             
@@ -296,6 +342,8 @@ def handleEncounter(inputCharacter, inputNPC):
             else:
                 playerInput = "enemyInitiative"
 
+            #handle status effects here
+
             # Handle player inputs
             if playerInput == "attack":
                 # Maybe calculate dodge and accuracy, whether attack hits, here.
@@ -304,11 +352,11 @@ def handleEncounter(inputCharacter, inputNPC):
                 print(f"\n({chanceToHit}%) You attempt to strike...")
                 if randint(0,100) < chanceToHit:
                     # Calculates lower and upper bound of damage based on base attack + main weapon dmg 
-                    lowerBoundDamage = player['attack'][0] + weapon[player["equipments"]["weapon"]][0] # + math.floor(weapon[player["equipments"]["offHand"]][0]/2)
-                    upperBoundDamage = player['attack'][1] + weapon[player["equipments"]["weapon"]][1] # + math.floor(weapon[player["equipments"]["offHand"]][1]/2)
+                    lowerBoundDamage = player['attack']['current'][0] + weapon[player["equipments"]["weapon"]][0] # + math.floor(weapon[player["equipments"]["offHand"]][0]/2)
+                    upperBoundDamage = player['attack']['current'][1] + weapon[player["equipments"]["weapon"]][1] # + math.floor(weapon[player["equipments"]["offHand"]][1]/2)
 
                     # max is to prevent negative damage from being dealt
-                    damage = max(randint(lowerBoundDamage,upperBoundDamage) - (enemy['defence']),0)
+                    damage = max(randint(lowerBoundDamage,upperBoundDamage) - (enemy['defence']['current']),0)
                     enemy['health']['current'] -= damage
                     print(f"{Fore.CYAN}You hit the {enemy['name']} for {damage} damage!{Style.RESET_ALL}")
                 
@@ -318,7 +366,7 @@ def handleEncounter(inputCharacter, inputNPC):
 
             # This is a dumb move now, but maybe can be made useful in the future
             if playerInput == "wait":
-                print("You bide your time...")
+                print("You skipped your turn...")
 
             if playerInput == "run":
                 # minimum chance to run away is 10%
@@ -361,6 +409,29 @@ def handleEncounter(inputCharacter, inputNPC):
                     consumeTurn = True
                     handleUse(player, inventoryInput)
 
+            if playerInput == "skill":
+                consumeTurn = False
+                skillInput = ""
+                #while skillInput != "go back":
+                #To implement skill description
+                handleSkillDescription(player)
+                skillControls = {'X':"Go Back"}
+                for idx,skill in enumerate(player['skills'], start = 1):
+                    skillControls[str(idx)] = skill
+                print("Select skill to use:")
+                skillInput = playerAction(skillControls)
+                if skillInput != "go back":
+                    if player['skills'][skillInput]["turnsTillReady"] > 0:
+                        print (f"Skill is not ready! {player['skills'][skillInput]['turnsTillReady']} more turns needed!")
+                    else:
+                        targetControls = {'1':player['name'],'2':enemy['name'],'X':"Go back"}
+                        targetInput = playerAction(targetControls)
+                        if targetInput != "go back":
+                            #Consumes a turn in combat if player decides to use a skill
+                            consumeTurn = True
+                            target = enemy if targetInput == enemy['name'] else player
+                            handleSkill(skillInput,player,target)
+
             if playerInput == "equipment":
                 consumeTurn = False
                 for slot in player['equipments']:
@@ -400,6 +471,8 @@ def handleEncounter(inputCharacter, inputNPC):
                 print(f"{Fore.YELLOW}The enemy {enemy['name']} acted first!{Style.RESET_ALL}")
 
             if consumeTurn:
+                # Handle end of turn effect for player, decrement duration and remove statuses, restore stat to max, cooldown,check death etc.
+
                 # Enemy's turn
                 enemyInput = enemyAction(enemy)
                 enemyInitiative = False
@@ -409,13 +482,18 @@ def handleEncounter(inputCharacter, inputNPC):
                     chanceToHit = max(math.floor(((enemy['accuracy']['current'] - player['dodge']['current'])/enemy['accuracy']['current'])*100) + (enemy['speed']['current'] - player['speed']['current']),5)
                     print(f"({chanceToHit}%) The {enemy['name']} attempts to attack you...")
                     if randint(0,100) < chanceToHit:
-                        lowerBoundDamage = enemy['attack'][0]
-                        upperBoundDamage = enemy['attack'][1]
-                        damage = max(randint(lowerBoundDamage,upperBoundDamage) - (player['defence'] + armor[player["equipments"]["armor"]]),0)
+                        lowerBoundDamage = enemy['attack']['current'][0]
+                        upperBoundDamage = enemy['attack']['current'][1]
+                        damage = max(randint(lowerBoundDamage,upperBoundDamage) - (player['defence']['current'] + armor[player["equipments"]["armor"]]),0)
                         player['health']['current'] -= damage
                         print(f"{Fore.YELLOW if damage > 0 else Fore.CYAN}The {enemy['name']} hits you for {damage} damage!{Style.RESET_ALL}")
                     else:
                         print(f"{Fore.GREEN}You dodged the {enemy['name']}'s attack!{Style.RESET_ALL}")
+
+                elif enemyInput == "wait":
+                    print("The enemy skipped their turn!")
+
+                # Handle end of turn effect for enemy
             
             # Handle combat-ending event
             if player['health']['current'] <= 0:

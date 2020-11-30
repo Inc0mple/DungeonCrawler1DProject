@@ -6,26 +6,63 @@ classes = {
             "max":50,
             "current":50
         },
-        "attack": [4,6],
-        "defence": 1,
+        "attack": {
+            "max":[4,6],
+            "modifier":0,
+            "current":[4,6]
+        },
+        "defence": {
+            "max":1,
+            "modifier":0,
+            "current":1
+        },
         "speed": {
-            "current":7,
-            "max":7
+            "max":7,
+            "modifier":0,
+            "current":7
         },
         "accuracy": {
-            "current":85,
-            "max":85
+            "max":85,
+            "modifier":0,
+            "current":85
         },
         "dodge": {
-            "current":10,
-            "max":10
+            "max":10,
+            "modifier":0,
+            "current":10
         },
         "equipments": {
             "armor":"empty",
             "weapon":"empty",
             "trinket":"empty"
         },
-        "status": [],
+        "status": {},
+        "skills":{
+            "empower": {
+                "duration":5,
+                "magnitude":1,
+                "cooldown":3,
+                "turnsTillReady":0,
+            },
+            "poison": {
+                "duration":5,
+                "magnitude":2,
+                "cooldown":3,
+                "turnsTillReady":0,
+            },
+            "resist": {
+                "duration":5,
+                "magnitude":1,
+                "cooldown":3,
+                "turnsTillReady":0,
+            },
+            "disarm": {
+                "duration":5,
+                "magnitude":1,
+                "cooldown":3,
+                "turnsTillReady":0,
+            }
+        },
         "inventory": [],
         "gold": 175,
         "torch":{
@@ -42,29 +79,66 @@ classes = {
         "name": "PlaceholderName",
         "class":"ranger",
         "health": {
-            "max":35,
-            "current":35
+            "max":40,
+            "current":40
         },
-        "attack": [3,6],
-        "defence": 0,
+        "attack": {
+            "max":[3,6],
+            "modifier":0,
+            "current":[3,6]
+        },
+        "defence": {
+            "max":0,
+            "modifier":0,
+            "current":0
+        },
         "speed": {
-            "current":11,
-            "max":11
+            "max":11,
+            "modifier":0,
+            "current":11
         },
         "accuracy": {
-            "current":90,
-            "max":90
+            "max":90,
+            "modifier":0,
+            "current":90
         },
         "dodge": {
-            "current":20,
-            "max":20
+            "max":20,
+            "modifier":0,
+            "current":20
         },
         "equipments": {
             "armor":"empty",
             "weapon":"empty",
             "trinket":"empty"
         },
-        "status": [],
+        "status": {},
+        "skills":{
+            "empower": {
+                "duration":5,
+                "magnitude":1,
+                "cooldown":3,
+                "turnsTillReady":0,
+            },
+            "poison": {
+                "duration":5,
+                "magnitude":2,
+                "cooldown":3,
+                "turnsTillReady":0,
+            },
+            "resist": {
+                "duration":5,
+                "magnitude":1,
+                "cooldown":3,
+                "turnsTillReady":0,
+            },
+            "disarm": {
+                "duration":5,
+                "magnitude":1,
+                "cooldown":3,
+                "turnsTillReady":0,
+            }
+        },
         "inventory": [],
         "gold": 175,
         "torch":{
@@ -84,26 +158,66 @@ classes = {
             "max":45,
             "current":45
         },
-        "attack": [3,9],
-        "defence": 0,
+        "attack": {
+            "max":[3,9],
+            "modifier":0,
+            "current":[3,9]
+        },
+        "defence": {
+            "max":0,
+            "modifier":0,
+            "current":0
+        },
         "speed": {
-            "current":7,
-            "max":7
+            "max":7,
+            "modifier":0,
+            "current":7
+            
         },
         "accuracy": {
-            "current":80,
-            "max":80
+            "max":80,
+            "modifier":0,
+            "current":80
+            
         },
         "dodge": {
-            "current":10,
-            "max":10
+            "max":10,
+            "modifier":0,
+            "current":10
+            
         },
         "equipments": {
             "armor":"empty",
             "weapon":"empty",
             "trinket":"empty"
         },
-        "status": [],
+        "status": {},
+        "skills":{
+            "empower": {
+                "duration":5,
+                "magnitude":1,
+                "cooldown":3,
+                "turnsTillReady":0,
+            },
+            "poison": {
+                "duration":5,
+                "magnitude":2,
+                "cooldown":3,
+                "turnsTillReady":0,
+            },
+            "resist": {
+                "duration":5,
+                "magnitude":1,
+                "cooldown":3,
+                "turnsTillReady":0,
+            },
+            "disarm": {
+                "duration":5,
+                "magnitude":1,
+                "cooldown":3,
+                "turnsTillReady":0,
+            }
+        },
         "inventory": [],
         "gold": 175,
         "torch":{
@@ -123,26 +237,63 @@ classes = {
             "max":55,
             "current":55
         },
-        "attack": [3,5],
-        "defence": 1,
+        "attack": {
+            "max":[3,5],
+            "modifier":0,
+            "current":[3,5]
+        },
+        "defence": {
+            "max":1,
+            "modifier":0,
+            "current":1
+        } ,
         "speed": {
-            "current":10,
-            "max":10
+            "max":10,
+            "modifier":0,
+            "current":10
         },
         "accuracy": {
-            "current":80,
-            "max":80
+            "max":80,
+            "modifier":0,
+            "current":80
         },
         "dodge": {
-            "current":13,
-            "max":13
+            "max":13,
+            "modifier":0,
+            "current":13
         },
         "equipments": {
             "armor":"empty",
             "weapon":"empty",
             "trinket":"empty"
         },
-        "status": [],
+        "status": {},
+        "skills":{
+            "empower": {
+                "duration":5,
+                "magnitude":1,
+                "cooldown":3,
+                "turnsTillReady":0,
+            },
+            "poison": {
+                "duration":5,
+                "magnitude":2,
+                "cooldown":3,
+                "turnsTillReady":0,
+            },
+            "resist": {
+                "duration":5,
+                "magnitude":1,
+                "cooldown":3,
+                "turnsTillReady":0,
+            },
+            "disarm": {
+                "duration":5,
+                "magnitude":1,
+                "cooldown":3,
+                "turnsTillReady":0,
+            }
+        },
         "inventory": [],
         "gold": 175,
         "torch":{

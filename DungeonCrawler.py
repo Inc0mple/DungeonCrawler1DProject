@@ -2,7 +2,7 @@ import math
 from colorama import Fore, Style, Back
 from random import randint
 from random import choice
-from copy import deepcopy
+from copy import deepcopy, copy
 from time import sleep
 from mapLoot import mapLoot
 from classes import classes
@@ -10,6 +10,7 @@ from maps import maps
 from nonPlayableCharacters import nonPlayableCharacters
 from items import weapon,armor,trinket,consumables,priceSheet
 from statusSkill import *
+
 
 
 # use this function to print map in human-readable format
@@ -71,7 +72,7 @@ def handleSkillDescription(inputCharacter):
     print("\nSkills in your skillset:\n")
     message = ""
     for skillKey in inputCharacter['skills']:
-        message += f"{skillKey.capitalize()}: {skills[skillKey]['description']} Power: {inputCharacter['skills'][skillKey]['magnitude']}\n"
+        message += f"{skillKey.capitalize()}: {skills[skillKey]['description']}\n"
         message += f"\tPower: {inputCharacter['skills'][skillKey]['magnitude']}\n"
         message += f"\tDuration: {inputCharacter['skills'][skillKey]['duration']}\n"
         message += f"\tCooldown: {inputCharacter['skills'][skillKey]['cooldown']}\n"
@@ -79,9 +80,10 @@ def handleSkillDescription(inputCharacter):
     print(message)
 
 def handleSkill(castedSkill,casterCharacter,targetCharacter):
-    skills[castedSkill]['function'](casterCharacter,targetCharacter,casterCharacter['skills']['duration'],casterCharacter['skills']['magnitude'])
+    print(targetCharacter['name'])
+    skills[castedSkill]['function'](casterCharacter,targetCharacter,casterCharacter['skills'][castedSkill]['duration'],casterCharacter['skills'][castedSkill]['magnitude'])
     casterCharacter['skills'][castedSkill]["turnsTillReady"] = casterCharacter['skills'][castedSkill]['cooldown']
-    print(f"{casterCharacter['name']} casts {castedSkill} of power {casterCharacter['skills']['magnitude']} on {targetCharacter['name']} for {casterCharacter['skills']['duration']} turns!")
+    #print(f"{casterCharacter['name']} casts {castedSkill} of power {casterCharacter['skills'][castedSkill]['magnitude']} on {targetCharacter['name']} for {casterCharacter['skills'][castedSkill]['duration']} turns!")
 
 # Handles using of inventory items
 def handleUse(inputCharacter, inputItem):
@@ -127,28 +129,40 @@ def handleUse(inputCharacter, inputItem):
         inputCharacter["inventory"].append(inputItem)
 
 def handleTurnStart(inputCharacter):
-    temporaryCombatStats = ['attack','defence','speed','accuracy','dodge']
+    #handle attack modifier calculations
+    inputCharacter['attack']['current'][0] = max(0,inputCharacter['attack']['max'][0] + inputCharacter['attack']['modifier'])
+    inputCharacter['attack']['current'][1] = max(0,inputCharacter['attack']['max'][1] + inputCharacter['attack']['modifier'])
+    temporaryCombatStats = ['defence','speed','accuracy','dodge']
     for stat in temporaryCombatStats:
         inputCharacter[stat]['current'] = max(0,inputCharacter[stat]['max'] + inputCharacter[stat]['modifier'])
 
 def handleTurnEnd(inputCharacter):
-    temporaryCombatStats = ['attack','defence','speed','accuracy','dodge']
+    #handle attack modifier calculations
+    inputCharacter['attack']['modifier'] = 0
+    inputCharacter['attack']['current'] = copy(inputCharacter['attack']['max'])
+
+    temporaryCombatStats = ['defence','speed','accuracy','dodge']
     for stat in temporaryCombatStats:
         inputCharacter[stat]['modifier'] = 0
-        inputCharacter[stat]['current'] = inputCharacter[stat]['max']
-        for effect in inputCharacter['status']:
-            statusEffects[effect](inputCharacter,inputCharacter['status'][effect]['magnitude'])
+        inputCharacter[stat]['current'] = copy(inputCharacter[stat]['max'])
+        
+    expiredStatusList = []
+    
+    for key,val in inputCharacter['status'].items():
+        #print(key,val)
+        statusEffects[key](inputCharacter,inputCharacter['status'][key]['magnitude'])
+        inputCharacter['status'][key]['duration'] -= 1
+        if inputCharacter['status'][key]['duration'] <= 0:
+            expiredStatusList.append((key,val))
 
-    for effect in inputCharacter['status']:
-        inputCharacter['status'][effect]['duration'] -= 1
-        if inputCharacter['status'][effect]['duration'] <= 0:
-            expiredStatus = inputCharacter['status'].pop(effect)
-            print(f"{inputCharacter} is no longer {expiredStatus}!")
+    for expiredStatusTuple in expiredStatusList:
+        expiredEffectName = expiredStatusTuple[0]
+        inputCharacter['status'].pop(expiredEffectName)
+        print(f"{inputCharacter['name']} is no longer {expiredEffectName}!")
 
     for skill in inputCharacter['skills']:
         if inputCharacter['skills'][skill]["turnsTillReady"] > 0:
             inputCharacter['skills'][skill]["turnsTillReady"] -= 1
-        
 
 def handleMerchant(inputPlayer, startOfGame=False):
     shopInput = ""
@@ -306,6 +320,9 @@ def handleEncounter(inputCharacter, inputNPC):
             for stat in trinket[playerTrinket]:
                 player[stat]["modifier"] += trinket[playerTrinket][stat]
             
+            handleTurnStart(player)
+            handleTurnStart(enemy)
+
             combatLog =  (
                 f"\n"
                 f"{player['name']}\'s health: {Fore.RED if player['health']['current'] < 15 else Fore.WHITE}{player['health']['current']}/{player['health']['max']}{Style.RESET_ALL}\n"
@@ -418,18 +435,20 @@ def handleEncounter(inputCharacter, inputNPC):
                 skillControls = {'X':"Go Back"}
                 for idx,skill in enumerate(player['skills'], start = 1):
                     skillControls[str(idx)] = skill
-                print("Select skill to use:")
+                print("Select skill to use: \n")
                 skillInput = playerAction(skillControls)
                 if skillInput != "go back":
                     if player['skills'][skillInput]["turnsTillReady"] > 0:
                         print (f"Skill is not ready! {player['skills'][skillInput]['turnsTillReady']} more turns needed!")
                     else:
                         targetControls = {'1':player['name'],'2':enemy['name'],'X':"Go back"}
+                        print('Select your target: \n')
                         targetInput = playerAction(targetControls)
                         if targetInput != "go back":
                             #Consumes a turn in combat if player decides to use a skill
                             consumeTurn = True
-                            target = enemy if targetInput == enemy['name'] else player
+                            print(targetInput,enemy['name'])
+                            target = enemy if targetInput.lower() == enemy['name'].lower() else player
                             handleSkill(skillInput,player,target)
 
             if playerInput == "equipment":
@@ -471,8 +490,7 @@ def handleEncounter(inputCharacter, inputNPC):
                 print(f"{Fore.YELLOW}The enemy {enemy['name']} acted first!{Style.RESET_ALL}")
 
             if consumeTurn:
-                # Handle end of turn effect for player, decrement duration and remove statuses, restore stat to max, cooldown,check death etc.
-
+                
                 # Enemy's turn
                 enemyInput = enemyAction(enemy)
                 enemyInitiative = False
@@ -494,7 +512,22 @@ def handleEncounter(inputCharacter, inputNPC):
                     print("The enemy skipped their turn!")
 
                 # Handle end of turn effect for enemy
-            
+                handleTurnEnd(enemy)
+                # Handle killing of enemy
+                if enemy['health']['current'] <= 0:
+                    inCombat = False
+                    print("______________________________________")
+                    print(f"{Fore.GREEN}You slew the {enemy['name']}!{Style.RESET_ALL}")
+                    for loot in enemy['possible loot']:
+                        if randint(0,100) < enemy['possible loot'][loot]:
+                            player['inventory'].append(loot)
+                            print(f"{Fore.CYAN}You take the {loot} from the dead {enemy['name']}.{Style.RESET_ALL}")
+                    goldReceived = randint(enemy['gold'][0],enemy['gold'][1]) 
+                    player['gold'] += goldReceived
+                    print(f"{Fore.WHITE}You received {goldReceived} gold from the dead {enemy['name']}.{Style.RESET_ALL}")
+                    break
+                # Handle end of turn effect for player, decrement duration and remove statuses, restore stat to max, cooldown,check death etc.
+                handleTurnEnd(player)
             # Handle combat-ending event
             if player['health']['current'] <= 0:
                 inCombat = False

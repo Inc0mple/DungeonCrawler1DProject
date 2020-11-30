@@ -647,11 +647,12 @@ def main():
     else:
         print("Great! lets go!")
     """ 
-    
-    print("_____________________________________________________________________________________")
-    playerName = input('''
-    Please enter a name for your character: 
-    ''')
+    playerName = False
+    while not playerName or len(playerName) > 20 or len(playerName) < 3:
+        print("_____________________________________________________________________________________")
+        playerName = input('''
+        Please enter a valid name for your character (between 3 and 20 characters): 
+        ''')
     sleep(1)
     print("""
     That's a fine name!

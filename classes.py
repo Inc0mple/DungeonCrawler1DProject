@@ -52,7 +52,7 @@ classes = {
             }
         },
         "inventory": [],
-        "gold": 500,
+        "gold": 175,
         "torch":{
             "max":20,
             "current":15

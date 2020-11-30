@@ -51,14 +51,14 @@ statusEffects = {
 }
 
 '''
- poisoned: - x health every turn
- dazed: decrease accuracy
- slowed: decrease speed,dodge
- focused: increased accuracy, dodge
- empowered: add attack
- sturdy: add defence
- disarmed: decrease attack for x turns
- resistant: decreased -ve status effect by x turns
+ poisoned: - x health every turn -ranger
+ dazed: decrease accuracy -survivalist
+ slowed: decrease speed,dodge -survivalist
+ focused: increased accuracy, dodge -ranger
+ empowered: add attack -berserker
+ sturdy: add defence -warrior
+ disarmed: decrease attack for x turns -warrior
+ resistant: decreased -ve status effect by x turns -surval
  stunned (if possible to implement): skip turn
 
 '''

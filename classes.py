@@ -38,22 +38,10 @@ classes = {
         },
         "status": {},
         "skills":{
-            "empower": {
+            "guard": {
                 "duration":5,
                 "magnitude":1,
-                "cooldown":3,
-                "turnsTillReady":0,
-            },
-            "poison": {
-                "duration":5,
-                "magnitude":2,
-                "cooldown":3,
-                "turnsTillReady":0,
-            },
-            "resist": {
-                "duration":5,
-                "magnitude":1,
-                "cooldown":3,
+                "cooldown":5,
                 "turnsTillReady":0,
             },
             "disarm": {
@@ -114,25 +102,13 @@ classes = {
         },
         "status": {},
         "skills":{
-            "empower": {
-                "duration":5,
-                "magnitude":1,
-                "cooldown":3,
-                "turnsTillReady":0,
-            },
             "poison": {
                 "duration":5,
                 "magnitude":2,
-                "cooldown":3,
+                "cooldown":5,
                 "turnsTillReady":0,
             },
-            "resist": {
-                "duration":5,
-                "magnitude":1,
-                "cooldown":3,
-                "turnsTillReady":0,
-            },
-            "disarm": {
+            "inner focus": {
                 "duration":5,
                 "magnitude":1,
                 "cooldown":3,
@@ -199,24 +175,6 @@ classes = {
                 "cooldown":3,
                 "turnsTillReady":0,
             },
-            "poison": {
-                "duration":5,
-                "magnitude":2,
-                "cooldown":3,
-                "turnsTillReady":0,
-            },
-            "resist": {
-                "duration":5,
-                "magnitude":1,
-                "cooldown":3,
-                "turnsTillReady":0,
-            },
-            "disarm": {
-                "duration":5,
-                "magnitude":1,
-                "cooldown":3,
-                "turnsTillReady":0,
-            }
         },
         "inventory": [],
         "gold": 175,
@@ -269,28 +227,16 @@ classes = {
         },
         "status": {},
         "skills":{
-            "empower": {
+            "daze": {
                 "duration":5,
-                "magnitude":1,
+                "magnitude":4,
                 "cooldown":3,
                 "turnsTillReady":0,
             },
-            "poison": {
+            "slow": {
                 "duration":5,
-                "magnitude":2,
-                "cooldown":3,
-                "turnsTillReady":0,
-            },
-            "resist": {
-                "duration":5,
-                "magnitude":1,
-                "cooldown":3,
-                "turnsTillReady":0,
-            },
-            "disarm": {
-                "duration":5,
-                "magnitude":1,
-                "cooldown":3,
+                "magnitude":3,
+                "cooldown":5,
                 "turnsTillReady":0,
             }
         },

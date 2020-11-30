@@ -20,7 +20,8 @@ def focused(targetCharacter,magnitude):
     print(f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} is {Fore.GREEN}Focused{Style.RESET_ALL}! Accuracy increased by {magnitude * 5}  and dodge increased by {magnitude * 5}! ({targetCharacter['status']['focused']['duration']} turns left)")
 
 def empowered(targetCharacter,magnitude):
-    targetCharacter["attack"]["modifier"] += magnitude
+    targetCharacter["attack"]["modifier"][0] += magnitude
+    targetCharacter["attack"]["modifier"][1] += magnitude
     print(f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} is {Fore.GREEN}Empowered{Style.RESET_ALL}! Attack increased by ({magnitude},{magnitude})! ({targetCharacter['status']['empowered']['duration']} turns left)")
 
 def sturdy(targetCharacter,magnitude):
@@ -28,7 +29,8 @@ def sturdy(targetCharacter,magnitude):
     print(f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} is {Fore.GREEN}Sturdy{Style.RESET_ALL}! Defence increased by {magnitude}! ({targetCharacter['status']['sturdy']['duration']} turns left)")
 
 def disarmed(targetCharacter,magnitude):
-    targetCharacter["attack"]["modifier"] -= magnitude
+    targetCharacter["attack"]["modifier"][0] -= magnitude
+    targetCharacter["attack"]["modifier"][1] -= magnitude
     print(f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} is {Fore.YELLOW}Disarmed{Style.RESET_ALL}! Attack decreased by ({magnitude},{magnitude})! ({targetCharacter['status']['disarmed']['duration']} turns left)")
 
 def resistant(targetCharacter,magnitude):

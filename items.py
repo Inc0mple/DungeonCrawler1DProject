@@ -128,12 +128,12 @@ priceSheet = {
         "large health potion":125
     },
     "trinket": {
-        "bracelet of accuracy":65,
+        "bracelet of accuracy":55,
         "ring of speed":95,
         "focus shard":85,
-        "gloves of haste":120,
+        "gloves of haste":100,
         "cloak of darkness":120,
-        "obfuscating shroud":175,
+        "obfuscating shroud":185,
         "talisman of evasion":125,
     }
 

@@ -108,21 +108,21 @@ def handleUse(inputCharacter, inputItem):
             inputCharacter["inventory"].append(inputCharacter["equipments"]["weapon"])
             print(f"You remove your {Fore.CYAN}{inputCharacter['equipments']['weapon']}{Style.RESET_ALL} and put it in your inventory.")
         inputCharacter["equipments"]["weapon"] = inputItem
-        print(f"You equipped your {Fore.CYAN}{inputItem}{Style.RESET_ALL} in your {Fore.YELLOW}Weapon{Style.RESET_ALL} slot ( + {Fore.GREEN}{weapon[inputItem][0]}-{weapon[inputItem][1]}{Style.RESET_ALL} attack ).")
+        print(f"You equipped your {Fore.CYAN}{inputItem.capitalize()}{Style.RESET_ALL} in your {Fore.YELLOW}Weapon{Style.RESET_ALL} slot ( + {Fore.GREEN}{weapon[inputItem][0]}-{weapon[inputItem][1]}{Style.RESET_ALL} attack ).")
 
     elif inputItem in armor:
         if inputCharacter["equipments"]["armor"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["armor"])
             print(f"You remove your {Fore.CYAN}{inputCharacter['equipments']['armor']}{Style.RESET_ALL} and put it in your inventory.")
         inputCharacter["equipments"]["armor"] = inputItem
-        print(f"You equipped your {Fore.CYAN}{inputItem}{Style.RESET_ALL} in your {Fore.YELLOW}Armor{Style.RESET_ALL} slot ( + {Fore.GREEN}{armor[inputItem]}{Style.RESET_ALL} defence ).")
+        print(f"You equipped your {Fore.CYAN}{inputItem.capitalize()}{Style.RESET_ALL} in your {Fore.YELLOW}Armor{Style.RESET_ALL} slot ( + {Fore.GREEN}{armor[inputItem]}{Style.RESET_ALL} defence ).")
 
     elif inputItem in trinket:
         if inputCharacter["equipments"]["trinket"] != "empty":
             inputCharacter["inventory"].append(inputCharacter["equipments"]["trinket"])
             print(f"You remove your {Fore.CYAN}{inputCharacter['equipments']['trinket']}{Style.RESET_ALL} and put it in your inventory.")
         inputCharacter["equipments"]["trinket"] = inputItem
-        print(f"You equipped your {Fore.CYAN}{inputItem}{Style.RESET_ALL} in your {Fore.YELLOW}Trinket{Style.RESET_ALL} slot  ( + {Fore.GREEN}{trinket[inputItem]}{Style.RESET_ALL} defence )")
+        print(f"You equipped your {Fore.CYAN}{inputItem.capitalize()}{Style.RESET_ALL} in your {Fore.YELLOW}Trinket{Style.RESET_ALL} slot  ({Fore.GREEN}{trinket[inputItem]}{Style.RESET_ALL} stat modifier)")
     
     else:
         print("You can't use that item!")
@@ -130,15 +130,15 @@ def handleUse(inputCharacter, inputItem):
 
 def handleTurnStart(inputCharacter):
     #handle attack modifier calculations
-    inputCharacter['attack']['current'][0] = max(0,inputCharacter['attack']['max'][0] + inputCharacter['attack']['modifier'])
-    inputCharacter['attack']['current'][1] = max(0,inputCharacter['attack']['max'][1] + inputCharacter['attack']['modifier'])
+    inputCharacter['attack']['current'][0] = max(0,inputCharacter['attack']['max'][0] + inputCharacter['attack']['modifier'][0])
+    inputCharacter['attack']['current'][1] = max(0,inputCharacter['attack']['max'][1] + inputCharacter['attack']['modifier'][1])
     temporaryCombatStats = ['defence','speed','accuracy','dodge']
     for stat in temporaryCombatStats:
         inputCharacter[stat]['current'] = max(0,inputCharacter[stat]['max'] + inputCharacter[stat]['modifier'])
 
 def handleTurnEnd(inputCharacter):
-    #handle attack modifier calculations
-    inputCharacter['attack']['modifier'] = 0
+    #reset attack modifier calculations
+    inputCharacter['attack']['modifier'] = [0,0]
     inputCharacter['attack']['current'] = copy(inputCharacter['attack']['max'])
 
 
@@ -179,9 +179,9 @@ def handleMerchant(inputPlayer, startOfGame=False):
         print(f"{Fore.CYAN}Merchant: Hi there! Which category would you like to browse?{Style.RESET_ALL}")
     while shopInput != "leave":
         if startOfGame:
-            shopControls = {"1":"Weapon","2":"Armor","3":"Consumables","4":"Trinket","5":"Sell","B":"Buy recommended consumables","X":"Leave"}
+            shopControls = {"1":"Weapon","2":"Armor","3":"Trinket","4":"Consumables","5":"Sell","B":"Buy recommended consumables","X":"Leave"}
         else:
-            shopControls = {"1":"Weapon","2":"Armor","3":"Consumables","4":"Trinket","5":"Sell","X":"Leave"}
+            shopControls = {"1":"Weapon","2":"Armor","3":"Trinket","4":"Consumables","5":"Sell","X":"Leave"}
         print(f"Gold: {inputPlayer['gold']}")
         shopInput = playerAction(shopControls)
         if shopInput == "leave":
@@ -193,7 +193,7 @@ def handleMerchant(inputPlayer, startOfGame=False):
             recommendedStarter = ["small health potion","small torch fuel","small food ration"]
             for item in recommendedStarter:
                 if inputPlayer['gold'] >= priceSheet['consumables'][item]:
-                    print(f"You bought {item} for {priceSheet['consumables'][item]} Gold!")
+                    print(f"You bought {Fore.CYAN}{item}{Style.RESET_ALL} for {Fore.YELLOW}{priceSheet['consumables'][item]}{Style.RESET_ALL} Gold!")
                     inputPlayer['gold'] -= priceSheet['consumables'][item]
                     inputPlayer['inventory'].append(item)
                 else:
@@ -212,7 +212,7 @@ def handleMerchant(inputPlayer, startOfGame=False):
             buyInput = playerAction(buyControls)
             if buyInput != "go back":
                 if inputPlayer['gold'] >= priceSheet[shopInput][buyInput]:
-                    print(f"You bought {buyInput} for {priceSheet[shopInput][buyInput]} Gold!")
+                    print(f"You bought {Fore.CYAN}{buyInput}{Style.RESET_ALL} for {Fore.YELLOW}{priceSheet[shopInput][buyInput]}{Style.RESET_ALL} Gold!")
                     inputPlayer['gold'] -= priceSheet[shopInput][buyInput]
                     inputPlayer['inventory'].append(buyInput)
                 else:
@@ -298,10 +298,6 @@ def describeSurroundings(inputPlayerMap,x,y):
     else:
         print(f"You see an undocumented/unknown object '{westObject}' to your West.")
 
-# Function to handle status effects ( TO DO )
-def handleStatus(inputCharacter):
-    return None
-    #for key,val in inputCharacter["status"]:
 
 
 #Future update may include handling encounters with neutral or friendly characters that you can interact with.
@@ -324,25 +320,34 @@ def handleEncounter(inputCharacter, inputNPC):
         for skill in player['skills']:
             player['skills'][skill]['turnsTillReady'] = 0
         consumeTurn = True
+        # Reset modifier by items
+        handleTurnEnd(player)
         while inCombat:
-            #Handle trinket stat modifier
+            #Handle stat modifier
             if consumeTurn:
+                #Trinket modifier:
                 playerTrinket = player["equipments"]["trinket"]
                 for stat in trinket[playerTrinket]:
                     player[stat]["modifier"] += trinket[playerTrinket][stat]
-                
+                #Armor modifier:
+                playerArmor = player["equipments"]["armor"]
+                player['defence']["modifier"] = armor[playerArmor]
+                #Weapon modifier:
+                playerWeapon = player["equipments"]["weapon"]
+                player['attack']["modifier"][0] = weapon[playerWeapon][0]
+                player['attack']["modifier"][1] = weapon[playerWeapon][1]
+
                 handleTurnStart(player)
                 handleTurnStart(enemy)
             message = ""
-            
             combatLog =  (
                 f"\n"
                 f"{player['name']}\'s health: {Fore.RED if player['health']['current'] < 15 else Fore.WHITE}{player['health']['current']}/{player['health']['max']}{Style.RESET_ALL}\n"
                 f"{enemy['name']}\'s health: {Fore.RED if enemy['health']['current'] < 10 else Fore.WHITE}{enemy['health']['current']}/{enemy['health']['max']}{Style.RESET_ALL}\n"
-                f"{player['name']}\'s chance to hit: {max(math.floor(((player['accuracy']['current'] - enemy['dodge']['current'])/player['accuracy']['current'])*100) + (player['speed']['current'] - enemy['speed']['current']),10)}%\n"
+                f"{player['name']}\'s chance to hit: {max(math.floor(((player['accuracy']['current'] - enemy['dodge']['current'])/player['accuracy']['current'])*100) + (player['speed']['current'] - enemy['speed']['current']),5)}%\n"
                 f"{player['name']}\'s chance to dodge: {100 - max(math.floor(((enemy['accuracy']['current'] - player['dodge']['current'])/enemy['accuracy']['current'])*100) + (enemy['speed']['current'] - player['speed']['current']),5)}%\n"
-                f"{player['name']}\'s damage: {player['attack']['current'][0] + weapon[player['equipments']['weapon']][0]} - {player['attack']['current'][1] + weapon[player['equipments']['weapon']][1]}\n"
-                f"{player['name']}\'s defence: {player['defence']['current'] + armor[player['equipments']['armor']]}\n"
+                f"{player['name']}\'s damage: {player['attack']['current'][0]} - {player['attack']['current'][1]}\n"
+                f"{player['name']}\'s defence: {player['defence']['current']}\n"
 
             )
             print("______________________________________")
@@ -372,19 +377,18 @@ def handleEncounter(inputCharacter, inputNPC):
             else:
                 playerInput = "enemyInitiative"
 
-            #handle status effects here
-
             # Handle player inputs
             if playerInput == "attack":
                 consumeTurn = True
                 # Maybe calculate dodge and accuracy, whether attack hits, here.
                 # Hit chance formula modified from https://www.gamedev.net/forums/topic/685930-the-simplest-but-most-effective-and-intuitive-way-to-implement-accuracy-and-dodge-chance-in-an-rpg/
-                chanceToHit = max(math.floor(((player['accuracy']['current'] - enemy['dodge']['current'])/player['accuracy']['current'])*100) + (player['speed']['current'] - enemy['speed']['current']),10)
+                chanceToHit = max(math.floor(((player['accuracy']['current'] - enemy['dodge']['current'])/player['accuracy']['current'])*100) + (player['speed']['current'] - enemy['speed']['current']),5)
                 print(f"\n({chanceToHit}%) You attempt to strike...")
                 if randint(0,100) < chanceToHit:
                     # Calculates lower and upper bound of damage based on base attack + main weapon dmg 
-                    lowerBoundDamage = player['attack']['current'][0] + weapon[player["equipments"]["weapon"]][0] # + math.floor(weapon[player["equipments"]["offHand"]][0]/2)
-                    upperBoundDamage = player['attack']['current'][1] + weapon[player["equipments"]["weapon"]][1] # + math.floor(weapon[player["equipments"]["offHand"]][1]/2)
+                    
+                    lowerBoundDamage = player['attack']['current'][0] 
+                    upperBoundDamage = player['attack']['current'][1]
 
                     # max is to prevent negative damage from being dealt
                     damage = max(randint(lowerBoundDamage,upperBoundDamage) - (enemy['defence']['current']),0)
@@ -537,7 +541,8 @@ def handleEncounter(inputCharacter, inputNPC):
                     if randint(0,100) < chanceToHit:
                         lowerBoundDamage = enemy['attack']['current'][0]
                         upperBoundDamage = enemy['attack']['current'][1]
-                        damage = max(randint(lowerBoundDamage,upperBoundDamage) - (player['defence']['current'] + armor[player["equipments"]["armor"]]),0)
+                        
+                        damage = max(randint(lowerBoundDamage,upperBoundDamage) - (player['defence']['current']),0)
                         player['health']['current'] -= damage
                         print(f"{Fore.YELLOW if damage > 0 else Fore.CYAN}The {enemy['name']} hits you for {damage} damage!{Style.RESET_ALL}")
                     else:
@@ -790,10 +795,23 @@ def main():
         #Prompt player for input
         playerInput = playerAction(mapControls)
 
-        #Handle tricket stat modifier (Need test this part for bugs)
+        #Handle stat modifiers (Need test this part for bugs)
         playerTrinket = player["equipments"]["trinket"]
         for stat in trinket[playerTrinket]:
-            player[stat]["current"] = player[stat]["max"] + trinket[playerTrinket][stat]
+            player[stat]["modifier"] = trinket[playerTrinket][stat]
+            player[stat]["current"] = player[stat]["max"] + player[stat]["modifier"] 
+        #Armor modifier:
+        playerArmor = player["equipments"]["armor"]
+        player['defence']["modifier"] = armor[playerArmor]
+        player['defence']["current"] = player['defence']["max"] + player['defence']["modifier"] 
+        #Weapon modifier:
+        playerWeapon = player["equipments"]["weapon"]
+        print(player['attack']["modifier"][0])
+        print(weapon[playerWeapon][0])
+        player['attack']["modifier"][0] = weapon[playerWeapon][0]
+        player['attack']["modifier"][1] = weapon[playerWeapon][1]
+        player['attack']["current"][0] = player['attack']["max"][0] + player['attack']["modifier"][0]
+        player['attack']["current"][1] = player['attack']["max"][1] + player['attack']["modifier"][1]  
 
         if playerInput == "quit":
             print(f"{Fore.RED}You succumbed to the dangers of the Dungeon...Game Over.{Style.RESET_ALL}")

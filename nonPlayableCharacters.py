@@ -8,7 +8,7 @@ nonPlayableCharacters = {
         },
         "attack":{
             "max":[2,6],
-            "modifier":0,
+            "modifier":[0,0],
             "current":[2,6],
         } ,
         "defence": {
@@ -58,7 +58,7 @@ nonPlayableCharacters = {
         },
         "attack":{
             "max":[1,4],
-            "modifier":0,
+            "modifier":[0,0],
             "current":[1,4],
         } ,
         "defence": {
@@ -103,7 +103,7 @@ nonPlayableCharacters = {
         },
         "attack":{
             "max":[4,7],
-            "modifier":0,
+            "modifier":[0,0],
             "current":[4,7],
         } ,
         "defence": {
@@ -149,7 +149,7 @@ nonPlayableCharacters = {
         },
         "attack":{
             "max":[4,8],
-            "modifier":0,
+            "modifier":[0,0],
             "current":[4,8],
         } ,
         "defence": {
@@ -200,7 +200,7 @@ nonPlayableCharacters = {
         },
         "attack":{
             "max":[5,10],
-            "modifier":0,
+            "modifier":[0,0],
             "current":[5,10],
         } ,
         "defence": {

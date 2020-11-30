@@ -8,7 +8,7 @@ classes = {
         },
         "attack": {
             "max":[4,6],
-            "modifier":0,
+            "modifier":[0,0],
             "current":[4,6]
         },
         "defence": {
@@ -52,7 +52,7 @@ classes = {
             }
         },
         "inventory": [],
-        "gold": 175,
+        "gold": 500,
         "torch":{
             "max":20,
             "current":15
@@ -72,7 +72,7 @@ classes = {
         },
         "attack": {
             "max":[3,6],
-            "modifier":0,
+            "modifier":[0,0],
             "current":[3,6]
         },
         "defence": {
@@ -136,7 +136,7 @@ classes = {
         },
         "attack": {
             "max":[3,9],
-            "modifier":0,
+            "modifier":[0,0],
             "current":[3,9]
         },
         "defence": {
@@ -197,7 +197,7 @@ classes = {
         },
         "attack": {
             "max":[3,5],
-            "modifier":0,
+            "modifier":[0,0],
             "current":[3,5]
         },
         "defence": {

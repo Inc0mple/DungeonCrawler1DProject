@@ -15,8 +15,8 @@ from statusSkill import *
 
 # use this function to print map in human-readable format
 def printMap(map):
+    #Prints line surrounding map headings
     print("_"*(len(map[0])-2)+"Map:"+"_"*(len(map[0])-2))
-    #print("_"*2*len(map[0]))
     for row in map:
         print(' '.join(row))
     print("_"*2*len(map[0]))
@@ -31,7 +31,7 @@ def playerAction(availableActions):
     while True:
         playerInput = input("Enter your action: ").upper()
         if playerInput not in availableActions:
-            print(f"{playerInput} is an invalid action. Please try again.")
+            print(f"{playerInput} is an {Fore.RED}invalid action{Style.RESET_ALL}. Please try again.")
         else:
             break
     # Outputs an action in the form of a lowercase string
@@ -80,10 +80,8 @@ def handleSkillDescription(inputCharacter):
     print(message)
 
 def handleSkill(castedSkill,casterCharacter,targetCharacter):
-    #print(targetCharacter['name'])
     skills[castedSkill]['function'](casterCharacter,targetCharacter,casterCharacter['skills'][castedSkill]['duration'],casterCharacter['skills'][castedSkill]['magnitude'])
     casterCharacter['skills'][castedSkill]["turnsTillReady"] = casterCharacter['skills'][castedSkill]['cooldown']
-    #print(f"{casterCharacter['name']} casts {castedSkill} of power {casterCharacter['skills'][castedSkill]['magnitude']} on {targetCharacter['name']} for {casterCharacter['skills'][castedSkill]['duration']} turns!")
 
 # Handles using of inventory items
 def handleUse(inputCharacter, inputItem):
@@ -101,7 +99,6 @@ def handleUse(inputCharacter, inputItem):
             print(f"{Fore.GREEN}Restored {inputCharacter['name']}'s {effect} by {amountRestored}.{Style.RESET_ALL}")
 
 
-    # To implement choice of equipping in either weapon or off hand (perhaps)
     # Check which slot equipment belongs. If current equipment slot not empty, remove current equipment first before replacing with new equipment
     elif inputItem in weapon:
         if inputCharacter["equipments"]["weapon"] != "empty":
@@ -141,15 +138,16 @@ def handleTurnEnd(inputCharacter):
     inputCharacter['attack']['modifier'] = [0,0]
     inputCharacter['attack']['current'] = copy(inputCharacter['attack']['max'])
 
-
+    #Reset stat modifiers
     temporaryCombatStats = ['defence','speed','accuracy','dodge']
     for stat in temporaryCombatStats:
         #reset modifier and current stat
         inputCharacter[stat]['modifier'] = 0
         inputCharacter[stat]['current'] = copy(inputCharacter[stat]['max'])
         
+    # We need 
     expiredStatusList = []
-    
+    # We cannot delete keys in the dictionary that we are iterating on, hence the need to append expired statuses to list
     for key,val in inputCharacter['status'].items():
         #print(key,val)
         # Runs status effect functions on character's stats
@@ -171,7 +169,8 @@ def handleTurnEnd(inputCharacter):
 
 def handleMerchant(inputPlayer, startOfGame=False):
     shopInput = ""
-    #Sell price = buy price/5
+    # Sell price = buy price/5
+    # Interacts differently depending on whether it is the start of game or not
     if startOfGame:
         print(f"{Fore.CYAN}Merchant: Welcome to my shop! Before you embark, please consider buying some items from my shop!{Style.RESET_ALL}")
         print(f"{Fore.CYAN}Merchant: If you are a beginner, consider pressing 'B' to buy the recommended consumables!{Style.RESET_ALL}\n")
@@ -189,7 +188,7 @@ def handleMerchant(inputPlayer, startOfGame=False):
             break
         elif shopInput == "buy recommended consumables":
             startOfGame == False
-            #So far, only consumables can be entered here
+            # Put only consumables here
             recommendedStarter = ["small health potion","small torch fuel","small food ration"]
             for item in recommendedStarter:
                 if inputPlayer['gold'] >= priceSheet['consumables'][item]:
@@ -205,7 +204,8 @@ def handleMerchant(inputPlayer, startOfGame=False):
             print("_____________________________________________________________________________________")
             for idx,item in enumerate(priceSheet[shopInput], start = 1):
                 buyControls[str(idx)] = str(item)
-                # Eval() converts a string like "weapon" to the variable weapon
+                # Eval() converts a string like "weapon" to the weapon variable (which is a dict)
+                # This is required here as shopInput is a string.
                 costPrice = priceSheet[shopInput][item]
                 print(f"{item.capitalize()}: {Fore.GREEN}+{eval(shopInput)[item]}.{Style.RESET_ALL} {Fore.YELLOW}Cost Price: {costPrice} Gold.{Style.RESET_ALL}")
             print("_____________________________________________________________________________________")
@@ -319,11 +319,19 @@ def handleEncounter(inputCharacter, inputNPC):
         #Reset skill cooldown before combat
         for skill in player['skills']:
             player['skills'][skill]['turnsTillReady'] = 0
+
+        #Reset status effects of player
+        player['status'] = {}
+
+        #ANY player action that doesnt consume a turn should set this to false
         consumeTurn = True
         # Reset modifier by items
         handleTurnEnd(player)
         while inCombat:
-            #Handle stat modifier
+            
+            #Handles stat modifier from equipments
+            #These calculation are specific only to player characters
+            #As only the player will equip items
             if consumeTurn:
                 #Trinket modifier:
                 playerTrinket = player["equipments"]["trinket"]
@@ -337,6 +345,7 @@ def handleEncounter(inputCharacter, inputNPC):
                 player['attack']["modifier"][0] += weapon[playerWeapon][0]
                 player['attack']["modifier"][1] += weapon[playerWeapon][1]
 
+                #These function calculates current stat from max stat + modifier
                 handleTurnStart(player)
                 handleTurnStart(enemy)
             message = ""
@@ -353,10 +362,6 @@ def handleEncounter(inputCharacter, inputNPC):
             print("______________________________________")
             print(combatLog)
             print("______________________________________")
-            
-            #print(f"{player['name']}\'s health: {player['health']['current']}.")
-            #print(f"{enemy['name']}\'s health: {enemy['health']['current']}.")
-
             
             combatControls = {
                 "A": "Attack",
@@ -399,7 +404,8 @@ def handleEncounter(inputCharacter, inputNPC):
                     print(f"{Fore.RED}You missed!{Style.RESET_ALL}")
                     
 
-            # This is a dumb move now, but maybe can be made useful in the future
+            # This is a dumb move now, mostly used for debugging, but its possible
+            # that future updates can make this a viable strat
             if playerInput == "wait":
                 consumeTurn = True
                 print("You skipped your turn...")
@@ -451,6 +457,7 @@ def handleEncounter(inputCharacter, inputNPC):
 
             if playerInput == "inventory":
                 consumeTurn = False
+                #Print description of player inventory
                 handleInventoryDescription(player)
                 inventoryControls = {'X':"Go Back"}
                 for idx,item in enumerate(player['inventory'], start = 1):
@@ -689,22 +696,20 @@ def main():
     """
     print(classSelectText)
     classSelected = False
-    classesControls = {}
-    for idx,classChoice in enumerate(classes,start = 1):    
-        classesControls[str(idx)] = classChoice
-    print('''
-    Please select a character class by entering the corresponding digit: 
-    ''')
-    classesInput = playerAction(classesControls)
-    # Go back functionality not yet implemented
-    if classesInput != "go back":
+    while not classSelected:
+        classesControls = {}
+        for idx,classChoice in enumerate(classes,start = 1):    
+            classesControls[str(idx)] = classChoice
+        print('''
+        Please select a character class by entering the corresponding digit: 
+        ''')
+        classesInput = playerAction(classesControls)
         classes[classesInput]['name'] = playerName
         print(f"{Fore.GREEN}Class selected: {classesInput}!{Style.RESET_ALL}")
         print(f"{Fore.WHITE}_____________________________________________________________________________________")
         message = ""
         for info in classes[classesInput]:
-            #print(type(classes[classesInput][info]), classes[classesInput][info])
-            if type(classes[classesInput][info]) is dict or type(classes[classesInput][info]) is list:
+            if type(classes[classesInput][info]) is dict:
                 message += f"{Fore.GREEN}{str(info).capitalize()}{Style.RESET_ALL}: \n"
                 for nestedInfo in classes[classesInput][info]:
                     message += f"\t{Fore.YELLOW}{str(nestedInfo).capitalize()}{Style.RESET_ALL}:{classes[classesInput][info][nestedInfo]}\n"
@@ -712,19 +717,25 @@ def main():
                 message += f"{Fore.GREEN}{str(info).capitalize()}{Style.RESET_ALL}: {str(classes[classesInput][info]).capitalize()}\n"
         print(message)
         print(f"_____________________________________________________________________________________{Style.RESET_ALL}")
-        classSelected = True
-        player = classes[classesInput]
-    sleep(2)
+        confirmClassControl = {"Y":"Yes","N":"No"}
+        print(f"Are you sure you want to select {Fore.CYAN}{classesInput.capitalize()}{Style.RESET_ALL}?")
+        decision = playerAction(confirmClassControl)
+        if decision == 'yes':
+            player = classes[classesInput]
+            classSelected = True
+        else:
+            continue
 
+    print("\nWise choice.")
+    sleep(1)
 
-    # To give player chance to read the stats
     input('''
     You may now buy some items from the shop to prepare for the journey ahead.
     
     Try to prioritise consumables as they will restore your health, food and torch levels.
 
-    If you are new, we recommed that you use the 'Buy recommended consumables' option by
-    pressing 'B' in the next menu.
+    It is recommeded that you use the 'Buy recommended consumables' option by
+    pressing 'B' in the next menu if you are a beginner
 
     Press enter to continue...\n''')
     handleMerchant(player, startOfGame=True)
@@ -807,8 +818,6 @@ def main():
         player['defence']["current"] = player['defence']["max"] + player['defence']["modifier"] 
         #Weapon modifier:
         playerWeapon = player["equipments"]["weapon"]
-        print(player['attack']["modifier"][0])
-        print(weapon[playerWeapon][0])
         player['attack']["modifier"][0] = weapon[playerWeapon][0]
         player['attack']["modifier"][1] = weapon[playerWeapon][1]
         player['attack']["current"][0] = player['attack']["max"][0] + player['attack']["modifier"][0]

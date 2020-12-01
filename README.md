@@ -12,6 +12,8 @@ Click Run at the top of the page to start the game.
 
 ## Game Description (TODO)
 
+### Background of Genre
+
 ### To do
 
 Character save system using Firebase  

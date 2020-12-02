@@ -1,9 +1,11 @@
+# Python modules
 import math
-from colorama import Fore, Style, Back
-from random import randint
-from random import choice
+from colorama import Fore, Style
+from random import randint, choice
 from copy import deepcopy, copy
 from time import sleep
+
+# Custom modules
 from mapLoot import mapLoot
 from classes import classes
 from maps import maps
@@ -645,15 +647,6 @@ def main():
     print(welcomeText)
     input("Press enter to continue...")
 
-    """
-    tutorialInput =  playerAction({"0":"No","1":"Yes"})
-    if tutorialInput.lower() == "yes" :
-        # tutorial goes here
-        print("Too bad the tutorial isn't done yet. Pick it up as you go along.")
-        sleep(1)
-    else:
-        print("Great! lets go!")
-    """ 
     playerName = False
     while not playerName or len(playerName) > 20 or len(playerName) < 3:
         print("_____________________________________________________________________________________")
@@ -857,6 +850,7 @@ def main():
             inventoryInput = playerAction(inventoryControls)
             if inventoryInput != "go back":
                 handleUse(player, inventoryInput)
+                # Updates torch levels so that area around player is lit immediately if they refueled.
                 if player['torch']['current'] >= 10:
                     torchLit = 2
                 elif 1 < player['torch']['current'] < 10: 
@@ -868,6 +862,7 @@ def main():
 
         if playerInput == "equipment":
             consumeTurn = False
+            # Displays information regarding player's equipments
             for slot in player['equipments']:
                 print(f"{slot.capitalize()} slot: {Fore.CYAN if player['equipments'][slot] != 'empty' else Fore.YELLOW }{player['equipments'][slot]}{Style.RESET_ALL}{Fore.GREEN} (+ {eval(slot)[player['equipments'][slot]]} {'attack' if slot == 'weapon' else 'defence'} ){Style.RESET_ALL} ")
             equipmentsControls = {'X':"Go Back"}
@@ -877,7 +872,7 @@ def main():
             print(f"Select item to unequip.")
             equipmentsInput = playerAction(equipmentsControls)
             if equipmentsInput != "go back":
-                # Handles unequipping (consider replacing with a function to make it neater?)
+                # Handles unequipping
                 for slot in player['equipments']:
                     if player['equipments'][slot] == equipmentsInput:
                         print(f"You remove your {Fore.CYAN}{player['equipments'][slot]}{Style.RESET_ALL} from your {Fore.YELLOW}{slot}{Style.RESET_ALL} slot and put it in your inventory.")
@@ -1055,7 +1050,6 @@ def main():
         print("_____________________________________________________________________________________")
             
 # Starts Game.
-
 
 main()
 

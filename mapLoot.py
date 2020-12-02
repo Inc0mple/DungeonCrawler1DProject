@@ -46,16 +46,19 @@ mapLoot = {
             "small torch fuel":50,
             "small health potion":50,
             "small food ration":50,
-            "small torch fuel":25,
-            "small health potion":25,
-            "small food ration":25
+            "small torch fuel":35,
+            "small health potion":35,
+            "small food ration":35,
+            "small torch fuel":10,
+            "small health potion":10,
+            "small food ration":10
         }
         
     },
     "box of equipment": {
         "gold": [5,20],
         "possible loot": {
-            "dagger":65,
+            "dagger":85,
             "short sword":30,
             "spear":15,
             "gladius":15,

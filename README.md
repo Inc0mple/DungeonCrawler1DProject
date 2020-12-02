@@ -46,7 +46,7 @@ In general, the controls are as follows (unless otherwise specified in-game):
 - **`WASD`** to move up, right, down and left respectively.  
 - **`M`** to view map  
 - **`I`** to access inventory  
-- **`E`** to check equipment  
+- **`E`** to check equipment and/or unequip them
 - **`C`** to check player profile/stats  
 - **`Q`** to quit.  
 
@@ -57,7 +57,7 @@ In general, the controls are as follows (unless otherwise specified in-game):
 - **`S`** to cast a skill  
 - **`D`** to describe the enemy  
 - **`I`** to access the inventory for using an item  
-- **`E`** to check equipement to unequip  
+- **`E`** to check equipement and/or unequip them  
 - **`R`** to attempt to run away.
 
 ### **Attributes**
@@ -67,8 +67,8 @@ In general, the controls are as follows (unless otherwise specified in-game):
 - **`Health`**: Player loses when current health reaches 0  
 - **`Attack`**: Current attack determines raw damage dealt to enemies  
 - **`Defence`**: Current defence negates incoming attack by a given amount  
-- **`Speed`**: Affects dodge, determines turn order and chance to run away  
-- **`Accuracy`**: Affects chance to hit enemies with attack. Hit chance is calculated as ((Your Speed-Enemy Speed) + ((Your Accuracy-Enemy Dodge)/Your Accuracy))%, with a minimum of 5%
+- **`Speed`**: Increases dodge, determines turn order and affects chance to run away  
+- **`Accuracy`**: Affects chance to hit enemies with attack. Hit chance is calculated as ((Your Speed-Enemy Speed) + ((Your Accuracy-Enemy Dodge)/Your Accuracy))%, with a minimum hit chance of 5%
 - **`Dodge`**: Affects chance to completely negate damage from enemy attacks  
 - **`Equipments`**: Shows currently equipped items in your various slots  
 - **`Status`**: Shows status effects that are currently affecting the character  
@@ -97,34 +97,34 @@ In general, the controls are as follows (unless otherwise specified in-game):
 
 #### **Weapons**
 
-- `empty`: +0-0 Attack
-- `dagger`: +1-1 Attack
-- `gladius`: +2-1 Attack
-- `short sword`: +1-3 Attack
-- `sword`: +2-3 Attack
-- `spear`: +1-5 Attack
-- `halberd`: +2-6 Attack
-- `longsword`: +3-5 Attack
+- `Empty`: +0-0 Attack
+- `Dagger`: +1-1 Attack
+- `Gladius`: +2-1 Attack
+- `Short Sword`: +1-3 Attack
+- `Sword`: +2-3 Attack
+- `Spear`: +1-5 Attack
+- `Halberd`: +2-6 Attack
+- `Longsword`: +3-5 Attack
 
 #### **Armor**
 
-- `empty`: +0 Defence
-- `leather armor`: +1 Defence
-- `chainmail`: +2 Defence
-- `scale armor`: +3 Defence
-- `plate armor`: +4 Defence
-- `dragonscale armor`: +5 Defence
+- `Empty`: +0 Defence
+- `Leather Armor`: +1 Defence
+- `Chainmail`: +2 Defence
+- `Scale Armor`: +3 Defence
+- `Plate Armor`: +4 Defence
+- `Dragonscale Armor`: +5 Defence
 
 #### **Trinket**
 
 - `empty`: No effect
-- `bracelet of accuracy`: +5 Accuracy
-- `ring of speed`: +2 Speed
-- `focus shard`: +25 Accuracy, -5 Dodge, -1 Speed
-- `gloves of haste`: +5 Dodge, +5 Speed, -10 Accuracy
-- `talisman of evasion`: +10 Dodge, +1 Speed
-- `cloak of darkness`: +25 Dodge, -15 Accuracy, -1 Speed
-- `obfuscating shroud`: +40 Dodge, -25 Accuracy, -3 Speed
+- `Bracelet of Accuracy`: +5 Accuracy
+- `Ring of Speed`: +2 Speed
+- `Focus Shard`: +25 Accuracy, -5 Dodge, -1 Speed
+- `Gloves of Haste`: +5 Dodge, +5 Speed, -10 Accuracy
+- `Talisman of Evasion`: +10 Dodge, +1 Speed
+- `Cloak of Darkness`: +25 Dodge, -15 Accuracy, -1 Speed
+- `Obfuscating Shroud`: +40 Dodge, -25 Accuracy, -3 Speed
 
 #### **Consumables**
 
@@ -159,13 +159,13 @@ Walking over the `C` tile on the map will cause the player to receive one of the
 
 Can be used in combat, with different classes having different skills.
 
-- `Poison`: Poisons target, removing health each turn.
-- `Daze`: Dazes target, decreasing accuracy of target.
-- `Slow`: Slows target, decreasing dodge and speed of target.
-- `Heighten Senses`: Heighten senses of target, increasing target accuracy and dodge.
-- `Empower`: Empowers target, increasing attack
-- `Guard`: Guards target, increasing defence.
-- `Disarm`: Disarms target, decreasing attack.
+- `Guard`: Guards target, increasing defence. Used by Warriors.
+- `Disarm`: Disarms target, decreasing attack. Used by Warriors.
+- `Poison`: Poisons target, removing health each turn. Used by Rangers.
+- `Heighten Senses`: Heighten senses of target, increasing target accuracy and dodge. Used by Rangers.
+- `Empower`: Empowers target, increasing attack. Used by Beserkers.
+- `Daze`: Dazes target, decreasing accuracy of target. Used by Survivalists.
+- `Slow`: Slows target, decreasing dodge and speed of target. Used by Survivalists.
 
 ### **References**
 

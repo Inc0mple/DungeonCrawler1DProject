@@ -132,6 +132,7 @@ def handleTurnStart(inputCharacter):
     inputCharacter['attack']['current'][0] = max(0,inputCharacter['attack']['max'][0] + inputCharacter['attack']['modifier'][0])
     inputCharacter['attack']['current'][1] = max(0,inputCharacter['attack']['max'][1] + inputCharacter['attack']['modifier'][1])
     temporaryCombatStats = ['defence','speed','accuracy','dodge']
+    #handle stat modifier calculations
     for stat in temporaryCombatStats:
         inputCharacter[stat]['current'] = max(0,inputCharacter[stat]['max'] + inputCharacter[stat]['modifier'])
 
@@ -147,7 +148,6 @@ def handleTurnEnd(inputCharacter):
         inputCharacter[stat]['modifier'] = 0
         inputCharacter[stat]['current'] = copy(inputCharacter[stat]['max'])
         
-    # We need 
     expiredStatusList = []
     # We cannot delete keys in the dictionary that we are iterating on, hence the need to append expired statuses to list
     for key,val in inputCharacter['status'].items():
@@ -158,7 +158,7 @@ def handleTurnEnd(inputCharacter):
         if inputCharacter['status'][key]['duration'] <= 0:
             expiredStatusList.append((key,val))
 
-    #handle removing of expired skill
+    #handle removing of expired statuses
     for expiredStatusTuple in expiredStatusList:
         expiredEffectName = expiredStatusTuple[0]
         inputCharacter['status'].pop(expiredEffectName)
@@ -331,7 +331,7 @@ def handleEncounter(inputCharacter, inputNPC):
         handleTurnEnd(player)
         while inCombat:
             
-            #Handles stat modifier from equipments
+            #Handles stat modifier from equipments if turn is consumed
             #These calculation are specific only to player characters
             #As only the player will equip items
             if consumeTurn:

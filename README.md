@@ -1,5 +1,7 @@
 # **Dungeon Crawler Game**
-**Cohort 4 Groupt 2 Members**: Bryan, Ryan, Colin, Muzi, Joseph
+
+**Cohort 4 Group 2**: Bryan, Ryan, Colin, Muzi, Joseph
+
 ## **Setup**
 
 ### **From [Github](https://github.com/Inc0mple/DungeonCrawler1DProject)**
@@ -32,9 +34,9 @@ will be given a score that can be compared with others to determine whoever had 
 
 Available actions are shown at all time during the game in the form \[key\:action\]. Type one of the keys and press enter to perform/select the corresponding action/choice. Inputs are always case insensitive. Press enter to continue whenever prompted.  
 
-In general, the controls are as follows:
+In general, the controls are as follows (unless otherwise specified in-game):
 
-**General controls:**  
+**Selection controls:**  
 
 - **`1-9`** (or more) to choose from a list of available items/choices (Browsing shop, casting skills, using items etc.).  
 - **`X`** to leave/go back from a menu if possible.  
@@ -184,8 +186,13 @@ Basic map movement and updating learnt from: <https://www.youtube.com/watch?v=G1
 
 **Rationale:**  
 
-- `math`, `randint` and `choice` are used whenever to calculate chance of events, from attack damage to loot received.
+- `math`, `randint` and `choice` are used whenever there is a need to calculate chance of events, from attack damage to loot received.
+
 - `Fore` and `Style` from `colorama` are used to enhance visual experience, increase readiblity and provide a sense of reward/danger during positive/negative events. This is important especially in the absence of any other visual libraries.
+
+- `deepcopy` and `copy` are used to generate fresh copies of enemies and player statistics from refrence dictionary variables. Also used to create a version of the map that the player sees.
+
+- `sleep` is used to enhance gameplay experience by providing pauses during the display of relevant or important sets of information.
 
 #### **Custom modules:**  
 
@@ -200,11 +207,73 @@ Basic map movement and updating learnt from: <https://www.youtube.com/watch?v=G1
 
 ### **Functions**
 
-`printMap`
+#### **Main**
+
+- `main()`: Runs the game. Pseudocode is as follows:
+  1. Prints welcome texts and initializes game by prompting player for their name, class choice, map choice and initial purchases.
+  2. Displays map and provides instructions.
+  3. Enter into main game loop.
+  4. Prompts the player for an action.
+  5. Handles player action and any encounters that occur because of it.
+  6. Checks if player action consumes turn.
+  7. Upon turn consumption, updates map state depending on direction and player vision level.
+  8. Updates player statistics based on current food and torch levels.
+  9. Displays the updated map, a description of surrounding objects, vital player statistics and warns the player if their health or supplies are low.
+  10. Loops back to step 3 until player quits, loses all their health or reaches the exit with the key
+
+
+#### **General-purpose**
+
+- `playerAction(availableActions)`: Takes in a dictionary of the form {Control:Action}, displays the available actions for players to choose, handles invalid inputs and returns an action in the form of a string.
+
+- `handleInventoryDescription(inputCharacter)`: Accepts a character in the form of a dictionary, checks their inventory and prints out their items in a presentable format. Does not return anything.
+
+- `handleSkillDescription(inputCharacter)`: Accepts a character in the form of a dictionary, checks their skills and prints out their skills in a presentable format. Does not return anything.
+
+- `handleUse(inputCharacter, inputItem)`: Accepts a character in the dictionary form and an item represented by a string. Determines if item is to be consumed or equipped, updates character statistics as required and prints the result. Returns nothing.
+
+#### **Map-related**
+
+- `fogMap(inputMap)`: Takes in a map in the form of a list of lists and creates a fogged version of it.
+
+- `printMap(map)`: Takes in a map in the form of a list-of-lists and prints it in a more human-readable format (Without punctuations etc.). Returns nothing.
+
+- `describeSurroundings(inputPlayerMap,x,y)`: Accepts a map list-of-lists and the player's current coordinates. Prints a description of adjacent map tiles for every movement of the player. Returns nothing.
+
+- `handleMerchant(inputPlayer, startOfGame=False)`: Takes in the player's character in dictionary form. Provides different interactions if `startOfgame=True` by displaying recommended starting purchases. Handles transactions with merchants by displaying useful information like player gold and purchasable items. Utilises the `playerAction(availableActions)` function to navigate the shop menu and to select items. Updates player inventory and gold for each successful transaction. Returns nothing.
+
+- `updateFog(inputPlayerMap, inputCurrentMap, inputX, inputY, inputPrevX, inputPrevY, vision=0)`: Takes in the map that the player sees, the actual map current coordinates, previous coordinates and vision level of player that is determined by player torch levels. Reveals the 8 tiles surrounding the player on vision 2, the 4 adjacent tiles on vision 1 and the one tile the player steps into on vision 0. Returns an updated version of the map visible to the player.
+
+#### **Combat-related**
+
+- `handleTurnStart(inputCharacter)`: Used in combat. Takes in a character dictionary and updates their current combat statistics according to their modifiers. Returns nothing.
+
+- `handleTurnEnd(inputCharacter)`: Takes in a character dictionary and updates it by resetting their modifiers, removing expired statuses and handling skill cooldowns. Returns nothing.
+
+- `enemyAction(inputEnemey)`: Takes in an enemy character in the form of adictionary, check behaviour type and returns an appropriate action in the form of a string. Used during combat. (Currently only 1 type of behaviour is coded).
+
+- `handleSkill(castedSkill,casterCharacter,targetCharacter)`: Takes in a skill in the form of a string and 2 dicionaries representing the caster and the target. Invokes the respective skill function on the target and causes caster's skill to go on cooldown. Returns nothing
+
+- `handleUse(inputCharacter, inputItem)`: Accepts a character in the dictionary form an item represented by a string. Determines if item is to be consumed or equipped, updates character statistics as required and prints the result. Returns nothing.
+
+- `handleEncounter(inputCharacter, inputNPC)`: Accepts 2 dictionaries: the player character and the NPC. Initiates combat if the NPC is hostile. Returns an outcome. Pseudocode for combat is as follows:
+  1. Creates a copy of the inputNPC for player to fight.
+  2. Compare speed to see if player or enemy acts first.
+  3. Resets skill cooldown and statuses of player.
+  4. Combat loop begins.
+  5. `handleTurnStart()` function is invoked for both characters.
+  6. Combat log is shown and player is prompted for an action.
+  7. Handles player actions and check if resulting action consumes a turn after which the enemy will act.
+  8. `handleTurnEnd()` function is invoked for both characters.
+  9. Combat-ending events are checked.
+  10. Loops back to step 5 until conditions for ending combat are met.
+  11. Returns an outcome in the form of a string (`"victory"`, `"defeat"` or `"retreated"`).
 
 ## **Video Demonstration (TODO)**
 
-## **Notes**
+*insert nice 3-minute video here.
+
+## **Personal Notes/Comments**
 
 1D Project Brief:
 <https://docs.google.com/document/d/14Yq8YuP0RxB080rZlBmDTTOS-8_ds3UmV0gc3L_Sv4s/edit>

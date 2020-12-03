@@ -20,8 +20,7 @@ Inspired by the popular fantasy roleplaying table top game of Dungeons and Drago
 simulates the navigation of a dungeon in which the protagonist slays monsters and aquires loots in
 an attempt to fulfil a certain objective (killing the main antagonist or escaping). The randomised
 nature of each run via procedually generated map layouts, enemies and loot results in emergent
-gameplay where the circumstance of each playthrough is fresh and unique. The potential for replayability
-and relative simplicity of implementation (generally no need for fancy graphics or computations)
+gameplay where the circumstance of each playthrough is fresh and unique.(Due to time limiations however, we opted not to include procedural generation.) The potential for replayability and relative simplicity of implementation (generally no need for fancy graphics or computations)
 makes Dungeon Crawlers popular even among older systems.
 
 ### **Objectives**

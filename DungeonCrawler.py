@@ -29,7 +29,6 @@ def playerAction(availableActions):
     # Takes in a dictionary with key/value pair corresponding with control/action
     # Input will be convereted to upperCase. Output will be lower case.
     availableActionsList = [(key,val) for key,val in availableActions.items()]
-    #print (availableActionsList)
     # The tup in the code below stands for tuple (But i cant use tuple cause its already part of python)
     print(f"Available actions: {Fore.GREEN}{' '.join(f'[{tup[0]}: {tup[1].capitalize()}]' for tup in availableActionsList)}{Style.RESET_ALL}")
     # If player doesnt give valid action, continue the loop of prompting player

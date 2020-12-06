@@ -104,9 +104,9 @@ priceSheet = {
         "gladius":95,
         "short sword":105,
         "sword":140,
-        "spear":190,
-        "longsword":275,
-        "halberd":275
+        "spear":200,
+        "longsword":325,
+        "halberd":325
     },
     "armor": {
         "leather armor":70,

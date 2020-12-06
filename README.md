@@ -42,10 +42,10 @@ In general, the controls are as follows (unless otherwise specified in-game):
 
 **Map Controls:**  
 
-- **`WASD`** to move up, right, down and left respectively.  
+- **`WASD`** to move up, left, down and right respectively.  
 - **`M`** to view map  
 - **`I`** to access inventory  
-- **`E`** to check equipment and/or unequip them
+- **`E`** to check equipment and unequip
 - **`C`** to check player profile/stats  
 - **`Q`** to quit.  
 
@@ -213,7 +213,7 @@ Basic map movement and updating learnt from: <https://www.youtube.com/watch?v=G1
   2. Displays map and provides instructions.
   3. Enter into main game loop.
   4. Prompts the player for an action.
-  5. Handles player action and any encounters that occur because of it.
+  5. Handles player action and any events that occur because of it.
   6. Checks if player action consumes turn.
   7. Upon turn consumption, updates map state depending on direction and player vision level.
   8. Updates player statistics based on current food and torch levels.
@@ -223,7 +223,7 @@ Basic map movement and updating learnt from: <https://www.youtube.com/watch?v=G1
 
 #### **General-purpose**
 
-- `playerAction(availableActions)`: Takes in a dictionary of the form {Control:Action}, displays the available actions for players to choose, handles invalid inputs and returns an action in the form of a string.
+- `playerAction(availableActions)`: Takes in a dictionary of the form {UserInput:ResultantAction}, displays the available actions for players to choose, handles invalid inputs and returns an action in the form of a string.
 
 - `handleInventoryDescription(inputCharacter)`: Accepts a character in the form of a dictionary, checks their inventory and prints out their items in a presentable format. Does not return anything.
 
@@ -270,4 +270,8 @@ Basic map movement and updating learnt from: <https://www.youtube.com/watch?v=G1
 
 ## **Video Demonstration (TODO)**
 
-*insert nice 3-minute video here.
+<html>
+  <video width="640" height="480" controls>
+    <source src="Group2_1D_CDTProjectVideo.mp4" type="video/mp4">
+  </video>
+</html>

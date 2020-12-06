@@ -2,6 +2,8 @@
 
 **Cohort 4 Group 2**: Bryan, Ryan, Colin, Muzi, Joseph
 
+## **[Video Demonstration](https://www.youtube.com/watch?v=GbHC0m3Qj1E&feature=youtu.be)**
+
 ## **Setup**
 
 ### **From [Github](https://github.com/Inc0mple/DungeonCrawler1DProject)**
@@ -31,7 +33,7 @@ will be given a score that can be compared with others to determine whoever had 
 
 ### **Controls**
 
-Available actions are shown at all time during the game in the form \[key\:action\]. Type one of the keys and press enter to perform/select the corresponding action/choice. Inputs are always case insensitive. Press enter to continue whenever prompted.  
+Available actions are shown at all time during the game in the form \[UserInput\:ResultantAction\]. Type one of the keys and press enter to perform/select the corresponding action/choice. Inputs are always case insensitive. Press enter to continue whenever prompted.  
 
 In general, the controls are as follows (unless otherwise specified in-game):
 
@@ -84,7 +86,7 @@ In general, the controls are as follows (unless otherwise specified in-game):
 - '&nbsp;' : Empty Space.
 - `C`: Chest. Generates a random loot box for the player upon walking on it, after which it disappears.
 - `M`: Merchant.Impassable. Buy and sell everything here.
-- `E`: Exit. Move here with the key to win the game (or go to next level maybe? If that's ever implemented).
+- `E`: Exit. Move here with the key to win the game.
 - `K`: Key. Required to exit the Dungeon.
 - `S`: Slime: Weak but durable. Only drops torch fuel. 33 Health, 1-4 Attack. Easiest.
 - `G`: Goblin: Typical enemy, variety of useful drops. 25 Health, 2-6 Attack. Easy.
@@ -267,11 +269,3 @@ Basic map movement and updating learnt from: <https://www.youtube.com/watch?v=G1
   9. Combat-ending events are checked.
   10. Loops back to step 5 until conditions for ending combat are met.
   11. Returns an outcome in the form of a string (`"victory"`, `"defeat"` or `"retreated"`).
-
-## **Video Demonstration (TODO)**
-
-<html>
-  <video width="640" height="480" controls>
-    <source src="Group2_1D_CDTProjectVideo.mp4" type="video/mp4">
-  </video>
-</html>

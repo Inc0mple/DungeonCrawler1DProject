@@ -694,6 +694,7 @@ def main():
     """
     print(classSelectText)
     classSelected = False
+    # Loop continues until class is selected and confirmed by player
     while not classSelected:
         classesControls = {}
         for idx,classChoice in enumerate(classes,start = 1):    
@@ -707,6 +708,7 @@ def main():
         print(f"{Fore.WHITE}_____________________________________________________________________________________")
         message = ""
         for info in classes[classesInput]:
+            # Handles formatting of 1-level-deep dictionaries for display
             if type(classes[classesInput][info]) is dict:
                 message += f"{Fore.GREEN}{str(info).capitalize()}{Style.RESET_ALL}: \n"
                 for nestedInfo in classes[classesInput][info]:
@@ -805,7 +807,7 @@ def main():
         #Prompt player for input
         playerInput = playerAction(mapControls)
 
-        #Handle stat modifiers (Need test this part for bugs)
+        #Handle stat modifiers 
         playerTrinket = player["equipments"]["trinket"]
         for stat in trinket[playerTrinket]:
             player[stat]["modifier"] = trinket[playerTrinket][stat]
@@ -945,6 +947,7 @@ def main():
             y = prevY
             sleep(1)
 
+        # M is a merchant
         if currentMap[y][x] == "M":
 
             print(f"{Fore.YELLOW}You meet the Merchant and start trading!{Style.RESET_ALL}")

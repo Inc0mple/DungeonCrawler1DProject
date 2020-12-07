@@ -13,8 +13,6 @@ from nonPlayableCharacters import nonPlayableCharacters
 from items import weapon,armor,trinket,consumables,priceSheet
 from statusSkill import *
 
-
-
 # use this function to print map in human-readable format
 def printMap(map):
     #Prints line surrounding map headings
@@ -22,7 +20,6 @@ def printMap(map):
     for row in map:
         print(' '.join(row))
     print("_"*2*len(map[0]))
-
 
 # Use this whenever you want player input.
 def playerAction(availableActions):
@@ -55,7 +52,6 @@ def updateMap(inputMap, inputX, inputY, inputPrevX, inputPrevY):
     inputMap[inputY][inputX] = f"{Fore.GREEN}P{Style.RESET_ALL}"
     return inputMap
 
-
 # Handles viewing of inventory items
 def handleInventoryDescription(inputCharacter):
     print("\nUsable/Equippable items in your inventory:\n")
@@ -71,7 +67,7 @@ def handleInventoryDescription(inputCharacter):
             message += f"Consumable: {Fore.YELLOW}{item}{Style.RESET_ALL} (restores {Fore.GREEN}{consumables[item]}{Style.RESET_ALL} when used)\n"
     print(message)
 
-#Copy inventory description for skilldescription
+# Prints out player skill in readable format
 def handleSkillDescription(inputCharacter):
     print("\nSkills in your skillset:\n")
     message = ""
@@ -83,6 +79,7 @@ def handleSkillDescription(inputCharacter):
         message += f"\t{Fore.YELLOW}Turns till ready{Style.RESET_ALL}: {inputCharacter['skills'][skillKey]['turnsTillReady']}\n"
     print(message)
 
+# Invokes input skill's function on target character, make caster skill go on CD
 def handleSkill(castedSkill,casterCharacter,targetCharacter):
     skills[castedSkill]['function'](casterCharacter,targetCharacter,casterCharacter['skills'][castedSkill]['duration'],casterCharacter['skills'][castedSkill]['magnitude'])
     casterCharacter['skills'][castedSkill]["turnsTillReady"] = casterCharacter['skills'][castedSkill]['cooldown']
@@ -101,7 +98,6 @@ def handleUse(inputCharacter, inputItem):
             amountRestored = min(consumables[inputItem][effect], difference)
             inputCharacter[effect]["current"] += amountRestored
             print(f"{Fore.GREEN}Restored {inputCharacter['name']}'s {effect} by {amountRestored}.{Style.RESET_ALL}")
-
 
     # Check which slot equipment belongs. If current equipment slot not empty, remove current equipment first before replacing with new equipment
     elif inputItem in weapon:
@@ -407,7 +403,6 @@ def handleEncounter(inputCharacter, inputNPC):
                 else:
                     print(f"{Fore.RED}You missed!{Style.RESET_ALL}")
                     
-
             # This is a dumb move now, mostly used for debugging, but its possible
             # that future updates can make this a viable strat
             if playerInput == "wait":

@@ -1,3 +1,6 @@
+"""
+F04 Group 2: Bryan Tan, Ryan Kaw Zheng Da, Colin Teoh, Xu Muzi, Joseph Lai
+"""
 weapon = {
     # Structured by how much they increase lower and upper dmg bound
     "empty":(0,0),

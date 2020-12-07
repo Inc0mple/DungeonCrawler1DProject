@@ -1,3 +1,6 @@
+"""
+F04 Group 2: Bryan Tan, Ryan Kaw Zheng Da, Colin Teoh, Xu Muzi, Joseph Lai
+"""
 # Add new monsters/encounters here
 nonPlayableCharacters = {
     "G": {

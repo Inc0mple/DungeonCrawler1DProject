@@ -1,5 +1,10 @@
+"""
+F04 Group 2: Bryan Tan, Ryan Kaw Zheng Da, Colin Teoh, Xu Muzi, Joseph Lai
+"""
+
 from colorama import Fore, Style, Back
 
+# Status effect functions
 def poisoned(targetCharacter,magnitude):
     targetCharacter["health"]["current"] -=  magnitude
     print(f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} is {Fore.RED}Poisoned{Style.RESET_ALL} for {magnitude} health! ({targetCharacter['status']['poisoned']['duration']} turns remaining)")
@@ -40,6 +45,7 @@ def resistant(targetCharacter,magnitude):
             #resistedStatus = targetCharacter["status"].pop(statusKey)
             print (f"{Fore.CYAN}{targetCharacter['name']}{Style.RESET_ALL} {Fore.GREEN}resisted {Style.RESET_ALL}{statusKey} effect, decreasing its duration by {magnitude} turns!({targetCharacter['status']['resistant']['duration']} turns remaining)")
 
+#Status effect dictionaries
 statusEffects = {
     "poisoned":poisoned,
     "dazed":dazed,
@@ -68,6 +74,7 @@ statusEffects = {
 armor break: decrease defence
 '''
 
+#Skill Functions
 
 def poison(casterCharacter,targetCharacter, duration, magnitude):
     targetCharacter["status"]["poisoned"] = {
@@ -126,6 +133,7 @@ def resist(casterCharacter,targetCharacter, duration, magnitude):
     }
     print(f"{Fore.CYAN}{casterCharacter['name']}{Style.RESET_ALL} used {Fore.GREEN}Resist{Style.RESET_ALL} of power {magnitude} on {Fore.YELLOW}{targetCharacter['name']}{Style.RESET_ALL} for {duration} turns!")
 
+#Skill dictionaries
 skills = {
     "poison":{
         "function":poison,

@@ -1,3 +1,6 @@
+"""
+F04 Group 2: Bryan Tan, Ryan Kaw Zheng Da, Colin Teoh, Xu Muzi, Joseph Lai
+"""
 mapLoot = {
     # Strucured by the type of lootbox u can find and what is inside them, with gold by range its loot by possibility in perecentage
     "treasure chest": {

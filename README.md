@@ -1,6 +1,6 @@
 # **Dungeon Crawler Game**
 
-**Cohort 4 Group 2**: Bryan, Ryan, Colin, Muzi, Joseph
+**Cohort 4 Group 2**: Bryan Tan, Ryan Kaw Zheng Da, Colin Teoh, Xu Muzi, Joseph Lai
 
 ## **[Video Demonstration](https://www.youtube.com/watch?v=GbHC0m3Qj1E&feature=youtu.be)**
 
@@ -22,7 +22,7 @@ Inspired by the popular fantasy roleplaying table top game of Dungeons and Drago
 simulates the navigation of a dungeon in which the protagonist slays monsters and aquires loots in
 an attempt to fulfil a certain objective (killing the main antagonist or escaping). The randomised
 nature of each run via procedually generated map layouts, enemies and loot results in emergent
-gameplay where the circumstance of each playthrough is fresh and unique.(Due to time limiations however, we opted not to include procedural generation.) The potential for replayability and relative simplicity of implementation (generally no need for fancy graphics or computations)
+gameplay where the circumstance of each playthrough is fresh and unique. (Due to time limiations however, we opted not to include procedural generation.) The potential for replayability and relative simplicity of implementation (generally no need for fancy graphics or computations)
 makes Dungeon Crawlers popular even among older systems.
 
 ### **Objectives**
@@ -46,8 +46,8 @@ In general, the controls are as follows (unless otherwise specified in-game):
 
 - **`WASD`** to move up, left, down and right respectively.  
 - **`M`** to view map  
-- **`I`** to access inventory  
-- **`E`** to check equipment and unequip
+- **`I`** to access inventory
+- **`E`** to check current equipments and unequip
 - **`C`** to check player profile/stats  
 - **`Q`** to quit.  
 
@@ -57,8 +57,8 @@ In general, the controls are as follows (unless otherwise specified in-game):
 - **`W`** to wait  
 - **`S`** to cast a skill  
 - **`D`** to describe the enemy  
-- **`I`** to access the inventory for using an item  
-- **`E`** to check equipement and/or unequip them  
+- **`I`** to access the inventory 
+- **`E`** to check current equipements and unequip  
 - **`R`** to attempt to run away.
 
 ### **Attributes**
@@ -235,7 +235,7 @@ Basic map movement and updating learnt from: <https://www.youtube.com/watch?v=G1
 
 #### **Map-related**
 
-- `fogMap(inputMap)`: Takes in a map in the form of a list of lists and creates a fogged version of it.
+- `fogMap(inputMap)`: Takes in a map in the form of a list of lists and returns a fogged version of it.
 
 - `printMap(map)`: Takes in a map in the form of a list-of-lists and prints it in a more human-readable format (Without punctuations etc.). Returns nothing.
 
@@ -249,9 +249,9 @@ Basic map movement and updating learnt from: <https://www.youtube.com/watch?v=G1
 
 - `handleTurnStart(inputCharacter)`: Used in combat. Takes in a character dictionary and updates their current combat statistics according to their modifiers. Returns nothing.
 
-- `handleTurnEnd(inputCharacter)`: Takes in a character dictionary and updates it by resetting their modifiers, removing expired statuses and handling skill cooldowns. Returns nothing.
+- `handleTurnEnd(inputCharacter)`: Used in combat. Takes in a character dictionary and updates it by resetting their modifiers, removing expired statuses and handling skill cooldowns. Returns nothing.
 
-- `enemyAction(inputEnemey)`: Takes in an enemy character in the form of adictionary, check behaviour type and returns an appropriate action in the form of a string. Used during combat. (Currently only 1 type of behaviour is coded).
+- `enemyAction(inputEnemey)`: Takes in an enemy character in the form of a dictionary, check behaviour type and returns an appropriate action in the form of a string. Used during combat. (Currently only 1 type of behaviour is coded).
 
 - `handleSkill(castedSkill,casterCharacter,targetCharacter)`: Takes in a skill in the form of a string and 2 dicionaries representing the caster and the target. Invokes the respective skill function on the target and causes caster's skill to go on cooldown. Returns nothing
 

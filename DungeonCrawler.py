@@ -1,3 +1,6 @@
+"""
+F04 Group 2: Bryan Tan, Ryan Kaw Zheng Da, Colin Teoh, Xu Muzi, Joseph Lai
+"""
 # Python modules
 import math
 from colorama import Fore, Style
@@ -88,13 +91,12 @@ def handleSkill(castedSkill,casterCharacter,targetCharacter):
 def handleUse(inputCharacter, inputItem):
     # First removes the used item from the inventory
     inputCharacter["inventory"].remove(inputItem)
-    # Possible optimisation with a for loop?
     # Check what type of item is used/equipped, with different behaviours for each.
     if inputItem in consumables:
         for effect in consumables[inputItem]:
             # Calculate difference between current and max to prevent over-restoration of stat.
             difference = inputCharacter[effect]["max"] - inputCharacter[effect]["current"]
-            # Take the smaller number between effect of consumable and 
+            # Take the smaller number between restorative effect of consumable and amount that CAN be restored
             amountRestored = min(consumables[inputItem][effect], difference)
             inputCharacter[effect]["current"] += amountRestored
             print(f"{Fore.GREEN}Restored {inputCharacter['name']}'s {effect} by {amountRestored}.{Style.RESET_ALL}")
@@ -121,6 +123,7 @@ def handleUse(inputCharacter, inputItem):
         inputCharacter["equipments"]["trinket"] = inputItem
         print(f"You equipped your {Fore.CYAN}{inputItem.capitalize()}{Style.RESET_ALL} in your {Fore.YELLOW}Trinket{Style.RESET_ALL} slot  ({Fore.GREEN}{trinket[inputItem]}{Style.RESET_ALL} stat modifier)")
     
+    # In case you use dungeon key
     else:
         print("You can't use that item!")
         inputCharacter["inventory"].append(inputItem)
@@ -134,6 +137,7 @@ def handleTurnStart(inputCharacter):
     for stat in temporaryCombatStats:
         inputCharacter[stat]['current'] = max(0,inputCharacter[stat]['max'] + inputCharacter[stat]['modifier'])
 
+#
 def handleTurnEnd(inputCharacter):
     #reset attack modifier calculations
     inputCharacter['attack']['modifier'] = [0,0]
@@ -298,8 +302,6 @@ def describeSurroundings(inputPlayerMap,x,y):
     else:
         print(f"You see an undocumented/unknown object '{westObject}' to your West.")
 
-
-
 #Future update may include handling encounters with neutral or friendly characters that you can interact with.
 def handleEncounter(inputCharacter, inputNPC):
     player = inputCharacter
@@ -325,13 +327,14 @@ def handleEncounter(inputCharacter, inputNPC):
 
         #ANY player action that doesnt consume a turn should set this to false
         consumeTurn = True
+        # We set consumeTrun to be true in first turn so that equipment modifiers are calulcated by the start of the first turn
         # Reset modifier by items
         handleTurnEnd(player)
         while inCombat:
             
-            #Handles stat modifier from equipments if turn is consumed
-            #These calculation are specific only to player characters
-            #As only the player will equip items
+            # Handles stat modifier from equipments if turn is consumed
+            # These calculation are specific only to player characters
+            # as only the player will equip items
             if consumeTurn:
                 #Trinket modifier:
                 playerTrinket = player["equipments"]["trinket"]
@@ -375,7 +378,7 @@ def handleEncounter(inputCharacter, inputNPC):
             }
             # Player's turn
             
-            # Allow player input if enemy is not acting first
+            # Allow player input if enemy is not acting first, else enemy acts first
             if not enemyInitiative:
                 playerInput = playerAction(combatControls)
                 print("______________________________________")
@@ -385,7 +388,6 @@ def handleEncounter(inputCharacter, inputNPC):
             # Handle player inputs
             if playerInput == "attack":
                 consumeTurn = True
-                # Maybe calculate dodge and accuracy, whether attack hits, here.
                 # Hit chance formula modified from https://www.gamedev.net/forums/topic/685930-the-simplest-but-most-effective-and-intuitive-way-to-implement-accuracy-and-dodge-chance-in-an-rpg/
                 chanceToHit = max(math.floor(((player['accuracy']['current'] - enemy['dodge']['current'])/player['accuracy']['current'])*100) + (player['speed']['current'] - enemy['speed']['current']),5)
                 print(f"\n({chanceToHit}%) You attempt to strike...")
@@ -471,14 +473,17 @@ def handleEncounter(inputCharacter, inputNPC):
             if playerInput == "skill":
                 consumeTurn = False
                 skillInput = ""
-                #while skillInput != "go back":
-                #To implement skill description
+                # Prints available skills you can use in a nice format
                 handleSkillDescription(player)
                 skillControls = {'X':"Go Back"}
+                # Adds skills to the control dictionary
                 for idx,skill in enumerate(player['skills'], start = 1):
                     skillControls[str(idx)] = skill
                 print("Select skill to use: \n")
+                # Ask for player input on what skill to use
                 skillInput = playerAction(skillControls)
+                # If player selects go back, turn is not consumed.
+                # If go back not selected and skill is ready, proceed with target selection
                 if skillInput != "go back":
                     if player['skills'][skillInput]["turnsTillReady"] > 0:
                         print (f"Skill is not ready! {player['skills'][skillInput]['turnsTillReady']} more turns needed!")
@@ -509,12 +514,13 @@ def handleEncounter(inputCharacter, inputNPC):
                 if equipmentsInput != "go back":
                     #Consumes a turn in combat if player decides to unequip an item
                     consumeTurn = True
-                    # Handles unequipping (consider replacing with a function to make it neater?)
+                    # Handles unequipping
                     for slot in player['equipments']:
                         if player['equipments'][slot] == equipmentsInput:
                             print(f"You remove your {Fore.CYAN}{player['equipments'][slot]}{Style.RESET_ALL} from your {slot} slot and put it in your inventory.")
                             player['inventory'].append(equipmentsInput)
                             player['equipments'][slot] = "empty"
+                            input("Press enter to continue...")
 
             # Handle killing of enemy
             if enemy['health']['current'] <= 0:
@@ -607,13 +613,13 @@ def updateFog(inputPlayerMap, inputCurrentMap, inputX, inputY, inputPrevX, input
         inputPlayerMap[inputY][inputX+1] = inputCurrentMap[inputY][inputX+1]
         inputPlayerMap[inputY][inputX-1] = inputCurrentMap[inputY][inputX-1]
         
-
     # returns updated map
     return inputPlayerMap
 
 #Initialises a fogged version of the current Map
 def fogMap(inputMap):
-    # normal methods of copy does not work if list contains objects (in this case it contains lists which I guess are objects). Hence, deep copy required to prevent old list from being overwritten.
+    # Normal methods of copy does not work if list itself contains lists.
+    # Hence, deep copy required to prevent lists within old list from being overwritten.
     outputMap = deepcopy(inputMap)
     for idxY, row in enumerate(outputMap):
         for idX, pos in enumerate(row[:]):
@@ -651,11 +657,13 @@ def main():
         Please enter a valid name for your character (between 3 and 20 characters): 
         ''')
     sleep(1)
+
     print("""
     That's a fine name!
     """)
+
     sleep(1)
-    # INITIALISE MAP
+    # Ask player to choose map
     mapSelectControls = {}
     for idx,mapChoice in enumerate(maps, start = 1):    
         mapSelectControls[str(idx)] = mapChoice
@@ -667,6 +675,8 @@ def main():
     currentMap = maps[selectedMap]
     print(f"{Fore.GREEN}Map selected: {selectedMap.capitalize()}!{Style.RESET_ALL}")
 
+    # Creates fogged version of the actual map.
+    # This fogged version is the one shown to players
     playerMap = fogMap(currentMap)
     sleep(1)
     # CLASS SELECT
@@ -734,8 +744,6 @@ def main():
     Remember to equip any weapon and armor that you bought from the shop!!
     
     Good luck! Press enter to continue...''')
-    
-    #Shows map to player at start of game
 
     playerInput = ""
 
@@ -758,7 +766,9 @@ def main():
     turn = 1
     prevX = x
     prevY = y
+    # Calls update fog at start of game so that the 8 tiles around the player are initially revealed.
     playerMap = updateFog(playerMap,currentMap,x,y,prevX,prevY,2)
+    # Shows map to player at start of game
     printMap(playerMap)
     print("_____________________________________________________________________________________")
     print("""
@@ -863,6 +873,7 @@ def main():
             equipmentsControls = {'X':"Go Back"}
             for idx,slot in enumerate(player['equipments'],start = 1):
                 if player['equipments'][slot] != "empty":     
+                    # Add a userInput:value pair to the equipment controls if equipment slot is taken by an equipment
                     equipmentsControls[str(idx)] = player['equipments'][slot]
             print(f"Select item to unequip.")
             equipmentsInput = playerAction(equipmentsControls)
@@ -873,7 +884,7 @@ def main():
                         print(f"You remove your {Fore.CYAN}{player['equipments'][slot]}{Style.RESET_ALL} from your {Fore.YELLOW}{slot}{Style.RESET_ALL} slot and put it in your inventory.")
                         player['inventory'].append(equipmentsInput)
                         player['equipments'][slot] = "empty"
-                        
+                        input("Press enter to continue...")
 
         if playerInput == "up":
             y -= 1
@@ -1032,7 +1043,6 @@ def main():
         if player['health']['current'] < 15:
             print(f"{Fore.RED}You feel weak...Find some way to restore your health!{Style.RESET_ALL}")
             
-        
         # Describes what player sees
         describeSurroundings(playerMap,x,y)
         print(message)

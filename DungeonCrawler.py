@@ -234,7 +234,7 @@ def handleMerchant(inputPlayer, startOfGame=False):
                     sellPrice = math.floor(priceSheet["armor"][item]/5)
                     print(f"{item.capitalize()}: {Fore.GREEN}{armor[item]}.{Style.RESET_ALL} {Fore.YELLOW}Sell Price: {sellPrice} Gold.{Style.RESET_ALL}")
                 elif item in trinket:
-                    sellPrice = math.floor(priceSheet["armor"][item]/5)
+                    sellPrice = math.floor(priceSheet["trinket"][item]/5)
                     print(f"{item.capitalize()}: {Fore.GREEN}{trinket[item]}.{Style.RESET_ALL} {Fore.YELLOW}Sell Price: {sellPrice} Gold.{Style.RESET_ALL}")
                 elif item in consumables:
                     sellPrice = math.floor(priceSheet["consumables"][item]/5)
@@ -247,6 +247,8 @@ def handleMerchant(inputPlayer, startOfGame=False):
                 soldItemType = "weapon"
             elif sellInput in armor:
                 soldItemType = "armor"
+            elif sellInput in trinket:
+                soldItemType = "trinket"
             elif sellInput in consumables:
                 soldItemType = "consumables"
             else:

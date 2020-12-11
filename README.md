@@ -2,7 +2,7 @@
 
 **Cohort 4 Group 2**: Bryan Tan, Ryan Kaw Zheng Da, Colin Teoh, Xu Muzi, Joseph Lai
 
-## **[Video Demonstration](https://www.youtube.com/watch?v=GbHC0m3Qj1E&feature=youtu.be)**
+## **[Video Demonstration (by Xu Muzi)](https://www.youtube.com/watch?v=GbHC0m3Qj1E&feature=youtu.be)**
 
 ## **Setup**
 

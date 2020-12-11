@@ -624,7 +624,7 @@ def fogMap(inputMap):
     # Hence, deep copy required to prevent lists within old list from being overwritten.
     outputMap = deepcopy(inputMap)
     for idxY, row in enumerate(outputMap):
-        for idX, pos in enumerate(row[:]):
+        for idX, pos in enumerate(row):
             if pos != "P":
                 outputMap[idxY][idX] = "."
     return outputMap
